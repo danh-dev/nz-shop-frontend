@@ -1,4 +1,18 @@
 <script setup>
+<<<<<<< HEAD
+import { RouterLink, RouterView } from "vue-router";
+
+import HelloWorld from "./components/HelloWorld.vue";
+import HelloWorld1 from "./components/HelloWorld.vue";
+</script>
+
+<template>
+	<HelloWorld></HelloWorld>
+	<HelloWorld1></HelloWorld1>
+</template>
+
+<style scoped></style>
+=======
 import HelloWorld from './components/HelloWorld.vue'
 </script>
 
@@ -28,3 +42,4 @@ import HelloWorld from './components/HelloWorld.vue'
   filter: drop-shadow(0 0 2em #42b883aa);
 }
 </style>
+>>>>>>> 2e31b4ded6198b2c3cf18989fa1d4120327a63c7
