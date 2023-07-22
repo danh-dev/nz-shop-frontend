@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "vue-project",
   "version": "0.0.0",
   "private": true,
@@ -23,5 +24,22 @@
     "eslint-plugin-vue": "^9.11.0",
     "prettier": "^2.8.8",
     "vite": "^4.3.9"
+=======
+  "name": "fe-izshop",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "vite": "^4.4.5"
+>>>>>>> 2e31b4ded6198b2c3cf18989fa1d4120327a63c7
   }
 }
