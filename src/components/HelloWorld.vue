@@ -7,7 +7,7 @@ const { increment } = useCounterStore();
 </script>
 
 <template>
-	<button @click="increment">count: {{ count }}</button>
+	<v-btn @click="increment">count: {{ count }}</v-btn>
 	<div>{{ doubleCount }}</div>
 </template>
 
