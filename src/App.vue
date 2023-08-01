@@ -7,7 +7,7 @@ import ProductDetail from "./components/ProductDetail.vue";
 </script>
 
 <template>
-	<ProductDetail />
+  <RouterView />
 </template>
 
 <style scoped></style>
