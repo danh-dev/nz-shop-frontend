@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/valid-v-slot -->
 <script setup>
 import ProductSliderArrow from "./ProductSliderArrow.vue";
 defineProps({
@@ -11,21 +12,20 @@ defineProps({
 		cycle
 		interval="5000"
 		show-arrows="hover"
-		height="100%"
 		class="rounded-lg"
 	>
-		<template #prev="{ props }">
+		<template v-slot:prev="{ props }">
 			<ProductSliderArrow
 				:icon="props.icon"
 				@click="props.onClick"
-				:class="[props.class, 'ms-n10 ps-5']"
+				:class="[props.class]"
 			/>
 		</template>
-		<template #next="{ props }">
+		<template v-slot:next="{ props }">
 			<ProductSliderArrow
 				:icon="props.icon"
 				@click="props.onClick"
-				:class="[props.class, 'me-n10 pe-5']"
+				:class="[props.class]"
 			/>
 		</template>
 		<v-carousel-item

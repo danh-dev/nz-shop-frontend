@@ -1,63 +1,35 @@
 <script setup>
-import { ref } from "vue";
-import LoginModal from "../components/LoginModal.vue";
-import CommentModal from "../components/CommentModal.vue";
-const comments = ref([
-	{
-		avatar: "T",
-		name: "Trinh",
-		time: "27/5/2023 09:09",
-		comment: "Điện thoại rất tốt.",
-	},
-	{
-		avatar: "J",
-		name: "Jonathan",
-		time: "20/5/2023 10:50",
-		comment: "sản phẩm dùng ổn.",
-	},
-	{
-		avatar: "S",
-		name: "Sơn Hải",
-		time: "28/5/2023 14:08",
-		comment: "Sản phẩm rất tốt.",
-	},
-	{
-		avatar: "N",
-		name: "Vũ Xuân Nam",
-		time: "20/4/2023 17:50",
-		comment: "sản phẩm tốt nhân viên nhiệt tình",
-	},
-	{
-		avatar: "T",
-		name: "Trần Thanh Tiền",
-		time: "14/4/2023 18:01",
-		comment: "Máy mượt mà đẹp pin Sài được 1 ngày trọn vẹn, nhân viên hỗ trợ nhiệt tình.",
-	},
-]);
+// import { ref } from "vue";
+import LoginModal from "./LoginModal.vue";
+import CommentModal from "./CommentModal.vue";
+import informations from "../../../public/informations.js";
+
 </script>
 
 <template>
-	<v-sheet
-		class="my-3 d-flex flex-column py-3 rounded-lg v-rating"
-		elevation="10"
-		width="100%"
+	<v-sheet  v-for="information in informations" :key="information.id">
+		<v-sheet
+			class="my-3 d-flex flex-column py-3 v-rating"
+			elevation="3"
+			width="100%"
+			rounded="2"
 	>
-		<h4 class="d-flex justify-center more">Đánh giá & nhận xét</h4>
+		<h4 class="d-flex justify-center">Đánh giá & nhận xét</h4>
 
 		<div class="d-flex align-center flex-column">
 			<div class="text-h2 mt-3">
-				4
+				{{ information.rating }}
 				<span class="text-h6 ml-n3">/5</span>
 			</div>
 
 			<v-rating
-				:model-value="4"
+				:model-value="information.rating"
 				color="yellow-darken-3"
-				size="30"
+				size="large"
 				readonly
 				density="compact"
 			></v-rating>
-			<div class="px-3">3,360 đánh giá</div>
+			<div class="px-3">{{ information.review }}</div>
 		</div>
 
 		<v-list
@@ -87,7 +59,7 @@ const comments = ref([
 
 				<template v-slot:append>
 					<div class="rating-values">
-						<span class="d-flex justify-end"> {{ rating * 224 }} </span>
+						<span class="d-flex justify-end"> {{ rating * information.value }} </span>
 					</div>
 				</template>
 			</v-list-item>
@@ -99,9 +71,8 @@ const comments = ref([
 		</v-sheet>
 
 		<v-container
-			class="my-2"
-			v-for="(comment, index) in comments"
-			:key="index"
+			v-for="comment in information.comments"
+			:key="comment.id"
 		>
 			<v-sheet class="d-flex justify-content-between py-2">
 				<v-sheet class="d-flex align-center">
@@ -117,25 +88,31 @@ const comments = ref([
 			>
 				<p class="d-flex align-center">
 					<b>Đánh giá:</b>
-					<span class="mdi mdi-star"></span>
-					<span class="mdi mdi-star"></span>
-					<span class="mdi mdi-star"></span>
-					<span class="mdi mdi-star"></span>
-					<span class="mdi mdi-star"></span>
+					<v-rating
+						:model-value="comment.rating"
+						color="yellow-darken-3"
+						readonly
+						density="compact"
+						size="small"
+						class="mx-2"
+					>
+					</v-rating>
 				</p>
 				<p class="more"><b>Nhận xét:</b> {{ comment.comment }}</p>
 			</v-sheet>
 		</v-container>
+
 		<v-sheet class="mt-4">
 			<CommentModal />
 		</v-sheet>
+	</v-sheet>
 	</v-sheet>
 </template>
 
 <style>
 .more {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	white-space: wrap;
+	/* overflow: hidden; */
+	/* text-overflow: ellipsis; */
 }
 </style>

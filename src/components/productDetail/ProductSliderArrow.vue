@@ -5,7 +5,7 @@
   <v-btn
     variant="elevated"
     color="grey-darken-3"
-    size="x-large"
+    size="large"
   />
 </template>
 

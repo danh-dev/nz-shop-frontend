@@ -1,14 +1,16 @@
 <script setup>
-import ProductInfomation from "../components/ProductInfomation.vue";
-import ProductAccessories from "../components/ProductAccessories.vue";
-import ProductFAQ from "../components/ProductFAQ.vue";
-import ProductReviews from "../components/ProductReviews.vue";
-import ProductQA from "../components/ProductQA.vue";
-import ProductSpecifications from "../components/ProductSpecifications.vue";
-import PruductNews from "../components/PruductNews.vue";
+import ProductInfomation from "./ProductInfomation.vue";
+import ProductAccessories from "./ProductAccessories.vue";
+import ProductFAQ from "./ProductFAQ.vue";
+import ProductReviews from "./ProductReviews.vue";
+import ProductQA from "./ProductQA.vue";
+import ProductSpecifications from "./ProductSpecifications.vue";
+import ProductNews from "./ProductNews.vue";
 
-import ProductSlider from "../components/ProductSlider.vue";
-import ProductThumbnailGroup from "../components/ProductThumbnailGroup.vue";
+import ProductSlider from "./ProductSlider.vue";
+import ProductThumbnailGroup from "./ProductThumbnailGroup.vue";
+
+import informations from "../../../public/informations.js";
 
 import { onMounted, ref, watch } from "vue";
 import { useDisplay } from "vuetify/lib/framework.mjs";
@@ -17,6 +19,7 @@ const { xs } = useDisplay();
 // Product photos Slider
 const model = ref(0);
 const maxModel = ref(0);
+
 const images = ref([
 	{
 		id: 1,
@@ -62,24 +65,26 @@ watch(model, (cur, pre) => {
 	}
 });
 
-
-
 onMounted(() => {});
 </script>
 
 <template>
 	<v-container class="my-3">
-		<v-sheet class="d-flex align-center my-3 d-none d-sm-flex">
-			<b class="text-h6">Xiaomi Redmi Note 12 Pro</b>
+		<v-sheet
+			class="d-flex align-center my-3 d-none d-sm-flex"
+			v-for="information in informations"
+			:key="information.id"
+		>
+			<b class="text-h6">{{ information.name }}</b>
 			<v-rating
-				:model-value="5"
+				:model-value="information.rating"
 				color="yellow-darken-3"
 				readonly
 				density="compact"
 				size="small"
 				class="mx-2"
 			></v-rating>
-			<p class="text-body-1">3,360 đánh giá</p>
+			<p class="text-body-1">{{ information.review }}</p>
 		</v-sheet>
 
 		<v-row>
@@ -100,6 +105,7 @@ onMounted(() => {});
 						height="80%"
 					>
 						<ProductSlider
+							height="100%"
 							:images="images"
 							v-model="model"
 						/>
@@ -121,13 +127,41 @@ onMounted(() => {});
 
 				<!-- Thông tin sản phẩm -->
 				<ProductInfomation />
-				<div class="d-md-block d-lg-none">
-					<ProductSpecifications />
-				</div>
 
 				<!-- Phụ kiện mua cùng -->
+				<h4 class="text-uppercase text-danger py-2">Phụ kiện mua cùng</h4>
 				<ProductAccessories />
 
+				<v-sheet class="d-md-block d-lg-none">
+					<ProductSpecifications />
+				</v-sheet>
+			</v-col>
+
+			<v-col
+				:cols="12"
+				md="4"
+				lg="4"
+			>
+				<!-- Thông tin sản phẩm -->
+				<v-sheet class="d-none d-md-flex d-md-none d-lg-block">
+					<ProductSpecifications />
+				</v-sheet>
+			</v-col>
+		</v-row>
+
+		<v-row>
+			<v-col :cols="12">
+				<h4 class="text-uppercase">Sản phẩm tương tự</h4>
+				<ProductAccessories />
+			</v-col>
+		</v-row>
+
+		<v-row>
+			<v-col
+				:cols="12"
+				lg="8"
+				md="8"
+			>
 				<!-- Begin : Câu hỏi thường gặp -->
 				<ProductFAQ />
 
@@ -137,15 +171,15 @@ onMounted(() => {});
 				<!-- Begin : Hỏi đáp -->
 				<ProductQA />
 			</v-col>
-
-			<v-col :cols="12" md="4" lg="4">
-				<!-- Thông tin sản phẩm -->
-				<v-sheet class="d-none d-md-flex d-md-none d-lg-block">
-					<ProductSpecifications />
-				</v-sheet>
-
+			<v-col
+				:cols="12"
+				md="4"
+				lg="4"
+			>
 				<!-- Tin tức -->
-				<PruductNews />
+				<v-sheet class="d-none d-md-flex d-md-none d-lg-block">
+					<ProductNews />
+				</v-sheet>
 			</v-col>
 		</v-row>
 	</v-container>
@@ -160,18 +194,17 @@ onMounted(() => {});
 	font-size: 0.7rem;
 }
 
-
 .mdi-star {
 	color: goldenrod;
 	font-size: 20px;
 }
 
-.border-light {
+/* .border-light {
 	border: 1px solid gainsboro;
 	border-radius: 10px;
 	box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15), 0 8px 12px rgba(0, 0, 0, 0.28);
 	z-index: -1;
-}
+} */
 
 .new > img:hover {
 	transform: scale(1.05);
@@ -200,7 +233,6 @@ onMounted(() => {});
 
 .modal-container {
 	max-width: 600px;
-	min-height: 200px;
 	z-index: 3;
 }
 
@@ -210,8 +242,6 @@ onMounted(() => {});
 	z-index: 3;
 	border-radius: 10px !important;
 }
-
-
 
 .modal-close-btn,
 .product-modal-close-btn {
@@ -230,6 +260,7 @@ onMounted(() => {});
 }
 
 .modal-body {
+	max-height: 800px;
 	padding: 16px;
 	background-color: #fff;
 	font-size: 0.9rem;

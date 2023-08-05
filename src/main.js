@@ -7,7 +7,7 @@ import "vuetify/styles";
 import { createVuetify } from "vuetify";
 
 import App from "./App.vue";
-import router from "./router";
+import router from "./router/index.js";
 
 import "bootstrap/dist/css/bootstrap-grid.min.css";
 import "bootstrap/dist/css/bootstrap-utilities.min.css";
