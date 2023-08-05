@@ -5,6 +5,8 @@ import { createPinia } from "pinia";
 // Vuetify
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
+import * as components from "vuetify/components";
+import * as labsComponents from "vuetify/labs/components";
 
 import App from "./App.vue";
 import router from "./router";
@@ -14,12 +16,13 @@ import "bootstrap/dist/css/bootstrap-utilities.min.css";
 
 // Vuetify
 const vuetify = createVuetify({
-	icons: {
-		defaultSet: "mdi", // This is already the default value - only for display purposes
+	components: {
+		...components,
+		...labsComponents,
 	},
-	defaults: {
-
-	}
+	icons: {
+		defaultSet: "mdi",
+	},
 });
 
 const app = createApp(App);
