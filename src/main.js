@@ -7,7 +7,7 @@ import "vuetify/styles";
 import { createVuetify } from "vuetify";
 
 import App from "./App.vue";
-import router from "./router";
+import router from "./router/index.js";
 
 import "bootstrap/dist/css/bootstrap-grid.min.css";
 import "bootstrap/dist/css/bootstrap-utilities.min.css";
@@ -17,9 +17,6 @@ const vuetify = createVuetify({
 	icons: {
 		defaultSet: "mdi", // This is already the default value - only for display purposes
 	},
-	defaults: {
-
-	}
 });
 
 const app = createApp(App);

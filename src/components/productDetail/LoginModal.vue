@@ -1,3 +1,15 @@
+<script setup>
+import { ref } from "vue";
+const modal = ref(null);
+
+function showLoginModal() {
+	modal.value.classList.add("open");
+}
+function hideLoginModal() {
+	modal.value.classList.remove("open");
+}
+</script>
+
 <template>
 	<!-- Begin : Login Modal  -->
 	<v-btn
@@ -10,6 +22,7 @@
 		class="modal"
 		ref="modal"
 		@click="hideLoginModal"
+		style="z-index: 2"
 	>
 		<v-sheet
 			position="relative"
@@ -55,13 +68,5 @@
 		</v-sheet>
 	</div>
 </template>
-<script setup>
-import { ref } from "vue";
-const modal = ref(null);
-function showLoginModal() {
-	modal.value.classList.add("open");
-}
-function hideLoginModal() {
-	modal.value.classList.remove("open");
-}
-</script>
+
+<style></style>
