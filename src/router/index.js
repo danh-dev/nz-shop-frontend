@@ -3,21 +3,16 @@ import products from "./products.js";
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
-	routes: [{
-		name: "cart",
-		path: "/cart",
-		components: {
-			default: () => import("../views/cart/Cart.vue"),
-			child: () => import("../views/cart/CartTable.vue"),
+	routes: [
+		{
+			name: "cart",
+			path: "/cart",
+			component: () => import("../views/cart/CartView.vue"),
 		},
-	},
 		{
 			name: "checkout",
 			path: "/checkout",
-			components: {
-				default: () => import("../views/cart/Cart.vue"),
-				child: () => import("../views/cart/CheckOut.vue"),
-			},
+			component: () => import("../views/cart/CheckOut.vue"),
 		},
 	...products,
 	],

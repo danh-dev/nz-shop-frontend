@@ -15,7 +15,7 @@ import "bootstrap/dist/css/bootstrap-utilities.min.css";
 // Vuetify
 const vuetify = createVuetify({
 	icons: {
-		defaultSet: "mdi", // This is already the default value - only for display purposes
+		defaultSet: "mdi",
 	},
 });
 
@@ -24,5 +24,9 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 app.use(vuetify);
+
+app.config.globalProperties.formatPrice = (value) => {
+	return parseFloat(value).toLocaleString("vi-VN", {"style": "currency", "currency": "VND"});
+};
 
 app.mount("#app");

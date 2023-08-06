@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
-import ProductDetail from "../components/ProductDetail.vue";
+import ProductDetail from "../components/ProductLayout.vue";
 </script>
 
 <template>
