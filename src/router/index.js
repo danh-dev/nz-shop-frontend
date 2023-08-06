@@ -4,10 +4,6 @@ import products from "./products.js";
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [{
-		name: "home",
-		path: "/",
-		component: () => import('../views/ProductDetail.vue')
-	},{
 		name: "cart",
 		path: "/cart",
 		components: {
