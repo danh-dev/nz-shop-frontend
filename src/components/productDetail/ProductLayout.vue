@@ -1,6 +1,6 @@
 <script setup>
 import ProductInfomation from "./ProductInfomation.vue";
-import ProductAccessories from "./ProductAccessories.vue";
+// import ProductAccessories from "./ProductAccessories.vue";
 import ProductFAQ from "./ProductFAQ.vue";
 import ProductReviews from "./ProductReviews.vue";
 import ProductQA from "./ProductQA.vue";
@@ -9,6 +9,7 @@ import ProductNews from "./ProductNews.vue";
 
 import ProductSlider from "./ProductSlider.vue";
 import ProductThumbnailGroup from "./ProductThumbnailGroup.vue";
+import HomeMainProductSlider from "./HomeMainProductSlider.vue";
 
 import informations from "../../../public/informations.js";
 
@@ -55,6 +56,62 @@ const images = ref([
 	},
 ]);
 
+const anotherAccessories = ref([
+	{
+		id: 1,
+		image:
+			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_i_xu_ng_23__4_4.png",
+		name: "Tai nghe không dây Redmi Buds 4",
+		rating: 5,
+		price: "890.000đ",
+		originPrice: "490.000đ",
+	},
+	{
+		id: 2,
+		image:
+			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/g/o/golf_candy_10.000mah_g80_1.png",
+		name: "Pin sạc dự phòng Golf Candy 10.000mAh G80.",
+		rating: 5,
+		price: "175.000đ",
+		originPrice: "350.000đ",
+	},
+	{
+		id: 3,
+		image:
+			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/g/r/group_135_1.png",
+		name: "Củ sạc Baseus 25W, kèm cáp Type-C 1M",
+		rating: 4,
+		price: "300.000đ",
+		originPrice: "490.000đ",
+	},
+	{
+		id: 4,
+		image:
+			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/f/r/frame_9_1_.png",
+		name: "Củ sạc Xiaomi 20W cổng USB-C",
+		rating: 5,
+		price: "220.000đ",
+		originPrice: "300.000đ",
+	},
+	{
+		id: 5,
+		image:
+			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/f/r/frame_2_1_2.png",
+		name: "Dán cường lực Xiaomi Redmi Note 12",
+		rating: 4,
+		price: "150.000đ",
+		originPrice: "170.000đ",
+	},
+	{
+		id: 6,
+		name: "Dán cường lực Xiaomi Redmi Note 12 LikGlass",
+		image: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/g/r/group_249_5_.png",
+		rating: 4,
+		price: "120.000đ",
+		originPrice: "150000đ"
+	}
+]);
+
 const handleGroupButtonClick = index => {
 	model.value = index;
 };
@@ -65,63 +122,29 @@ watch(model, (cur, pre) => {
 	}
 });
 
-onMounted(() => {});
+onMounted(() => { });
 </script>
 
 <template>
 	<v-container class="my-3">
-		<v-sheet
-			class="d-flex align-center my-3 d-none d-sm-flex"
-			v-for="information in informations"
-			:key="information.id"
-		>
+		<v-sheet class="d-flex align-center my-3 d-none d-sm-flex" v-for="information in informations" :key="information.id">
 			<b class="text-h6">{{ information.name }}</b>
-			<v-rating
-				:model-value="information.rating"
-				color="yellow-darken-3"
-				readonly
-				density="compact"
-				size="small"
-				class="mx-2"
-			></v-rating>
+			<v-rating :model-value="information.rating" color="yellow-darken-3" readonly density="compact" size="small"
+				class="mx-2"></v-rating>
 			<p class="text-body-1">{{ information.review }}</p>
 		</v-sheet>
 
 		<v-row>
-			<v-col
-				:cols="12"
-				lg="8"
-				md="8"
-			>
+			<v-col :cols="12" lg="8" md="8">
 				<!-- Begin : Slide hình ảnh sản phẩm -->
-				<v-sheet
-					max-height="30rem"
-					width="100%"
-					class="d-flex flex-column"
-					:style="xs ? { aspectRatio: 16 / 9 } : { aspectRatio: 3 / 2 }"
-				>
-					<v-sheet
-						class="ma-0"
-						height="80%"
-					>
-						<ProductSlider
-							height="100%"
-							:images="images"
-							v-model="model"
-						/>
+				<v-sheet max-height="30rem" width="100%" class="d-flex flex-column"
+					:style="xs ? { aspectRatio: 16 / 9 } : { aspectRatio: 3 / 2 }">
+					<v-sheet class="ma-0" height="80%">
+						<ProductSlider height="100%" :images="images" v-model="model" />
 					</v-sheet>
-					<v-sheet
-						class="ma-0"
-						height="20%"
-					>
-						<ProductThumbnailGroup
-							class="d-flex overflow-hidden ma-1"
-							height="100%"
-							:images="images"
-							:model="model"
-							:maxModel="maxModel"
-							@handleGroupButtonClick="handleGroupButtonClick"
-						/>
+					<v-sheet class="ma-0" height="20%">
+						<ProductThumbnailGroup class="d-flex overflow-hidden ma-1" height="100%" :images="images" :model="model"
+							:maxModel="maxModel" @handleGroupButtonClick="handleGroupButtonClick" />
 					</v-sheet>
 				</v-sheet>
 
@@ -130,18 +153,35 @@ onMounted(() => {});
 
 				<!-- Phụ kiện mua cùng -->
 				<h4 class="text-uppercase text-danger py-2">Phụ kiện mua cùng</h4>
-				<ProductAccessories />
+				<HomeMainProductSlider :products="anotherAccessories" :products-show="3">
+					<template #default="{ props }">
+						<v-card color="" class="me-2 flex-1-0" width="calc((100% - 24px)/3)"
+								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">
+								<v-sheet>
+									<v-img :src="props.product.image" class="w-100" />
+									<div class="px-1 text-center">
+										<h5>{{ props.product.name }}</h5>
+										<v-rating :model-value="props.product.rating" color="yellow-darken-3" readonly density="compact"
+											size="small" class="mx-2">
+										</v-rating>
+										<v-sheet class="p-2 text-center text-danger d-flex align-center justify-content-between">
+											<b>{{ props.product.price }}</b>
+											<p class="text-muted text-decoration-line-through text-medium">
+												{{ props.product.originPrice }}
+											</p>
+										</v-sheet>
+									</div>
+								</v-sheet>
+							</v-card>
+					</template>
+				</HomeMainProductSlider>
 
 				<v-sheet class="d-md-block d-lg-none">
 					<ProductSpecifications />
 				</v-sheet>
 			</v-col>
 
-			<v-col
-				:cols="12"
-				md="4"
-				lg="4"
-			>
+			<v-col :cols="12" md="4" lg="4">
 				<!-- Thông tin sản phẩm -->
 				<v-sheet class="d-none d-md-flex d-md-none d-lg-block">
 					<ProductSpecifications />
@@ -152,16 +192,35 @@ onMounted(() => {});
 		<v-row>
 			<v-col :cols="12">
 				<h4 class="text-uppercase">Sản phẩm tương tự</h4>
-				<ProductAccessories />
+				<v-sheet>
+					<HomeMainProductSlider :products="anotherAccessories" :products-show="5">
+					<template #default="{ props }">
+						<v-card color="" class="me-2 flex-1-0" width="calc((100% - 40px)/5)"
+								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">
+								<v-sheet>
+									<v-img :src="props.product.image" class="w-100" />
+									<div class="px-1 text-center">
+										<h5>{{ props.product.name }}</h5>
+										<v-rating :model-value="props.product.rating" color="yellow-darken-3" readonly density="compact"
+											size="small" class="mx-2">
+										</v-rating>
+										<v-sheet class="p-2 text-center text-danger d-flex align-center justify-content-between">
+											<b>{{ props.product.price }}</b>
+											<p class="text-muted text-decoration-line-through text-medium">
+												{{ props.product.originPrice }}
+											</p>
+										</v-sheet>
+									</div>
+								</v-sheet>
+							</v-card>
+					</template>
+				</HomeMainProductSlider>
+				</v-sheet>
 			</v-col>
 		</v-row>
 
 		<v-row>
-			<v-col
-				:cols="12"
-				lg="8"
-				md="8"
-			>
+			<v-col :cols="12" lg="8" md="8">
 				<!-- Begin : Câu hỏi thường gặp -->
 				<ProductFAQ />
 
@@ -171,11 +230,7 @@ onMounted(() => {});
 				<!-- Begin : Hỏi đáp -->
 				<ProductQA />
 			</v-col>
-			<v-col
-				:cols="12"
-				md="4"
-				lg="4"
-			>
+			<v-col :cols="12" md="4" lg="4">
 				<!-- Tin tức -->
 				<v-sheet class="d-none d-md-flex d-md-none d-lg-block">
 					<ProductNews />
@@ -206,7 +261,7 @@ onMounted(() => {});
 	z-index: -1;
 } */
 
-.new > img:hover {
+.new>img:hover {
 	transform: scale(1.05);
 }
 
@@ -287,16 +342,15 @@ onMounted(() => {});
 
 /* End : Design Modal */
 @media screen and (max-width: 767px) {
+
 	.action,
-	.payment > .text-uppercase,
-	.payment > p {
+	.payment>.text-uppercase,
+	.payment>p {
 		font-size: 0.6rem;
 	}
 }
 
-@media screen and (min-width: 768px) and (max-width: 1023px) {
-}
+@media screen and (min-width: 768px) and (max-width: 1023px) {}
 
-@media screen and (min-width: 1024px) {
-}
+@media screen and (min-width: 1024px) {}
 </style>

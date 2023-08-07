@@ -39,7 +39,7 @@ import informations from "../../../public/informations.js";
 			</tbody>
 		</v-table>
 		<v-btn
-			href="#"
+			href="/home/news"
 			color="danger"
 			class="text-white"
 			append-icon="mdi-chevron-down"

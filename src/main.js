@@ -2,6 +2,9 @@ import "@mdi/font/css/materialdesignicons.css"; // Ensure you are using css-load
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+// Axios
+import axios from "axios";
+window.axios = axios;
 // Vuetify
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
@@ -24,5 +27,7 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 app.use(vuetify);
+
+
 
 app.mount("#app");
