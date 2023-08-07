@@ -6,6 +6,7 @@ import { createPinia } from "pinia";
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
 
+
 import App from "./App.vue";
 import router from "./router/index.js";
 
@@ -24,6 +25,7 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 app.use(vuetify);
+
 
 app.config.globalProperties.formatPrice = (value) => {
 	return parseFloat(value).toLocaleString("vi-VN", {"style": "currency", "currency": "VND"});

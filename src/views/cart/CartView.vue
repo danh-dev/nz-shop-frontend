@@ -1,7 +1,9 @@
 <script setup>
 import {computed, ref} from "vue";
 import CartList from "../../components/cart/CartList.vue";
+import {useCartStore} from "@/stores/cart";
 
+const cartStore = useCartStore();
 const shippingValue = ref("200000");
 const couponValue = ref("50000");
 
@@ -10,46 +12,18 @@ const totalCart = computed(() =>
 );
 
 const totalValue = computed(() =>
-    productList.value.reduce((total, product) => {
+    cartStore.listCart.reduce((total, product) => {
       const price = (product.priceSale) ? product.priceSale : product.priceRegular;
       return total + parseFloat(price) * product.quantity;
     }, 0)
 );
-
-const productList = ref([
-  {
-    name: "Laptop ASUS X515MA-BR481W",
-    priceRegular: 7600000,
-    priceSale: 6690000,
-    variations: ["Bạc", "Ram 32Gb"],
-    quantity: 5,
-    thumbnail: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/e/text_ng_n_5__1_2.png",
-    url: "#"
-  },
-  {
-    name: "Frozen 1",
-    priceRegular: 100,
-    priceSale: 70,
-    variations: ["zxc", "acb"],
-    quantity: 5,
-    thumbnail: "https://dummyimage.com/160x160/000000/fff",
-    url: "#"
-  },
-  {
-    name: "Frozen 1",
-    priceRegular: 100,
-    variations: ["zxc", "acb"],
-    quantity: 5,
-    thumbnail: "https://dummyimage.com/160x160/000000/fff",
-    url: "#"
-  },
-]);
 </script>
 
 <template>
   <v-app>
     <v-container>
       <v-sheet
+          v-if="cartStore.listCart.length"
           class="mx-auto mt-8 rounded pa-3"
           elevation="3"
       >
@@ -60,7 +34,7 @@ const productList = ref([
           <v-col cols="8" class="rounded pa-3">
             <v-sheet>
               <h4 class="font-weight-bold text-red-darken-2">Giỏ hàng</h4>
-              <CartList :productList="productList"/>
+              <CartList/>
             </v-sheet>
           </v-col>
           <v-col cols="4" class="rounded pa-3">
@@ -104,6 +78,14 @@ const productList = ref([
             </v-card>
           </v-col>
         </v-row>
+      </v-sheet>
+      <v-sheet v-else
+               class="rounded pa-3 d-flex flex-column justify-center align-center"
+               elevation="3">
+        <div>        <v-lazy>
+          <iframe  width="300" height="300" frameBorder="0" src="https://lottie.host/?file=95af846f-f62b-4bc5-b422-26c7cabda6eb/65kwV7npxO.json"></iframe></v-lazy></div>
+        <div class="ma-3"><p>Không có sản phẩm nào trong giỏ hàng, vui lòng quay lại</p></div>
+        <v-btn class="ma-3" density="default" color="red-darken-2" @click="$router.go(-1)">Quay lại</v-btn>
       </v-sheet>
     </v-container>
   </v-app>
