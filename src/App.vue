@@ -1,11 +1,23 @@
 <script setup>
 
-import { RouterView } from "vue-router";
+import {RouterView} from "vue-router";
+import Header from "@/components/globals/header.vue";
 
 </script>
 
 <template>
-  <RouterView />
+  <v-app>
+    <Header/>
+    <v-main>
+      <v-container>
+        <RouterView/>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
-<style scoped></style>
+<style>
+.m-pointer{
+  cursor:pointer;
+}
+</style>
