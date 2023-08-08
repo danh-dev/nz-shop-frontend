@@ -1,41 +1,101 @@
 <script setup>
+import { ref, watch, computed } from "vue";
+import { useDisplay } from "vuetify";
+import { useCategoryStore } from "../stores/category";
+import { storeToRefs } from "pinia";
+import getSlugByName from "../utils/getSlugByName";
+
 import HomeMainTopCarousel from "./HomeMainTopCarousel.vue";
-import HomeMainTopMenuList from "./HomeMainTopMenuList.vue";
 import HomeMainTopSliderButtonGroup from "./HomeMainTopSliderButtonGroup.vue";
 import HomeMainTopMenuItem from "./HomeMainTopMenuItem.vue";
+import HomeMainTopMenuList from "./HomeMainTopMenuList.vue";
 
-import { ref, watch } from "vue";
-import { useDisplay } from "vuetify/lib/framework.mjs";
+const categoryStore = useCategoryStore();
+const { parentCategories } = storeToRefs(categoryStore);
+const { findBrandsOfParentCategory } = categoryStore;
 
-const { smAndDown } = useDisplay();
-const images = ref([
+const { mdAndUp, name } = useDisplay();
+const buttonGroupLength = computed(() => {
+  switch (name.value) {
+    case "xs":
+      return 3;
+    case "sm":
+      return 4;
+    case "md":
+      return 4;
+    case "xl":
+      return 6;
+    case "xxl":
+      return 7;
+    default:
+      return 5;
+  }
+});
+
+
+const gallery = ref([
   {
     id: 1,
-    src: "https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg",
-  }, {
+    title: "Iphone 14",
+    subtitle: "Đặt trước giá sốc",
+    src: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/sliding-zfold-moi-2023-dat-hang.png",
+  },
+  {
     id: 2,
-    src: "https://cdn.vuetifyjs.com/images/carousel/sky.jpg",
-  }, {
+    title: "Iphone 14",
+    subtitle: "Đặt trước giá sốc",
+    src: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/bts-apple-sliding.png",
+  },
+  {
     id: 3,
-    src: "https://cdn.vuetifyjs.com/images/carousel/bird.jpg",
-  }, {
+    title: "Iphone 14",
+    subtitle: "Đặt trước giá sốc",
+    src: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/oppo-reno-1-dathang-sliding-02.png",
+  },
+  {
     id: 4,
-    src: "https://cdn.vuetifyjs.com/images/carousel/planet.jpg",
+    title: "Iphone 14",
+    subtitle: "Đặt trước giá sốc",
+    src: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/sliding-tab-s9-dat-hang.png",
   },
   {
     id: 5,
-    src: "https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg",
-  }, {
+    title: "Iphone 14",
+    subtitle: "Đặt trước giá sốc",
+    src: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/xiaomi-note12-series-sliding-th8.png",
+  },
+  {
     id: 6,
+    title: "Iphone 14",
+    subtitle: "Đặt trước giá sốc",
     src: "https://cdn.vuetifyjs.com/images/carousel/sky.jpg",
-  }, {
+  },
+  {
     id: 7,
+    title: "Iphone 14",
+    subtitle: "Đặt trước giá sốc",
     src: "https://cdn.vuetifyjs.com/images/carousel/bird.jpg",
-  }, {
+  },
+  {
     id: 8,
+    title: "Iphone 14",
+    subtitle: "Đặt trước giá sốc",
+    src: "https://cdn.vuetifyjs.com/images/carousel/planet.jpg",
+  },
+  {
+    id: 9,
+    title: "Iphone 14",
+    subtitle: "Đặt trước giá sốc",
+    src: "https://cdn.vuetifyjs.com/images/carousel/planet.jpg",
+  },
+  {
+    id: 10,
+    title: "Iphone 14",
+    subtitle: "Đặt trước giá sốc",
     src: "https://cdn.vuetifyjs.com/images/carousel/planet.jpg",
   },
 ]);
+
 const model = ref(0);
 const maxModel = ref(0);
 
@@ -44,126 +104,132 @@ const handleGroupButtonClick = (index) => {
 };
 
 watch(model, (cur, pre) => {
-  if ((cur > pre && cur > maxModel.value) || maxModel.value - 4 > cur) {
+  if ((cur > pre && cur > maxModel.value) || maxModel.value - (buttonGroupLength.value - 1) > cur) {
     maxModel.value = cur;
   }
 });
+
+const rightBanners = ref([
+  {
+    id: 1,
+    image: "RightBanner_PreOrder_WATCH6_Series_07.webp",
+  },
+  {
+    id: 2,
+    image: "RightBanner_PreOrder_WATCH6_Series_07.webp",
+  },
+  {
+    id: 3,
+    image: "RightBanner_PreOrder_WATCH6_Series_07.webp",
+  }
+]);
 
 </script>
 
 <template>
   <v-sheet
-    class="d-flex"
-    height="25rem"
+    class="d-flex mb-4"
+    :height="mdAndUp ? '23rem' : '20rem'"
   >
     <v-sheet
-      :width="smAndDown ? '25%' : '20%'"
-      class="d-none d-sm-block rounded-lg overflow-hidden elevation-15 mr-3 flex-1-1"
+      width="13rem"
+      max-width="23%"
+      class="d-none d-sm-block rounded-lg overflow-hidden elevation-3 mr-3 py-1"
     >
-      <HomeMainTopMenuList></HomeMainTopMenuList>
+      <HomeMainTopMenuList
+        class="py-0 d-flex flex-column scrollbar"
+        height="100%"
+      />
     </v-sheet>
     <v-sheet
-      class="d-flex flex-1-1"
-      :width="smAndDown ? '75%' : '80%'"
-      position="relative"
       id="parent-item"
+      class="d-flex flex-1-1"
+      position="relative"
+      width="calc(100% - 13rem - 12px)"
+      min-width="calc(77% - 12px)"
     >
-      <v-sheet class="d-flex flex-column rounded-lg overflow-hidden elevation-15 flex-1-1">
+      <v-sheet
+        class="d-flex flex-column rounded-lg overflow-hidden elevation-3"
+        :width="mdAndUp ? 'calc(100% - 15.5rem - 12px)' : '100%'"
+      >
         <v-sheet height="80%">
           <HomeMainTopCarousel
-            height="100%"
             v-model="model"
-            :images="images"
+            height="100%"
+            :gallery="gallery"
           ></HomeMainTopCarousel>
         </v-sheet>
         <v-sheet height="20%">
           <HomeMainTopSliderButtonGroup
             class="d-flex overflow-hidden"
             height="100%"
-            :images="images"
+            :gallery="gallery"
             :model="model"
             :maxModel="maxModel"
+            :buttonGroupLength="buttonGroupLength"
             @handleGroupButtonClick="handleGroupButtonClick"
           />
         </v-sheet>
       </v-sheet>
+
       <v-sheet
-        width="30%"
+        width="15.5rem"
         class="d-none d-md-flex flex-column justify-space-between bg-transparent ms-3"
+        height="100%"
       >
-        <v-img
-          v-for="i in 3"
-          :key="i"
-          src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"
-          class="rounded-lg flex-1-1 elevation-15"
-          :class="i !== 3 ? 'mb-2' : ''"
-          :aspectRatio="16 / 9"
-          cover
-        />
+        <v-card
+          v-for="(banner, index) in rightBanners"
+          :key="banner.id"
+          :class="index !== 3 ? 'mb-2' : ''"
+          class="d-flex rounded-lg elevation-3 flex-0-1"
+          :href="getSlugByName(banner.image)"
+        >
+          <v-img :src="`./src/assets/images/${banner.image}`" />
+        </v-card>
       </v-sheet>
     </v-sheet>
   </v-sheet>
 
   <HomeMainTopMenuItem
+    v-for="category in parentCategories"
+    :key="category.id"
+    :activator="`.${category.name.toLowerCase()}-activator`"
+    :brands="findBrandsOfParentCategory(category.id)"
     location-strategy="static"
     attach="#parent-item"
     width="100%"
     height="100%"
+    transition="fade-transition"
+    :open-on-hover="mdAndUp"
   ></HomeMainTopMenuItem>
 </template>
 
-<style></style>
+<style>
+.position-fixed {
+  position: fixed;
+}
 
+.scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
 
-<!-- <v-row
-    class="ma-0"
-    style="height: 25rem;"
-  >
-    <v-col
-      :cols="smAndDown ? 3 : 2"
-      class="h-100 pa-0 ma-0 rounded-lg overflow-hidden elevation-15"
-    >
-      <HomeMainTopMenuList></HomeMainTopMenuList>
-    </v-col>
-    <v-col
-      :cols="smAndDown ? 0 : 7"
-      class="h-100 pa-0 ma-0 rounded-lg overflow-hidden elevation-15"
-      elevation="20"
-    >
-      <v-sheet
-        id="parent-item"
-        position="relative"
-      >
-        <HomeMainTopMenuItem
-          location-strategy="static"
-          attach="#parent-item"
-          width="100%"
-        ></HomeMainTopMenuItem>
-      </v-sheet>
+.scrollbar::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
 
-      <v-row class="h-75 ma-0">
-        <HomeMainTopCarousel
-          v-model="model"
-          :images="images"
-        ></HomeMainTopCarousel>
-      </v-row>
-<v-row class="h-25 ma-0">
-        <HomeMainTopSliderButtonGroup
-          class="d-flex overflow-hidden"
-          height="100%"
-          width="100%"
-          :images="images"
-          :model="model"
-          :maxModel="maxModel"
-          @handleGroupButtonClick="handleGroupButtonClick"
-        />
-      </v-row>
-    </v-col>
-<v-col
-      cols="3"
-      class="h-100 py-0 ma-0"
-      :class="smAndDown ? 'd-none' : ''"
-    >
-      <HomeMainTopRightBanner></HomeMainTopRightBanner>
-    </v-col>
-  </v-row> -->
+.scrollbar::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  border-radius: 10px;
+  background-color: #E57373;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #EF5350;
+}
+
+.scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #EF5350 #E57373;
+}
+</style>

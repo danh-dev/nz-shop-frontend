@@ -1,10 +1,9 @@
 <script setup>
-import HomeMainTopSliderArrow from "./HomeMainTopSliderArrow.vue";
+import getSlugByName from "../utils/getSlugByName";
 
 defineProps({
-  images: Array,
+  gallery: Array,
 });
-
 </script>
 
 <template>
@@ -15,27 +14,45 @@ defineProps({
     show-arrows="hover"
   >
     <template #prev="{ props }">
-      <HomeMainTopSliderArrow
+      <v-btn
+        :class="[props.class, 'text-red-accent-4']"
         :icon="props.icon"
         @click="props.onClick"
-        :class="[props.class, 'ms-n10 ps-5']"
-      />
+      ></v-btn>
     </template>
+
     <template #next="{ props }">
-      <HomeMainTopSliderArrow
+      <v-btn
+        :class="[props.class, 'text-red-accent-4']"
         :icon="props.icon"
         @click="props.onClick"
-        :class="[props.class, 'me-n10 pe-5']"
-      />
+      ></v-btn>
     </template>
     <v-carousel-item
-      v-for="image in images"
-      :key="image.id"
-      :src="image.src"
-      :aspect-ratio="16 / 9"
-      cover
-    />
+      v-for="item in gallery"
+      :key="item.id"
+    >
+      <v-card
+        width="100%"
+        height="100%"
+        :href="`/${getSlugByName(item.title)}`"
+        v-ripple="false"
+        class="d-flex align-center"
+      >
+        <v-img :src="item.src" />
+      </v-card>
+    </v-carousel-item>
   </v-carousel>
 </template>
 
-<style></style>
+<style>
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s linear;
+}
+
+.list-enter-from,
+.list-leave-to {
+  transform: translateX(-100%);
+}
+</style>
