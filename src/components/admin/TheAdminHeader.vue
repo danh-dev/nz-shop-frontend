@@ -1,7 +1,8 @@
 <template>
   <div class="container-fluid">
-    <div class="row text-white text-uppercase d-flex align-center justify-center" style="background-color: rgb(223, 10, 10); padding: 1rem;">
-      <div class="col-1 d-flex d-sm-none align-items-center justify-content-center">
+    <div class="row text-white text-uppercase d-flex align-center justify-center"
+      style="background-color: rgb(223, 10, 10); padding: 1rem;">
+      <div class="col-1 d-flex d-sm-none align-center justify-center">
         <span @click="showDrawer()">menu</span>
       </div>
 

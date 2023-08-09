@@ -1,6 +1,5 @@
 <script setup>
 import ProductInfomation from "./ProductInfomation.vue";
-// import ProductAccessories from "./ProductAccessories.vue";
 import ProductFAQ from "./ProductFAQ.vue";
 import ProductReviews from "./ProductReviews.vue";
 import ProductQA from "./ProductQA.vue";
@@ -11,11 +10,12 @@ import ProductSlider from "./ProductSlider.vue";
 import ProductThumbnailGroup from "./ProductThumbnailGroup.vue";
 import HomeMainProductSlider from "./HomeMainProductSlider.vue";
 
-import informations from "../../../public/informations.js";
+import product from "../../product.js";
 
 import { onMounted, ref, watch } from "vue";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 const { xs } = useDisplay();
+
 
 // Product photos Slider
 const model = ref(0);
@@ -63,8 +63,8 @@ const anotherAccessories = ref([
 			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_i_xu_ng_23__4_4.png",
 		name: "Tai nghe không dây Redmi Buds 4",
 		rating: 5,
-		price: "890.000đ",
-		originPrice: "490.000đ",
+		price: 890000,
+		originPrice: 490000
 	},
 	{
 		id: 2,
@@ -72,8 +72,8 @@ const anotherAccessories = ref([
 			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/g/o/golf_candy_10.000mah_g80_1.png",
 		name: "Pin sạc dự phòng Golf Candy 10.000mAh G80.",
 		rating: 5,
-		price: "175.000đ",
-		originPrice: "350.000đ",
+		price: 175000,
+		originPrice: 350000,
 	},
 	{
 		id: 3,
@@ -81,8 +81,8 @@ const anotherAccessories = ref([
 			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/g/r/group_135_1.png",
 		name: "Củ sạc Baseus 25W, kèm cáp Type-C 1M",
 		rating: 4,
-		price: "300.000đ",
-		originPrice: "490.000đ",
+		price: 300000,
+		originPrice: 490000,
 	},
 	{
 		id: 4,
@@ -90,8 +90,8 @@ const anotherAccessories = ref([
 			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/f/r/frame_9_1_.png",
 		name: "Củ sạc Xiaomi 20W cổng USB-C",
 		rating: 5,
-		price: "220.000đ",
-		originPrice: "300.000đ",
+		price: 220000,
+		originPrice: 300000,
 	},
 	{
 		id: 5,
@@ -99,16 +99,16 @@ const anotherAccessories = ref([
 			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/f/r/frame_2_1_2.png",
 		name: "Dán cường lực Xiaomi Redmi Note 12",
 		rating: 4,
-		price: "150.000đ",
-		originPrice: "170.000đ",
+		price: 150000,
+		originPrice: 170000,
 	},
 	{
 		id: 6,
 		name: "Dán cường lực Xiaomi Redmi Note 12 LikGlass",
 		image: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/g/r/group_249_5_.png",
 		rating: 4,
-		price: "120.000đ",
-		originPrice: "150000đ"
+		price: 120000,
+		originPrice: 150000
 	}
 ]);
 
@@ -126,12 +126,12 @@ onMounted(() => { });
 </script>
 
 <template>
-	<v-container class="my-3">
-		<v-sheet class="d-flex align-center my-3 d-none d-sm-flex" v-for="information in informations" :key="information.id">
-			<b class="text-h6">{{ information.name }}</b>
-			<v-rating :model-value="information.rating" color="yellow-darken-3" readonly density="compact" size="small"
+	<v-container class="">
+		<v-sheet class="d-flex align-center my-3 d-none d-sm-flex">
+			<b class="text-h6">{{ product.name }}</b>
+			<v-rating :model-value="product.rating" color="yellow-darken-3" readonly density="compact" size="small"
 				class="mx-2"></v-rating>
-			<p class="text-body-1">{{ information.review }}</p>
+			<p class="text-body-1">{{ product.review }}</p>
 		</v-sheet>
 
 		<v-row>
@@ -156,23 +156,23 @@ onMounted(() => { });
 				<HomeMainProductSlider :products="anotherAccessories" :products-show="3">
 					<template #default="{ props }">
 						<v-card color="" class="me-2 flex-1-0" width="calc((100% - 24px)/3)"
-								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">
-								<v-sheet>
-									<v-img :src="props.product.image" class="w-100" />
-									<div class="px-1 text-center">
-										<h5>{{ props.product.name }}</h5>
-										<v-rating :model-value="props.product.rating" color="yellow-darken-3" readonly density="compact"
-											size="small" class="mx-2">
-										</v-rating>
-										<v-sheet class="p-2 text-center text-danger d-flex align-center justify-content-between">
-											<b>{{ props.product.price }}</b>
-											<p class="text-muted text-decoration-line-through text-medium">
-												{{ props.product.originPrice }}
-											</p>
-										</v-sheet>
-									</div>
-								</v-sheet>
-							</v-card>
+							:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">
+							<v-sheet>
+								<v-img :src="props.product.image" class="w-100" />
+								<div class="px-1 text-center">
+									<p class="text-medium">{{ props.product.name }}</p>
+									<v-rating :model-value="props.product.rating" color="yellow-darken-3" readonly density="compact"
+										size="small" class="mx-2">
+									</v-rating>
+									<v-sheet class="pa-2 text-center text-danger d-flex align-center justify-space-between">
+										<p class="text-danger">{{ formatPrice(props.product.price) }}</p>
+										<p class="text-muted text-decoration-line-through text-medium">
+											{{ formatPrice(props.product.originPrice) }}
+										</p>
+									</v-sheet>
+								</div>
+							</v-sheet>
+						</v-card>
 					</template>
 				</HomeMainProductSlider>
 
@@ -194,27 +194,27 @@ onMounted(() => { });
 				<h4 class="text-uppercase">Sản phẩm tương tự</h4>
 				<v-sheet>
 					<HomeMainProductSlider :products="anotherAccessories" :products-show="5">
-					<template #default="{ props }">
-						<v-card color="" class="me-2 flex-1-0" width="calc((100% - 40px)/5)"
+						<template #default="{ props }">
+							<v-card color="" class="me-2 flex-1-0" width="calc((100% - 40px)/5)"
 								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">
 								<v-sheet>
 									<v-img :src="props.product.image" class="w-100" />
 									<div class="px-1 text-center">
-										<h5>{{ props.product.name }}</h5>
+										<p class="text-medium font-bold">{{ props.product.name }}</p>
 										<v-rating :model-value="props.product.rating" color="yellow-darken-3" readonly density="compact"
 											size="small" class="mx-2">
 										</v-rating>
-										<v-sheet class="p-2 text-center text-danger d-flex align-center justify-content-between">
-											<b>{{ props.product.price }}</b>
+										<v-sheet class="pa-2 text-center d-flex align-center justify-space-between">
+											<p class="text-danger">{{ formatPrice(props.product.price) }}</p>
 											<p class="text-muted text-decoration-line-through text-medium">
-												{{ props.product.originPrice }}
+												{{ formatPrice(props.product.originPrice) }}
 											</p>
 										</v-sheet>
 									</div>
 								</v-sheet>
 							</v-card>
-					</template>
-				</HomeMainProductSlider>
+						</template>
+					</HomeMainProductSlider>
 				</v-sheet>
 			</v-col>
 		</v-row>
@@ -244,22 +244,6 @@ onMounted(() => { });
 .text-medium {
 	font-size: 0.85rem;
 }
-
-.text-small {
-	font-size: 0.7rem;
-}
-
-.mdi-star {
-	color: goldenrod;
-	font-size: 20px;
-}
-
-/* .border-light {
-	border: 1px solid gainsboro;
-	border-radius: 10px;
-	box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15), 0 8px 12px rgba(0, 0, 0, 0.28);
-	z-index: -1;
-} */
 
 .new>img:hover {
 	transform: scale(1.05);
@@ -339,18 +323,4 @@ onMounted(() => { });
 		opacity: 1;
 	}
 }
-
-/* End : Design Modal */
-@media screen and (max-width: 767px) {
-
-	.action,
-	.payment>.text-uppercase,
-	.payment>p {
-		font-size: 0.6rem;
-	}
-}
-
-@media screen and (min-width: 768px) and (max-width: 1023px) {}
-
-@media screen and (min-width: 1024px) {}
 </style>

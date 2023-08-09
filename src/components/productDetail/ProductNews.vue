@@ -1,50 +1,38 @@
 <script setup>
-// import { ref } from "vue";
-import informations from "../../../public/informations.js";
+import useNewsStore from "../../stores/useNewsStore.js";
+import { storeToRefs } from "pinia";
+import getSlugByName from "../../utils/getSlugByName.js";
+const { productArticles } = storeToRefs(useNewsStore());
 </script>
 
 <template>
-	<v-sheet  elevation="3" rounded="2" v-for="information in informations" :key="information.id">
+	<v-sheet elevation="3" rounded="lg">
 		<v-table class="news text-medium my-3 py-2 d-md-none d-lg-flex d-none d-sm-flex">
 			<thead>
 				<tr>
 					<th colspan="2">
-						<div class="d-flex align-center">
-							<v-icon color="danger">mdi-newspaper-variant-multiple</v-icon>
+						<v-sheet class="d-flex align-center">
+							<v-icon color="#cd3545">mdi-newspaper-variant-multiple</v-icon>
 							<h3 class="px-1 text-uppercase">Tin tức về sản phẩm</h3>
-						</div>
+						</v-sheet>
 					</th>
 				</tr>
 			</thead>
-			<tbody
-				v-for="article in information.articles"
-				:key="article.id"
-			>
+			<tbody v-for="productArticle in productArticles" :key="productArticle.id">
 				<tr>
 					<th style="width: 40%">
-						<v-img
-							class="w-100 d-flex align-center py-2"
-							:src="article.image"
-							alt=""
-						/>
+						<img class="w-100 d-flex align-center py-2" :src="productArticle.image" alt="" />
 					</th>
 					<td class="py-1">
-						<a
-							class="text-decoration-none text-dark"
-							href="#"
-							>{{ article.title }}</a
-						>
+						<a :href="`/news/${getSlugByName(productArticle.title)}`" class="text-decoration-none text-dark">
+							{{ productArticle.title }}
+						</a>
 					</td>
 				</tr>
 			</tbody>
 		</v-table>
-		<v-btn
-			href="/home/news"
-			color="danger"
-			class="text-white"
-			append-icon="mdi-chevron-down"
-			location="center"
-			>Xem tất cả bài viết
+		<v-btn href="/news" color="#cd3545" class="text-white" append-icon="mdi-chevron-down" location="center">
+			Xem tất cả bài viết
 		</v-btn>
 	</v-sheet>
 </template>

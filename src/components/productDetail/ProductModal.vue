@@ -64,42 +64,17 @@ const title8s = ref([
 </script>
 
 <template>
-	<v-btn
-		append-icon="mdi-chevron-down"
-		color="danger"
-		class="text-white"
-		@click="showProductModal()"
-		location="center"
-	>
+	<v-btn append-icon="mdi-chevron-down" color="#cd3545" class="text-white" @click="showProductModal()" location="center">
 		Xem cấu hình chi tiết
 	</v-btn>
 
 	<!-- Begin: Detail Product Modal -->
-	<div
-		class="product-modal"
-		ref="productModal"
-		@click="hideProductModal()"
-		style="z-index: 2"
-	>
-		<v-sheet
-			position="relative"
-			class="product-modal-container"
-			@click.stop
-		>
-			<v-btn
-				location="right top"
-				position="absolute"
-				variant="text"
-				color="white"
-				icon="mdi-close-circle"
-				@click="hideProductModal()"
-			></v-btn>
+	<div class="product-modal" rounded="lg" ref="productModal" @click="hideProductModal()" style="z-index: 2">
+		<v-sheet position="relative" class="product-modal-container" @click.stop>
+			<v-btn location="right top" position="absolute" variant="text" color="white" icon="mdi-close-circle"
+				@click="hideProductModal()"></v-btn>
 
-			<v-sheet
-				color="danger"
-				rounded="3"
-				class="modal-header d-flex align-center justify-center"
-			>
+			<v-sheet color="#cd3545" rounded="lg" class="modal-header d-flex align-center justify-center">
 				<b class="fw-medium text-uppercase">Thông số kỹ thuật</b>
 			</v-sheet>
 
@@ -172,14 +147,8 @@ const title8s = ref([
 			</v-table>
 
 			<v-sheet class="modal-footer d-flex justify-center align-center">
-				<v-btn
-					id="product-modal-close-btn"
-					class="text-white"
-					color="danger"
-					type="submit"
-					@click="hideProductModal()"
-					>Đóng</v-btn
-				>
+				<v-btn id="product-modal-close-btn" class="text-white" color="#cd3545" type="submit"
+					@click="hideProductModal()">Đóng</v-btn>
 			</v-sheet>
 		</v-sheet>
 	</div>

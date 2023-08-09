@@ -1,10 +1,12 @@
 import {ref} from "vue";
-const informations = ref([
+const product = ref(
 	{
-		id: 1,
-		name: "Xiaomi Redmi Note 12 Pro",
-		type: "Xiaomi",
-		price: "8.990.000đ",
+		id: "4",
+    name: "Xiaomi Redmi Note 12 Pro",
+    priceRegular: 8990000,
+    variations: [],
+    thumbnail: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/x/i/xiaomi-redmi-note-12s_4__1_2.jpg",
+    url: "#",
 		rating: 4,
 		value: 224,
 		review: "3,360 đánh giá",
@@ -50,7 +52,6 @@ const informations = ref([
 			{ id: 1, name: "Trắng", value: "Trắng" },
 			{ id: 2, name: "Đen", value: "Đen" },
 			{ id: 3, name: "Xanh dương", value: "Xanh dương" },
-			{ id: 4, name: "Đỏ", value: "Đỏ" },
 		],
 
 		discounts: [
@@ -177,94 +178,12 @@ const informations = ref([
 
 		questions: [{ id: 1, name: "", question: "", rating: "" }],
 
-		articles: [
-			{
-				id: 1,
-				image: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/05/thoi-nghe-18-5.jpg",
-				title: "Tìm hiểu giá iPhone trên Apple Store Online tại VN, HTC trở lại đường đua?",
-			},
-			{
-				id: 2,
-				image: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/06/Galaxy-A23-5G-7.jpeg",
-				title: "Top smartphone tầm trung có màn hình lớn xem phim tốt nhất hiện nay.",
-			},
-			{
-				id: 3,
-				image:
-					"https://cellphones.com.vn/sforum/wp-content/uploads/2023/04/Xiaomi-Redmi-Note-12-Pro-1-1.jpg",
-				title:
-					"Đánh giá chi tiết Xiaomi Redmi Note 12 Pro 5G: Xiaomi khác hay người dùng xưa và nay đã khác?",
-			},
-			{
-				id: 4,
-				image:
-					"https://cdn.sforum.vn/sforum/wp-content/uploads/2023/03/Xiaomi-Redmi-Note-12-Pro-25-e1680257603900-1.jpg",
-				title:
-					"Trên tay Redmi Note 12 Pro 5G: Thiết kế cao cấp, camera chất lượng cao, giá 9.49 triệu đồng",
-			},
-		],
-
-		anotherAccessories: [
-			{
-				id: 1,
-				image:
-					"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_i_xu_ng_23__4_4.png",
-				name: "Tai nghe không dây Redmi Buds 4",
-				rating: 5,
-				price: "890.000đ",
-				originPrice: "490.000đ",
-			},
-			{
-				id: 2,
-				image:
-					"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/g/o/golf_candy_10.000mah_g80_1.png",
-				name: "Pin sạc dự phòng Golf Candy 10.000mAh G80.",
-				rating: 5,
-				price: "175.000đ",
-				originPrice: "350.000đ",
-			},
-			{
-				id: 3,
-				image:
-					"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/g/r/group_135_1.png",
-				name: "Củ sạc Baseus 25W, kèm cáp Type-C 1M",
-				rating: 4,
-				price: "300.000đ",
-				originPrice: "490.000đ",
-			},
-			{
-				id: 4,
-				image:
-					"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/f/r/frame_9_1_.png",
-				name: "Củ sạc Xiaomi 20W cổng USB-C",
-				rating: 5,
-				price: "220.000đ",
-				originPrice: "300.000đ",
-			},
-			{
-				id: 5,
-				image:
-					"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/f/r/frame_2_1_2.png",
-				name: "Dán cường lực Xiaomi Redmi Note 12",
-				rating: 4,
-				price: "150.000đ",
-				originPrice: "170.000đ",
-			},
-			{
-				id: 6,
-				name: "Dán cường lực Xiaomi Redmi Note 12 LikGlass",
-				image: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/g/r/group_249_5_.png",
-				price: "120.000đ",
-				originPrice: "150000đ"
-			}
-		],
-
 		designs: [
-			{ id: 1, name: "Note 12 Pro 5GB", link: "#", price: "8.990.000đ" },
-			{ id: 2, name: "Note 12 Pro 4GB", link: "#", price: "7.590.000đ" },
-			{ id: 3, name: "Note 12S", link: "#", price: "6.190.000đ" },
+			{ id: 1, name: "Note 12 Pro 5GB", url: "#", priceRegular: 8990000 },
+			{ id: 2, name: "Note 12 Pro 4GB", url: "#", priceRegular: 7590000 },
+			{ id: 3, name: "Note 12S", url: "#", priceRegular: 6190000 },
 		],
 	},
-]);
+);
 
-export default informations;
+export default product;
