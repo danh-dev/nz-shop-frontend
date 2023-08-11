@@ -1,8 +1,9 @@
 <script setup>
 // import { ref } from "vue";
-import LoginModal from "./LoginModal.vue";
-import CommentModal from "./CommentModal.vue";
+import LoginModal from "../modals/LoginModal.vue";
+import CommentModal from "../modals/CommentModal.vue";
 import product from "../../product.js";
+import comments from "../../comment.js";
 
 </script>
 
@@ -44,7 +45,7 @@ import product from "../../product.js";
 				<LoginModal />
 			</v-sheet>
 
-			<v-container v-for="comment in product.comments" :key="comment.id">
+			<v-container v-for="comment in comments" :key="comment.id">
 				<v-sheet class="d-flex justify-space-between py-2">
 					<v-sheet class="d-flex align-center">
 						<p class="bg-secondary rounded pa-2">{{ comment.avatar }}</p>

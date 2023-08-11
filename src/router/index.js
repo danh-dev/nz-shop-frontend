@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
-import ProductPage from "../views/ProductPage.vue";
+import ProductDetailPage from "../views/ProductDetailPage.vue";
 import NewsPage from "../views/NewsPage.vue";
-import NewsDetail from "../views/NewsDetail.vue";
+import NewsDetailPage from "../views/NewsDetailPage.vue";
 import admin from "./admin.js";
 
 const router = createRouter({
@@ -25,8 +25,8 @@ const router = createRouter({
 		},
 		// Product router
 		{
-			path: "/home/Xiaomi-Redmi-Note-12-Pro",
-			component: ProductPage,
+			path: "/home/:productName",
+			component: ProductDetailPage,
 		},
 		// News router
 		{
@@ -35,7 +35,7 @@ const router = createRouter({
 		},
 		{
 			path: "/news/:newsName",
-			component: NewsDetail,
+			component: NewsDetailPage,
 		},
 		...admin],
 });

@@ -5,7 +5,7 @@ import product from "../../product.js";
 
 <template>
 	<v-sheet elevation="3" rounded="lg" class="my-3">
-		<h4 class="text-uppercase text-center pt-3">câu hỏi thường gặp</h4>
+		<h4 class="text-uppercase text-danger text-center pt-3">câu hỏi thường gặp</h4>
 		<v-sheet class="faq-content" v-for="faq in product.faqs" :key="faq.id">
 			<div class="faq-question">
 				<input :id="faq.id" type="checkbox" class="panel" />
@@ -21,7 +21,6 @@ import product from "../../product.js";
 </template>
 
 <style>
-/* BEGIN : FAQ Design */
 .faq-content {
 	margin: 0 auto;
 }
@@ -75,6 +74,4 @@ import product from "../../product.js";
 .panel {
 	display: none;
 }
-
-/* END : FAQ Design */
 </style>

@@ -68,14 +68,16 @@ const title8s = ref([
 		Xem cấu hình chi tiết
 	</v-btn>
 
-	<!-- Begin: Detail Product Modal -->
-	<div class="product-modal" rounded="lg" ref="productModal" @click="hideProductModal()" style="z-index: 2">
-		<v-sheet position="relative" class="product-modal-container" @click.stop>
+	<!-- Begin: Detail Specifications Modal -->
+	<div class="productModal" rounded="lg" ref="productModal" @click="hideProductModal()" style="z-index: 2">
+		<v-sheet position="relative" class="productModal-container" @click.stop>
+
 			<v-btn location="right top" position="absolute" variant="text" color="white" icon="mdi-close-circle"
-				@click="hideProductModal()"></v-btn>
+				@click="hideProductModal()">
+			</v-btn>
 
 			<v-sheet color="#cd3545" rounded="lg" class="modal-header d-flex align-center justify-center">
-				<b class="fw-medium text-uppercase">Thông số kỹ thuật</b>
+				<b class="text-uppercase">Thông số kỹ thuật</b>
 			</v-sheet>
 
 			<v-table class="text-medium modal-body mb-0">
@@ -146,13 +148,15 @@ const title8s = ref([
 				</tbody>
 			</v-table>
 
-			<v-sheet class="modal-footer d-flex justify-center align-center">
-				<v-btn id="product-modal-close-btn" class="text-white" color="#cd3545" type="submit"
-					@click="hideProductModal()">Đóng</v-btn>
+			<v-sheet class="d-flex justify-center">
+				<v-btn id="productModal-close-btn" class="text-white mb-0" color="#cd3545" type="submit"
+					@click="hideProductModal()">Đóng
+				</v-btn>
 			</v-sheet>
+
 		</v-sheet>
 	</div>
-	<!-- End: Detail Product Modal -->
+	<!-- End: Detail Specifications Modal -->
 </template>
 
 <style></style>

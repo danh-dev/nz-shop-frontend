@@ -8,14 +8,9 @@ const { articles, slides, subArticles } = storeToRefs(useNewsStore());
 
 
 </script>
+
 <template>
   <v-sheet>
-    <!-- <v-row>
-      <v-col cols="12">
-        <NewsHeader />
-      </v-col>
-    </v-row> -->
-
     <v-row class="container-fluid">
       <v-col :cols="12" lg="2" md="2">
         <NewsSideBar class="display" />

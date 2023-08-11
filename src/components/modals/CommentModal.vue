@@ -1,6 +1,7 @@
 <!-- eslint-disable no-unused-vars -->
 <script setup>
 import { ref } from "vue";
+import product from "../../product.js";
 const commentModal = ref(null);
 
 const comments = ref([
@@ -104,20 +105,22 @@ function hideCommentModal() {
 </script>
 
 <template>
-	<v-btn location="center" color="#cd3545" class="text-white" append-icon="mdi-chevron-down" @click="showCommentModal()">
+	<v-btn location="center" color="#cd3545" class="text-white" append-icon="mdi-chevron-down" 
+		@click="showCommentModal()">
 		Xem thêm
 	</v-btn>
-	<div class="comment-modal" ref="commentModal" @click="hideCommentModal()" style="z-index: 2;" >
-		<v-sheet rounded="0" position="relative" class="comment-modal-container" @click.stop>
+	<div class="commentModal" ref="commentModal" @click="hideCommentModal()" style="z-index: 2;">
+		<v-sheet position="relative" class="commentModal-container" @click.stop>
+
 			<v-btn location="right top" position="absolute" variant="text" color="white" icon="mdi-close-circle"
 				@click="hideCommentModal()">
 			</v-btn>
 
-			<v-sheet color="#cd3545" class="modal-header d-flex align-center justify-center">
-				<h5 class="text-uppercase">Đánh giá & nhận xét</h5>
+			<v-sheet color="#cd3545" rounded="lg" class="modal-header d-flex align-center justify-center">
+				<b class="text-uppercase">Đánh giá & nhận xét {{ product.name }}</b>
 			</v-sheet>
 
-			<v-sheet class="ma-3" rounded="lg" v-for="comment in comments" :key="comment.id">
+			<div class="ma-3" rounded="lg" v-for="comment in comments" :key="comment.id">
 				<v-sheet class="d-flex justify-space-between py-2">
 					<v-sheet class="d-flex align-center">
 						<p class="bg-secondary rounded pa-2">{{ comment.avatar }}</p>
@@ -125,6 +128,7 @@ function hideCommentModal() {
 					</v-sheet>
 					<p class="text-caption">{{ comment.time }}</p>
 				</v-sheet>
+
 				<v-sheet class="pa-2 text-caption d-flex justify-center flex-column rounded"
 					style="background-color: rgb(247, 243, 243); margin-left: 5%">
 					<p class="d-flex align-center">
@@ -134,50 +138,22 @@ function hideCommentModal() {
 					</p>
 					<p class="more"><b>Nhận xét:</b> {{ comment.comment }}</p>
 				</v-sheet>
-			</v-sheet>
-			<br />
-
-			<v-sheet class="modal-footer d-flex justify-center align-center mb-3">
-				<v-btn id="comment-modal-close-btn" class="text-white" color="#cd3545" type="submit"
-					@click="hideCommentModal()">Đóng
-				</v-btn>
-			</v-sheet>
+			</div>
+			<v-btn id="commentModal-close-btn" rounded="lg" class="text-white w-100 mt-2" color="#cd3545" type="submit"
+				variant="elevated" @click="hideCommentModal()">Đóng
+			</v-btn>
 		</v-sheet>
 	</div>
 </template>
 
 <style>
-.comment-modal.open {
-	display: flex;
-}
-
-.comment-modal {
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	left: 0;
-	background: rgba(0, 0, 0, 0.4);
-	display: none;
-	align-items: center;
-	justify-content: center;
-	animation: fadeIn linear 0.5s;
-}
-
-.comment-modal-container {
+.commentModal-container {
 	width: 800px;
 	max-width: 800px;
 	min-width: 320px;
-	height: 650px;
-	overflow-y: auto;
+	height: 600px;
 	z-index: 3;
-}
-
-.comment-modal-close-btn {
-	opacity: 0.9;
-}
-
-.comment-modal-close-btn:hover {
-	opacity: 0.7;
+	overflow: auto;
+	border-radius: 10px !important;
 }
 </style>

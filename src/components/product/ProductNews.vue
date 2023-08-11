@@ -6,8 +6,8 @@ const { productArticles } = storeToRefs(useNewsStore());
 </script>
 
 <template>
-	<v-sheet elevation="3" rounded="lg">
-		<v-table class="news text-medium my-3 py-2 d-md-none d-lg-flex d-none d-sm-flex">
+	<v-sheet elevation="3" rounded="lg" class="d-none d-md-none d-lg-block">
+		<v-table class="news text-medium my-3 py-2">
 			<thead>
 				<tr>
 					<th colspan="2">
@@ -30,7 +30,8 @@ const { productArticles } = storeToRefs(useNewsStore());
 					</td>
 				</tr>
 			</tbody>
-		</v-table>
+		</v-table><br>
+
 		<v-btn href="/news" color="#cd3545" class="text-white" append-icon="mdi-chevron-down" location="center">
 			Xem tất cả bài viết
 		</v-btn>

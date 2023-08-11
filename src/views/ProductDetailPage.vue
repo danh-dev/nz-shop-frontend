@@ -1,21 +1,30 @@
 <script setup>
-import ProductInfomation from "./ProductInfomation.vue";
-import ProductFAQ from "./ProductFAQ.vue";
-import ProductReviews from "./ProductReviews.vue";
-import ProductQA from "./ProductQA.vue";
-import ProductSpecifications from "./ProductSpecifications.vue";
-import ProductNews from "./ProductNews.vue";
+import ProductInfomation from "../components/product/ProductInfomation.vue";
+import ProductSpecifications from "../components/product/ProductSpecifications.vue";
+import ProductReviews from "../components/product/ProductReviews.vue";
+import ProductFAQ from "../components/product/ProductFAQ.vue";
+import ProductQA from "../components/product/ProductQA.vue";
+import ProductNews from "../components/product/ProductNews.vue";
 
-import ProductSlider from "./ProductSlider.vue";
-import ProductThumbnailGroup from "./ProductThumbnailGroup.vue";
-import HomeMainProductSlider from "./HomeMainProductSlider.vue";
+import ProductSlider from "../components/product/ProductSlider.vue";
+import ProductThumbnailGroup from "../components/product/ProductThumbnailGroup.vue";
+import HomeMainProductSlider from "../components/product/HomeMainProductSlider.vue";
 
-import product from "../../product.js";
+import product from "../product";
+import productGallery from "../productGallery.js";
 
 import { onMounted, ref, watch } from "vue";
+import router from "../router";
+// import useProductStore from "../stores/useProductStore";
 import { useDisplay } from "vuetify/lib/framework.mjs";
-const { xs } = useDisplay();
 
+const {xs} = useDisplay();
+
+// const { findProductBySlug } = useProductStore();
+onMounted(() => {
+	const productName = router.currentRoute.value.params.productNameName;
+	// product.value = findProductBySlug(productName);
+});
 
 // Product photos Slider
 const model = ref(0);
@@ -62,7 +71,7 @@ const anotherAccessories = ref([
 		image:
 			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_i_xu_ng_23__4_4.png",
 		name: "Tai nghe không dây Redmi Buds 4",
-		rating: 5,
+		rating: 4.5,
 		price: 890000,
 		originPrice: 490000
 	},
@@ -122,21 +131,24 @@ watch(model, (cur, pre) => {
 	}
 });
 
-onMounted(() => { });
 </script>
 
 <template>
 	<v-container class="">
-		<v-sheet class="d-flex align-center my-3 d-none d-sm-flex">
-			<b class="text-h6">{{ product.name }}</b>
-			<v-rating :model-value="product.rating" color="yellow-darken-3" readonly density="compact" size="small"
-				class="mx-2"></v-rating>
-			<p class="text-body-1">{{ product.review }}</p>
+		<v-sheet class="d-none d-sm-block d-md-block d-lg-block">
+			<div class="d-flex align-center my-3">
+				<b class="text-h6">{{ product.name }}</b>
+				<v-rating :model-value="product.rating" color="yellow-darken-3" readonly density="compact" size="small"
+					class="mx-2"></v-rating>
+				<p class="text-body-1">{{ product.review }}</p>
+			</div>
 		</v-sheet>
 
+
+		<!-- Product Photos Silder, Product Info, Another Accessories, Product Specifications  -->
 		<v-row>
 			<v-col :cols="12" lg="8" md="8">
-				<!-- Begin : Slide hình ảnh sản phẩm -->
+				<!-- Product Photos Silder -->
 				<v-sheet max-height="30rem" width="100%" class="d-flex flex-column"
 					:style="xs ? { aspectRatio: 16 / 9 } : { aspectRatio: 3 / 2 }">
 					<v-sheet class="ma-0" height="80%">
@@ -148,52 +160,53 @@ onMounted(() => { });
 					</v-sheet>
 				</v-sheet>
 
-				<!-- Thông tin sản phẩm -->
+				<!-- Product Info -->
 				<ProductInfomation />
 
-				<!-- Phụ kiện mua cùng -->
-				<h4 class="text-uppercase text-danger py-2">Phụ kiện mua cùng</h4>
-				<HomeMainProductSlider :products="anotherAccessories" :products-show="3">
-					<template #default="{ props }">
-						<v-card color="" class="me-2 flex-1-0" width="calc((100% - 24px)/3)"
-							:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">
-							<v-sheet>
-								<v-img :src="props.product.image" class="w-100" />
-								<div class="px-1 text-center">
-									<p class="text-medium">{{ props.product.name }}</p>
-									<v-rating :model-value="props.product.rating" color="yellow-darken-3" readonly density="compact"
-										size="small" class="mx-2">
-									</v-rating>
-									<v-sheet class="pa-2 text-center text-danger d-flex align-center justify-space-between">
-										<p class="text-danger">{{ formatPrice(props.product.price) }}</p>
-										<p class="text-muted text-decoration-line-through text-medium">
-											{{ formatPrice(props.product.originPrice) }}
-										</p>
-									</v-sheet>
-								</div>
-							</v-sheet>
-						</v-card>
-					</template>
-				</HomeMainProductSlider>
+				<!-- Another Accessories -->
+				<div class="d-none d-md-block d-lg-block">
+					<h4 class="text-uppercase text-danger py-2">Phụ kiện mua cùng</h4>
+					<HomeMainProductSlider :products="anotherAccessories" :products-show="3">
+						<template #default="{ props }">
+							<v-card color="" class="me-2 flex-1-0" width="calc((100% - 24px)/3)"
+								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">
+								<v-sheet>
+									<v-img :src="props.product.image" class="w-100" />
+									<div class="px-1 text-center">
+										<p class="text-medium">{{ props.product.name }}</p>
+										<v-rating half-increments :model-value="props.product.rating" color="yellow-darken-3" readonly
+											density="compact" size="small" class="mx-2">
+										</v-rating>
+										<v-sheet class="pa-2 text-center text-danger d-flex align-center justify-space-between">
+											<p class="text-danger font-bold">{{ formatPrice(props.product.price) }}</p>
+											<p class="text-muted text-decoration-line-through text-medium">
+												{{ formatPrice(props.product.originPrice) }}
+											</p>
+										</v-sheet>
+									</div>
+								</v-sheet>
+							</v-card>
+						</template>
+					</HomeMainProductSlider>
+				</div>
 
-				<v-sheet class="d-md-block d-lg-none">
-					<ProductSpecifications />
-				</v-sheet>
+				<ProductSpecifications class="d-block d-md-none d-sm-none d-lg-none" />
 			</v-col>
 
+			<!-- Product Specifications -->
 			<v-col :cols="12" md="4" lg="4">
-				<!-- Thông tin sản phẩm -->
 				<v-sheet class="d-none d-md-flex d-md-none d-lg-block">
 					<ProductSpecifications />
 				</v-sheet>
 			</v-col>
 		</v-row>
 
+		<!-- Product Gallery -->
 		<v-row>
 			<v-col :cols="12">
-				<h4 class="text-uppercase">Sản phẩm tương tự</h4>
-				<v-sheet>
-					<HomeMainProductSlider :products="anotherAccessories" :products-show="5">
+				<v-sheet class="d-none d-md-block d-lg-block">
+					<h4 class="text-uppercase">Sản phẩm tương tự</h4>
+					<HomeMainProductSlider :products="productGallery" :products-show="5">
 						<template #default="{ props }">
 							<v-card color="" class="me-2 flex-1-0" width="calc((100% - 40px)/5)"
 								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">
@@ -201,11 +214,11 @@ onMounted(() => { });
 									<v-img :src="props.product.image" class="w-100" />
 									<div class="px-1 text-center">
 										<p class="text-medium font-bold">{{ props.product.name }}</p>
-										<v-rating :model-value="props.product.rating" color="yellow-darken-3" readonly density="compact"
-											size="small" class="mx-2">
+										<v-rating half-increments :model-value="props.product.rating" color="yellow-darken-3" readonly
+											density="compact" size="small" class="mx-2">
 										</v-rating>
 										<v-sheet class="pa-2 text-center d-flex align-center justify-space-between">
-											<p class="text-danger">{{ formatPrice(props.product.price) }}</p>
+											<p class="text-danger font-bold">{{ formatPrice(props.product.price) }}</p>
 											<p class="text-muted text-decoration-line-through text-medium">
 												{{ formatPrice(props.product.originPrice) }}
 											</p>
@@ -219,24 +232,27 @@ onMounted(() => { });
 			</v-col>
 		</v-row>
 
+		<!-- FAQ, Product Reviews, Q&A, News -->
 		<v-row>
 			<v-col :cols="12" lg="8" md="8">
-				<!-- Begin : Câu hỏi thường gặp -->
+				<!-- FAQ -->
 				<ProductFAQ />
 
-				<!-- Begin: Đánh giá & nhận xét sản phẩm -->
+				<!-- Product REviews -->
 				<ProductReviews />
 
-				<!-- Begin : Hỏi đáp -->
+				<!-- Q&A -->
 				<ProductQA />
 			</v-col>
+
+			<!-- News -->
 			<v-col :cols="12" md="4" lg="4">
-				<!-- Tin tức -->
 				<v-sheet class="d-none d-md-flex d-md-none d-lg-block">
 					<ProductNews />
 				</v-sheet>
 			</v-col>
 		</v-row>
+
 	</v-container>
 </template>
 
@@ -251,13 +267,16 @@ onMounted(() => { });
 
 /* Begin : Design Modal */
 .modal.open,
-.product-modal.open,
-.comment-modal.open {
+.productModal.open,
+.commentModal.open,
+.reviewModal.open {
 	display: flex;
 }
 
 .modal,
-.product-modal {
+.productModal,
+.commentModal,
+.reviewModal {
 	position: fixed;
 	top: 0;
 	bottom: 0;
@@ -275,20 +294,20 @@ onMounted(() => { });
 	z-index: 3;
 }
 
-.product-modal-container {
+.productModal-container,
+.reviewModal-container {
+	width: 600px;
 	max-width: 600px;
-	height: 500px;
+	height: 600px;
 	z-index: 3;
 	border-radius: 10px !important;
 }
 
-.modal-close-btn,
-.product-modal-close-btn {
-	opacity: 0.9;
-}
+
 
 .modal-close-btn:hover,
-.product-modal-close-btn:hover {
+.productModal-close-btn:hover,
+.commentModal-close-btn:hover {
 	opacity: 0.7;
 }
 
@@ -306,12 +325,6 @@ onMounted(() => { });
 	height: 80%;
 	overflow: auto;
 	z-index: 1;
-}
-
-.modal-footer {
-	background-color: #fff;
-	font-size: 0.9rem;
-	height: auto;
 }
 
 @keyframes fadeIn {
