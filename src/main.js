@@ -10,6 +10,7 @@ import "vuetify/styles";
 import { createVuetify } from "vuetify";
 
 
+
 import App from "./App.vue";
 import router from "./router/index.js";
 
@@ -28,7 +29,7 @@ app.use(vuetify);
 
 // chuyển đổi tiền tệ
 app.config.globalProperties.formatPrice = (value) => {
-	return parseFloat(value).toLocaleString("vi-VN", {"style": "currency", "currency": "VND"});
+	return parseFloat(value).toLocaleString("vi-VN", { "style": "currency", "currency": "VND" });
 };
 
 app.mount("#app");
