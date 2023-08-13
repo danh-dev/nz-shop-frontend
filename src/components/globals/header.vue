@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
 import { useCartStore } from "@/stores/cart";
 
@@ -5,12 +6,12 @@ const cartStore = useCartStore();
 </script>
 
 <template>
-  <v-app-bar class="bg-red-darken-2" elevation="0">
+  <v-app-bar class="bg-red-accent-4" elevation="0">
     <v-container>
       <v-row>
         <v-col cols="4" class="d-flex align-center justify-space-between">
           <a @click="$router.push('/')" class="m-pointer">
-            <img id="logoShop" src="/assets/logo.png" alt="logo shop">
+            <img id="logoShop" src="/NZShop.svg" alt="logo shop">
           </a>
           <v-btn class="menu-list text-body-2" prepend-icon="mdi-format-list-bulleted">
             Danh mục
@@ -54,7 +55,7 @@ const cartStore = useCartStore();
 .btn-login,
 .menu-list {
   text-transform: none;
-  background-color: #df3346;
+  background-color:  #c50000;
   margin: 0 10px;
 }
 </style>

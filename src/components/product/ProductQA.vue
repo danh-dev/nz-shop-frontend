@@ -10,7 +10,7 @@ import product from "../../product.js";
 			<div>
 				<v-textarea name="" class="" variant="filled" auto-grow background="white"
 					model-value="Bình luận..."></v-textarea>
-				<v-btn prepend-icon="mdi-send-circle" color="#cd3545" class="text-white" href="#" onclick="">Gửi</v-btn>
+				<v-btn prepend-icon="mdi-send-circle" color="red-accent-4" class="text-white" href="#" onclick="">Gửi</v-btn>
 			</div>
 			<div>
 				<div class="" v-for="question in product.questions" :key="question.id">

@@ -11,7 +11,6 @@ import ProductThumbnailGroup from "./ProductThumbnailGroup.vue";
 import HomeMainProductSlider from "./HomeMainProductSlider.vue";
 
 import product from "../../product.js";
-import productGallery from "../../productGallery.js";
 
 import { onMounted, ref, watch } from "vue";
 import router from "../../router";
@@ -203,7 +202,7 @@ onMounted(() => { });
 			<v-col :cols="12">
 				<v-sheet class="d-none d-md-block d-lg-block">
 					<h4 class="text-uppercase">Sản phẩm tương tự</h4>
-					<HomeMainProductSlider :products="productGallery" :products-show="5">
+					<HomeMainProductSlider :products="product.productGallery" :products-show="5">
 						<template #default="{ props }">
 							<v-card color="" class="me-2 flex-1-0" width="calc((100% - 40px)/5)"
 								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">

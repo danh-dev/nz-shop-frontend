@@ -11,14 +11,13 @@ import ProductThumbnailGroup from "../components/product/ProductThumbnailGroup.v
 import HomeMainProductSlider from "../components/product/HomeMainProductSlider.vue";
 
 import product from "../product";
-import productGallery from "../productGallery.js";
 
 import { onMounted, ref, watch } from "vue";
 import router from "../router";
 // import useProductStore from "../stores/useProductStore";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 
-const {xs} = useDisplay();
+const { xs } = useDisplay();
 
 // const { findProductBySlug } = useProductStore();
 onMounted(() => {
@@ -30,96 +29,6 @@ onMounted(() => {
 const model = ref(0);
 const maxModel = ref(0);
 
-const images = ref([
-	{
-		id: 1,
-		src: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/x/i/xiaomi-redmi-note-12s_4__1_2.jpg",
-	},
-	{
-		id: 2,
-		src: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/x/i/xiaomi-redmi-note-12-pro-5g_1.jpg",
-	},
-	{
-		id: 3,
-		src: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/x/i/xiaomi-redmi-note-12-pro-5g_6__1.jpg",
-	},
-	{
-		id: 4,
-		src: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/x/i/xiaomi-redmi-note-12-pro-5g_1__1.jpg",
-	},
-	{
-		id: 5,
-		src: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/x/i/xiaomi-redmi-note-12-pro-5g_8__1.jpg",
-	},
-	{
-		id: 6,
-		src: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/x/i/xiaomi-redmi-note-12-pro-5g_7__1.jpg",
-	},
-	{
-		id: 7,
-		src: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/x/i/xiaomi-redmi-note-12-pro-5g_4__1.jpg",
-	},
-	{
-		id: 8,
-		src: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/x/i/xiaomi-redmi-note-12-pro-5g_5__1.jpg",
-	},
-]);
-
-const anotherAccessories = ref([
-	{
-		id: 1,
-		image:
-			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_i_xu_ng_23__4_4.png",
-		name: "Tai nghe không dây Redmi Buds 4",
-		rating: 4.5,
-		price: 890000,
-		originPrice: 490000
-	},
-	{
-		id: 2,
-		image:
-			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/g/o/golf_candy_10.000mah_g80_1.png",
-		name: "Pin sạc dự phòng Golf Candy 10.000mAh G80.",
-		rating: 5,
-		price: 175000,
-		originPrice: 350000,
-	},
-	{
-		id: 3,
-		image:
-			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/g/r/group_135_1.png",
-		name: "Củ sạc Baseus 25W, kèm cáp Type-C 1M",
-		rating: 4,
-		price: 300000,
-		originPrice: 490000,
-	},
-	{
-		id: 4,
-		image:
-			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/f/r/frame_9_1_.png",
-		name: "Củ sạc Xiaomi 20W cổng USB-C",
-		rating: 5,
-		price: 220000,
-		originPrice: 300000,
-	},
-	{
-		id: 5,
-		image:
-			"https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/f/r/frame_2_1_2.png",
-		name: "Dán cường lực Xiaomi Redmi Note 12",
-		rating: 4,
-		price: 150000,
-		originPrice: 170000,
-	},
-	{
-		id: 6,
-		name: "Dán cường lực Xiaomi Redmi Note 12 LikGlass",
-		image: "https://cdn2.cellphones.com.vn/x358,webp,q100/media/catalog/product/g/r/group_249_5_.png",
-		rating: 4,
-		price: 120000,
-		originPrice: 150000
-	}
-]);
 
 const handleGroupButtonClick = index => {
 	model.value = index;
@@ -147,16 +56,17 @@ watch(model, (cur, pre) => {
 
 		<!-- Product Photos Silder, Product Info, Another Accessories, Product Specifications  -->
 		<v-row>
-			<v-col :cols="12" lg="8" md="8">
+			<v-col :cols="12" lg="8" md="12">
+
 				<!-- Product Photos Silder -->
 				<v-sheet max-height="30rem" width="100%" class="d-flex flex-column"
 					:style="xs ? { aspectRatio: 16 / 9 } : { aspectRatio: 3 / 2 }">
 					<v-sheet class="ma-0" height="80%">
-						<ProductSlider height="100%" :images="images" v-model="model" />
+						<ProductSlider height="100%" :images="product.thumbImg" v-model="model" />
 					</v-sheet>
 					<v-sheet class="ma-0" height="20%">
-						<ProductThumbnailGroup class="d-flex overflow-hidden ma-1" height="100%" :images="images" :model="model"
-							:maxModel="maxModel" @handleGroupButtonClick="handleGroupButtonClick" />
+						<ProductThumbnailGroup class="d-flex overflow-hidden ma-1" height="100%" :images="product.thumbImg"
+							:model="model" :maxModel="maxModel" @handleGroupButtonClick="handleGroupButtonClick" />
 					</v-sheet>
 				</v-sheet>
 
@@ -164,23 +74,23 @@ watch(model, (cur, pre) => {
 				<ProductInfomation />
 
 				<!-- Another Accessories -->
-				<div class="d-none d-md-block d-lg-block">
+				<div class="d-none d-sm-block d-md-block d-lg-block">
 					<h4 class="text-uppercase text-danger py-2">Phụ kiện mua cùng</h4>
-					<HomeMainProductSlider :products="anotherAccessories" :products-show="3">
+					<HomeMainProductSlider :products="product.anotherAccessories" :products-show="3">
 						<template #default="{ props }">
-							<v-card color="" class="me-2 flex-1-0" width="calc((100% - 24px)/3)"
+							<v-card rounded="lg" class="me-2 flex-1-0" width="calc((100% - 24px)/3)"
 								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">
 								<v-sheet>
-									<v-img :src="props.product.image" class="w-100" />
-									<div class="px-1 text-center">
-										<p class="text-medium">{{ props.product.name }}</p>
+									<a href="#"><v-img :src="props.product.image" class="w-100" /></a>
+									<div class="pa-1 text-center">
+										<p class="text-body-2 font-bold"><a href="#">{{ props.product.name }}</a></p>
 										<v-rating half-increments :model-value="props.product.rating" color="yellow-darken-3" readonly
 											density="compact" size="small" class="mx-2">
 										</v-rating>
 										<v-sheet class="pa-2 text-center text-danger d-flex align-center justify-space-between">
-											<p class="text-danger font-bold">{{ formatPrice(props.product.price) }}</p>
+											<p class="text-danger font-bold">{{ formatPrice(props.product.priceSale) }}</p>
 											<p class="text-muted text-decoration-line-through text-medium">
-												{{ formatPrice(props.product.originPrice) }}
+												{{ formatPrice(props.product.price) }}
 											</p>
 										</v-sheet>
 									</div>
@@ -190,12 +100,12 @@ watch(model, (cur, pre) => {
 					</HomeMainProductSlider>
 				</div>
 
-				<ProductSpecifications class="d-block d-md-none d-sm-none d-lg-none" />
+				<ProductSpecifications class="d-block d-md-none d-sm-block d-lg-none" />
 			</v-col>
 
 			<!-- Product Specifications -->
 			<v-col :cols="12" md="4" lg="4">
-				<v-sheet class="d-none d-md-flex d-md-none d-lg-block">
+				<v-sheet class="d-none d-md-none d-md-none d-lg-block">
 					<ProductSpecifications />
 				</v-sheet>
 			</v-col>
@@ -204,23 +114,23 @@ watch(model, (cur, pre) => {
 		<!-- Product Gallery -->
 		<v-row>
 			<v-col :cols="12">
-				<v-sheet class="d-none d-md-block d-lg-block">
-					<h4 class="text-uppercase">Sản phẩm tương tự</h4>
-					<HomeMainProductSlider :products="productGallery" :products-show="5">
+				<v-sheet class="d-none d-sm-none d-md-none d-lg-block" >
+					<h4 class="text-uppercase text-danger">Sản phẩm tương tự</h4>
+					<HomeMainProductSlider :products="product.productGallery" :products-show="5">
 						<template #default="{ props }">
-							<v-card color="" class="me-2 flex-1-0" width="calc((100% - 40px)/5)"
+							<v-card rounded="lg" class="me-2 flex-1-0" width="calc((100% - 40px)/5)"
 								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">
 								<v-sheet>
-									<v-img :src="props.product.image" class="w-100" />
-									<div class="px-1 text-center">
-										<p class="text-medium font-bold">{{ props.product.name }}</p>
+									<a href="#"><v-img :src="props.product.image" class="w-100" /></a>
+									<div class="pa-1 text-center">
+										<p href="#" class="text-body-2 font-bold"><a href="#">{{ props.product.name }}</a></p>
 										<v-rating half-increments :model-value="props.product.rating" color="yellow-darken-3" readonly
 											density="compact" size="small" class="mx-2">
 										</v-rating>
 										<v-sheet class="pa-2 text-center d-flex align-center justify-space-between">
-											<p class="text-danger font-bold">{{ formatPrice(props.product.price) }}</p>
+											<p class="text-danger font-bold">{{ formatPrice(props.product.priceSale) }}</p>
 											<p class="text-muted text-decoration-line-through text-medium">
-												{{ formatPrice(props.product.originPrice) }}
+												{{ formatPrice(props.product.price) }}
 											</p>
 										</v-sheet>
 									</div>
@@ -234,11 +144,11 @@ watch(model, (cur, pre) => {
 
 		<!-- FAQ, Product Reviews, Q&A, News -->
 		<v-row>
-			<v-col :cols="12" lg="8" md="8">
+			<v-col :cols="12" lg="8" md="12">
 				<!-- FAQ -->
 				<ProductFAQ />
 
-				<!-- Product REviews -->
+				<!-- Product Reviews -->
 				<ProductReviews />
 
 				<!-- Q&A -->
@@ -294,11 +204,21 @@ watch(model, (cur, pre) => {
 	z-index: 3;
 }
 
-.productModal-container,
 .reviewModal-container {
-	width: 600px;
-	max-width: 600px;
-	height: 600px;
+	width: 500px;
+	max-width: 500px;
+	min-width: auto;
+	height: 500px;
+	z-index: 3;
+	border-radius: 10px !important;
+}
+
+.productModal-container {
+	width: 500px;
+	max-width: 500px;
+	min-width: auto;
+	height: 650px;
+	min-height: 300px;
 	z-index: 3;
 	border-radius: 10px !important;
 }

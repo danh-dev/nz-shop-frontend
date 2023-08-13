@@ -24,7 +24,7 @@ const router = createRouter({
 		},
 		// Product router
 		{
-			path: "/:productName",
+			path: "/home/:productName",
 			component: ProductDetailPage,
 		},
 		// News router
@@ -36,7 +36,7 @@ const router = createRouter({
 			path: "/news/:newsName",
 			component: NewsDetailPage,
 		},
-	],
+		],
 });
 
 export default router;

@@ -1,8 +1,9 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
   <v-card v-for="product in datas" :key="product.code">
     <h4><a class="titleProduct" :href="product.url">{{ product.name }}</a></h4>
     <div class="listVariations py-1">
-      <v-badge color="white" class="border rounded border-danger px-2 me-2" v-for="variation in product.variations"
+      <v-badge color="white" class="border rounded px-2 me-2" v-for="variation in product.variations"
         :key="variation" :content="variation" inline></v-badge>
     </div>
     <div class="d-flex justify-space-between">

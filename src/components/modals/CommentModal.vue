@@ -105,7 +105,7 @@ function hideCommentModal() {
 </script>
 
 <template>
-	<v-btn location="center" color="#cd3545" class="text-white" append-icon="mdi-chevron-down" 
+	<v-btn location="center" color="red-accent-4" class="text-white" append-icon="mdi-chevron-down" 
 		@click="showCommentModal()">
 		Xem thêm
 	</v-btn>
@@ -116,7 +116,7 @@ function hideCommentModal() {
 				@click="hideCommentModal()">
 			</v-btn>
 
-			<v-sheet color="#cd3545" rounded="lg" class="modal-header d-flex align-center justify-center">
+			<v-sheet color="red-accent-4" rounded="lg" class="modal-header d-flex align-center justify-center">
 				<b class="text-uppercase">Đánh giá & nhận xét {{ product.name }}</b>
 			</v-sheet>
 
@@ -139,7 +139,7 @@ function hideCommentModal() {
 					<p class="more"><b>Nhận xét:</b> {{ comment.comment }}</p>
 				</v-sheet>
 			</div>
-			<v-btn id="commentModal-close-btn" rounded="lg" class="text-white w-100 mt-2" color="#cd3545" type="submit"
+			<v-btn id="commentModal-close-btn" rounded="lg" class="text-white w-100 mt-2" color="red-accent-4" type="submit"
 				variant="elevated" @click="hideCommentModal()">Đóng
 			</v-btn>
 		</v-sheet>

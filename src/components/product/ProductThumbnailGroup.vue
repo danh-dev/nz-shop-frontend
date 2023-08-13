@@ -19,8 +19,8 @@ defineEmits(["handleGroupButtonClick"]);
 			<ProductThumbnail
 				width="20%"
 				height="100%"
-				v-for="(image, index) in images"
-				:key="image.id"
+				v-for="(thumbImg, index) in images"
+				:key="thumbImg.id"
 				@click="$emit('handleGroupButtonClick', index)"
 				:style="[
 					model === index ? { paddingTop: '2px', borderBottom: '2px solid red' } : '',
@@ -29,7 +29,7 @@ defineEmits(["handleGroupButtonClick"]);
 				:class="[model === index ? 'text-body-1' : 'text-body-2']"
 			>
 				<img
-					:src="image.src"
+					:src="thumbImg.src"
 					class="rounded w-100 h-100"
 				/>
 			</ProductThumbnail>

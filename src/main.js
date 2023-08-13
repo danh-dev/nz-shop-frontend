@@ -12,7 +12,7 @@ import { createVuetify } from "vuetify";
 
 
 import App from "./App.vue";
-import router from "./router/index.js";
+import router from "./router/index";
 
 // Vuetify
 const vuetify = createVuetify({

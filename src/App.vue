@@ -27,7 +27,7 @@ a {
 }
 
 .text-danger, .bg-danger, .danger, a:hover {
-  color: #cd3545;
+  color:  #c50000;
 }
 
 .font-bold {

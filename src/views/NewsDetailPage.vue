@@ -77,7 +77,7 @@ a {
 }
 
 a:hover {
-  color: #cd3545;
+  color: red-accent-4;
 }
 
 .more {

@@ -54,7 +54,7 @@ const { articles, slides, subArticles } = storeToRefs(useNewsStore());
             </div>
           </div>
         </v-sheet>
-        <v-btn color="#cd3545" variant="elevated" class="text-white" href="#">Xem thêm</v-btn>
+        <v-btn color="red-accent-4" variant="elevated" class="text-white" href="#">Xem thêm</v-btn>
       </v-col>
 
       <v-col cols="12" lg="3" md="3" class="">

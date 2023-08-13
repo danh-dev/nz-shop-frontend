@@ -12,7 +12,7 @@ const { productArticles } = storeToRefs(useNewsStore());
 				<tr>
 					<th colspan="2">
 						<v-sheet class="d-flex align-center">
-							<v-icon color="#cd3545">mdi-newspaper-variant-multiple</v-icon>
+							<v-icon color="red-accent-4">mdi-newspaper-variant-multiple</v-icon>
 							<h3 class="px-1 text-uppercase">Tin tức về sản phẩm</h3>
 						</v-sheet>
 					</th>
@@ -32,7 +32,7 @@ const { productArticles } = storeToRefs(useNewsStore());
 			</tbody>
 		</v-table><br>
 
-		<v-btn href="/news" color="#cd3545" class="text-white" append-icon="mdi-chevron-down" location="center">
+		<v-btn href="/news" color="red-accent-4" class="text-white" append-icon="mdi-chevron-down" location="center">
 			Xem tất cả bài viết
 		</v-btn>
 	</v-sheet>
