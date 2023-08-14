@@ -217,7 +217,7 @@ watch(model, (cur, pre) => {
 	width: 500px;
 	max-width: 500px;
 	min-width: auto;
-	height: 650px;
+	height: 600px;
 	min-height: 300px;
 	z-index: 3;
 	border-radius: 10px !important;

@@ -103,7 +103,7 @@ const data = ref([
 			<v-sheet rounded="lg" class="py-1 d-flex flex-column align-center justify-center text-body">
 				<img src="https://cdn2.cellphones.com.vn/213x213,webp,q100/media/wysiwyg/Shipper_CPS.jpg"
 					class="w-25 h-25" >
-				<p class="text-danger">Đánh giá và nhận xét {{ product.name }}</p>
+				<p class="text-danger">Đánh giá {{ product.name }}</p>
 				<p class="text-body-2">Bạn thấy sản phẩm này như thế nào ?</p>
 			</v-sheet>
 
