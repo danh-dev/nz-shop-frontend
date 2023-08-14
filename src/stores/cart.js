@@ -1,15 +1,15 @@
 import {defineStore} from "pinia";
-import data from "@/data";
+import { productList } from "@/data";
 
 export const useCartStore = defineStore("cart", {
     state: () => ({
-        cartApp: {}
+        cartList: {}
     }),
     getters: {
         listCart() {
-            return Object.keys(this.cartApp).map(productId => {
-                const item = data.find(p => p.id === productId);
-                const quantity = this.cartApp[productId].quantity;
+            return Object.keys(this.cartList).map(productId => {
+                const item = productList.find(p => p.id === productId);
+                const quantity = this.cartList[productId].quantity;
                 return {
                     ...item,
                     quantity: quantity,
@@ -17,31 +17,32 @@ export const useCartStore = defineStore("cart", {
             });
         },
         totalUnit(){
-            return Object.keys(this.cartApp).reduce((total,id)=> total + this.cartApp[id].quantity,0)
+            return Object.keys(this.cartList).reduce((total,id)=> total + this.cartList[id].quantity,0)
         }
     },
     actions: {
         add(productId) {
-            if (this.cartApp.hasOwnProperty(productId)) {
-                this.cartApp[productId].quantity += 1;
+            if (this.cartList.hasOwnProperty(productId)) {
+                this.cartList[productId].quantity += 1;
             } else {
-                this.cartApp[productId] = {
+                this.cartList[productId] = {
                     productId,
                     quantity: 1
                 };
             }
         },
         remove(productId) {
-            if (!this.cartApp[productId]) {
+            if (!this.cartList[productId]) {
                 return;
             }
-            this.cartApp[productId].quantity -= 1;
-            if (this.cartApp[productId].quantity === 0) {
-                delete this.cartApp[productId];
+            this.cartList[productId].quantity -= 1;
+            if (this.cartList[productId].quantity === 0) {
+                delete this.cartList[productId];
             }
         },
         removeAll(productId) {
-            delete this.cartApp[productId];
+            delete this.cartList[productId];
         }
-    }
+    },
+    persist: true
 });

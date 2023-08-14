@@ -23,4 +23,27 @@ const productList = [
         url: "#"
     },
 ];
-export default productList;
+
+const userList = [
+    {   id: "1",
+        name: "Danh",
+        email: "danh@gmail.com",
+        password: "123"
+    },
+    {   id: "2",
+        name: "Long",
+        email: "long@gmail.com",
+        password: "123"
+    },
+    {   id: "3",
+        name: "Sang",
+        email: "sang@gmail.com",
+        password: "123"
+    },
+    {   id: "4",
+        name: "Tam",
+        email: "tam@gmail.com",
+        password: "123"
+    },
+];
+export { productList , userList};
