@@ -1,6 +1,6 @@
 <script setup>
 
-import {ref} from "vue";
+import { ref } from "vue";
 
 const open = ref(["Users"]);
 
@@ -19,34 +19,68 @@ const cruds = ref([
 
 <template>
   <v-list v-model:opened="open">
-    <v-list-item prepend-icon="mdi-home" title="Home"></v-list-item>
+    <v-list-item
+      prepend-icon="mdi-home"
+      title="Home"
+    ></v-list-item>
 
-    <v-list-group v-model="open" value="Users">
+    <v-list-group
+      v-model="open"
+      value="Users"
+    >
       <template v-slot:activator="{ props }">
-        <v-list-item v-bind="props" prepend-icon="mdi-account-circle" title="Users"></v-list-item>
+        <v-list-item
+          v-bind="props"
+          prepend-icon="mdi-account-circle"
+          title="Users"
+        ></v-list-item>
       </template>
 
-      <v-list-group v-model="open" value="Admin">
+      <v-list-group
+        v-model="open"
+        value="Admin"
+      >
         <template v-slot:activator="{ props }">
-          <v-list-item v-bind="props" title="Admin"></v-list-item>
+          <v-list-item
+            v-bind="props"
+            title="Admin"
+          ></v-list-item>
         </template>
 
-        <v-list-item v-for="([title, icon], i) in admins" :key="i" :title="title" :prepend-icon="icon"
-                     :value="title"></v-list-item>
+        <v-list-item
+          v-for="([title, icon], i) in admins"
+          :key="i"
+          :title="title"
+          :prepend-icon="icon"
+          :value="title"
+        ></v-list-item>
       </v-list-group>
 
-      <v-list-group v-model="open" value="Actions">
+      <v-list-group
+        v-model="open"
+        value="Actions"
+      >
         <template v-slot:activator="{ props }">
-          <v-list-item v-bind="props" title="Actions"></v-list-item>
+          <v-list-item
+            v-bind="props"
+            title="Actions"
+          ></v-list-item>
         </template>
 
-        <v-list-item v-for="([title, icon], i) in cruds" :key="i" :value="title" :title="title"
-                     :prepend-icon="icon"></v-list-item>
+        <v-list-item
+          v-for="([title, icon], i) in cruds"
+          :key="i"
+          :value="title"
+          :title="title"
+          :prepend-icon="icon"
+        ></v-list-item>
       </v-list-group>
+
+
     </v-list-group>
+    <!-- Admin Product Form  -->
+    <v-list-item href="/admincp/product">Product</v-list-item>
   </v-list>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

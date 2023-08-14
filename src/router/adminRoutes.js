@@ -2,7 +2,7 @@ const routes = [
 	{
 		path: "",
 		redirect: to => {
-			return { name: 'dashboard-admin' }
+			return { name: 'dashboard-admin' };
 		},
 	},
 	{
@@ -14,6 +14,16 @@ const routes = [
 		path: "user",
 		name: "user-admin",
 		component: () => import("../views/admin/user/UserList.vue"),
+	},
+	{
+		name: "admin-product",
+		path: "product",
+		component: () => import("../views/admin/product/ProductList.vue"),
+	},
+	{
+		name: "admin-product-detail",
+		path: "product/:code",
+		component: () => import("../views/admin/product/ProductDetail.vue"),
 	},
 ];
 
