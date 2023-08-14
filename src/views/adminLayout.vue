@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <aside>
-      <v-navigation-drawer class="pa-3" elevation="1">
+      <v-navigation-drawer v-model="drawer" class="pa-3" elevation="1">
         <template #prepend>
           <RouterLink
               to="/admincp"
@@ -9,6 +9,7 @@
           >
             <img id="logoShop" src="/assets/NZShop-Text.svg" alt="logo shop">
           </RouterLink>
+          <v-btn density="compact" class="btn-close hidden-lg-and-up" icon="mdi-close" @click.stop="drawer = !drawer"></v-btn>
         </template>
         <MenuList/>
         <template #append>
@@ -25,11 +26,11 @@
         <header class="bar-sticky">
           <v-toolbar rounded class="bg-white m-card">
             <div class="hidden-lg-and-up  ms-3">
-              <v-btn prepend-icon="mdi-apps" variant="tonal" class="font-weight-bold bg-red-darken-1">
+              <v-btn prepend-icon="mdi-apps" variant="tonal" class="font-weight-bold bg-red-darken-1" @click.stop="drawer = !drawer">
                 Tính năng
               </v-btn>
             </div>
-            <v-toolbar-title class="text-h6 font-weight-bold text-blue-grey-darken-1">Title</v-toolbar-title>
+            <v-toolbar-title class="text-h6 font-weight-bold text-blue-grey-darken-1">{{ childTitle?childTitle:"Trang admin" }}</v-toolbar-title>
             <div class="hidden-md-and-down ms-3">
               <v-btn prepend-icon="mdi-apps" variant="tonal" class="font-weight-bold bg-red-darken-1">
                 Tính năng
@@ -64,6 +65,34 @@
 
 <script setup>
 import MenuList from "../components/admincp/MenuList.vue";
+import {onMounted, ref, watch} from "vue";
+import { useRoute, useRouter } from "vue-router";
+
+const drawer = ref(true);
+const childTitle = ref();
+
+const route = useRoute();
+const router = useRouter();
+
+watch(router.currentRoute,
+    () => {
+      childTitle.value = document.title
+    }
+);
+
+// onMounted(() => {
+//   if (route.meta.title) {
+//     console.log(route.meta.title)
+//     childTitle.value = route.meta.title;
+//   }
+// });
+
+// onBeforeRouteUpdate((to, from, next) => {
+//   if (to.meta.title) {
+//     titleChild.value = route.meta.title;
+//   }
+//   next();
+// });
 </script>
 
 <style scoped>
@@ -86,5 +115,12 @@ import MenuList from "../components/admincp/MenuList.vue";
   inset-inlcleine-start: 0;
   -webkit-mask: linear-gradient(black, black 18%, transparent 100%);
   mask: linear-gradient(black, black 18%, transparent 100%);
+}
+.btn-close{
+  position: absolute;
+  top:5px;
+  right: 5px;
+  z-index: 3;
+
 }
 </style>

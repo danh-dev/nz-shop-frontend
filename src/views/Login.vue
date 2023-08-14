@@ -5,7 +5,7 @@
       Đăng nhập thành công!
     </VSnackbar>
     <v-overlay v-model="hasError" :persistent="true">
-      <VSnackbar v-model="hasError" transition="scroll-y-reverse-transition" location="bottom end" color="red-darken-1"
+      <VSnackbar v-model="hasError" transition="scroll-y-reverse-transition" location="center" color="red-darken-1"
         :timeout="1500">
         <div class="ma-5 text-h6 text-center">{{ errors }}</div>
       </VSnackbar>

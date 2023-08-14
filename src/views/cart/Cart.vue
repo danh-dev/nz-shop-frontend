@@ -66,7 +66,7 @@ const totalValue = computed(() =>
         </v-row>
       </v-sheet>
       <v-sheet v-else class="rounded pa-3 d-flex flex-column justify-center align-center" elevation="0">
-        <div style="min-height: 1800px">
+        <div>
           <iframe width="300" height="300" frameBorder="0"
                   src="https://lottie.host/?file=95af846f-f62b-4bc5-b422-26c7cabda6eb/65kwV7npxO.json">
           </iframe>
