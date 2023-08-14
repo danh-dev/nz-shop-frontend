@@ -1,5 +1,5 @@
 <script setup>
-import getSlugByName from '../utils/getSlugByName';
+import getSlugByName from "../utils/getSlugByName";
 
 defineProps({
   item: Object,

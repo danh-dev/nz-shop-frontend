@@ -1,4 +1,8 @@
 <script setup>
+import useCategoryStore from "../stores/category.js";
+import { storeToRefs } from "pinia";
+import getSlugByName from "../utils/getSlugByName";
+
 import HomeMainItem from "./HomeMainItem.vue";
 defineProps({
   modal: {
@@ -6,47 +10,29 @@ defineProps({
     default: "",
   },
 });
+
+const { parentCategories } = storeToRefs(useCategoryStore());
+
 </script>
 
 <template>
   <v-list>
-    <HomeMainItem
-      :activatorClass="`phone-activator${modal} flex-1-1`"
-      category="phone"
+    <v-hover
+      v-for="category in parentCategories"
+      :key="category.id"
+      #default="{ isHovering, props }"
     >
-      <template #icon>mdi-cellphone</template>
-      <template #name>Điện thoại</template>
-    </HomeMainItem>
-    <HomeMainItem
-      :activatorClass="`laptop-activator${modal} flex-1-1`"
-      category="laptop"
-    >
-      <template #icon>mdi-laptop</template>
-      <template #name>Laptop</template>
-    </HomeMainItem>
-    <HomeMainItem :activatorClass="`sound-activator${modal} flex-1-1`">
-      <template #icon>mdi-earbuds-outline</template>
-      <template #name>Âm thanh</template>
-    </HomeMainItem>
-    <HomeMainItem :activatorClass="`watch-activator${modal} flex-1-1`">
-      <template #icon>mdi-watch-variant</template>
-      <template #name>Đồng hồ</template>
-    </HomeMainItem>
-    <HomeMainItem :activatorClass="`usb-activator${modal} flex-1-1`">
-      <template #icon>mdi-usb-flash-drive</template>
-      <template #name>Phụ kiện</template>
-    </HomeMainItem>
-    <HomeMainItem
-      :activatorClass="`pc-activator${modal} flex-1-1`"
-      category="pc"
-    >
-      <template #icon>mdi-desktop-tower-monitor</template>
-      <template #name>PC, Màn hình</template>
-    </HomeMainItem>
-    <HomeMainItem :activatorClass="`tv-activator${modal} flex-1-1`">
-      <template #icon>mdi-television-classic</template>
-      <template #name>Tivi</template>
-    </HomeMainItem>
+      <HomeMainItem
+        :class="[`${getSlugByName(category.name)}-activator${modal} flex-1-1`, isHovering ? 'text-red-accent-4' : '']"
+        v-bind="props"
+        :value="category.name"
+        :href="`/categories/${getSlugByName(category.name)}`"
+      >
+        <template #icon>{{ category.icon }}</template>
+        <template #name>{{ category.name }}</template>
+      </HomeMainItem>
+    </v-hover>
+
     <HomeMainItem :activatorClass="`sale-activator${modal} flex-1-1`">
       <template #icon>mdi-sale</template>
       <template #name>Khuyến mãi</template>

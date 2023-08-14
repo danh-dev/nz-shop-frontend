@@ -1,5 +1,5 @@
 <script setup>
-import { useCategoryStore } from "../stores/category";
+import useCategoryStore from "../stores/category";
 import getSlugByName from "../utils/getSlugByName";
 
 import LogoButton from "./LogoButton.vue";
@@ -15,7 +15,7 @@ const { findBrandsOfParentCategory, findRecursiveCategorySlug } = useCategorySto
   <v-sheet class="d-flex align-center">
     <v-sheet class="text-body-1 font-weight-bold mb-3">{{ parentCategory.name }}</v-sheet>
     <a
-      :href="`/${getSlugByName(parentCategory.name)}`"
+      :href="`/categories/${getSlugByName(parentCategory.name)}`"
       class="ms-auto text-body-2 text-decoration-none"
     >Xem tất cả</a>
   </v-sheet>
@@ -28,7 +28,7 @@ const { findBrandsOfParentCategory, findRecursiveCategorySlug } = useCategorySto
       v-for="(category, index) in findBrandsOfParentCategory(parentCategory.id)"
       :key="category.id"
       :logo="category.logo"
-      :href="findRecursiveCategorySlug(category)"
+      :href="`/categories${findRecursiveCategorySlug(category)}`"
       class="mb-2"
       :class="index !== findBrandsOfParentCategory(parentCategory.id).length - 1 ? 'me-2' : ''"
     ></LogoButton>

@@ -10,22 +10,33 @@ const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
 		{
+			name: "home",
 			path: "/",
 			component: HomePage,
 		},
 		{
-			path: "/:categorySlugs(.*)*",
+			name: "categories",
+			path: "/categories/:slugs+",
 			component: CategoryPage,
-			children: {
-				path: "/:productSlug",
-				component: ProductPage
-			}
+
 		},
 		{
-			path: "/news/:newsName",
+			name: "product",
+			path: "/:slug",
+			component: ProductPage
+		},
+		{
+			name: "news",
+			path: "/news",
 			component: NewsPage,
 		},
 		{
+			name: "",
+			path: "/news/:slug",
+			component: NewsPage,
+		},
+		{
+			name: "register",
 			path: "/register",
 			component: RegisterPage,
 		},

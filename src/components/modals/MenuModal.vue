@@ -1,10 +1,12 @@
 <script setup>
 import { useDisplay } from "vuetify";
-import { useCategoryStore } from "../stores/category";
+
 import { storeToRefs } from "pinia";
 
-import HomeMainTopMenuItem from "./HomeMainTopMenuItem.vue";
-import HomeMainTopMenuList from "./HomeMainTopMenuList.vue";
+import HomeMainTopMenuItem from "../HomeMainTopMenuItem.vue";
+import HomeMainTopMenuList from "../HomeMainTopMenuList.vue";
+import useCategoryStore from "../../stores/category";
+import getSlugByName from "../../utils/getSlugByName";
 
 const categoryStore = useCategoryStore();
 const { parentCategories } = storeToRefs(categoryStore);
@@ -46,7 +48,7 @@ const { mdAndUp } = useDisplay();
     <HomeMainTopMenuItem
       v-for="category in parentCategories"
       :key="category.id"
-      :activator="`.${category.name.toLowerCase()}-activator-modal`"
+      :activator="`.${getSlugByName(category.name)}-activator-modal`"
       :brands="findBrandsOfParentCategory(category.id)"
       location-strategy="static"
       attach="#parent"

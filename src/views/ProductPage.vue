@@ -2,18 +2,17 @@
 import { onMounted, ref } from "vue";
 
 import router from "../router";
-import getSlugByName from "../utils/getSlugByName.js";
 
-const categoryNames = ref([]);
+const product = ref(null);
 
 onMounted(() => {
-  categoryNames.value = router.currentRoute.value.params.categorySlugs.map(getSlugByName);
+  product.value = router.currentRoute.value.params.slug;
 });
 
 </script>
 
 <template>
-  <h1>{{ categoryNames[0] }}</h1>
+  <h1>{{ product }}</h1>
 </template>
 
 <style></style>

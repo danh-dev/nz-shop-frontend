@@ -1,5 +1,5 @@
 <script setup>
-import HomeMainTopSliderArrow from "./HomeMainTopSliderArrow.vue";
+import ProductSliderArrow from "./ProductSliderArrow.vue";
 import { onMounted, onUnmounted, ref, computed } from "vue";
 
 const props = defineProps({
@@ -167,17 +167,17 @@ const undo = timeStamp => {
 
 
     </v-sheet>
-    <HomeMainTopSliderArrow
+    <ProductSliderArrow
       direction="left"
       :disabled="disabled"
       :class="!number ? 'd-none' : ''"
       @click="handleArrowButton"
-    ></HomeMainTopSliderArrow>
-    <HomeMainTopSliderArrow
+    ></ProductSliderArrow>
+    <ProductSliderArrow
       direction="right"
       :disabled="disabled"
       @click="handleArrowButton"
-    ></HomeMainTopSliderArrow>
+    ></ProductSliderArrow>
   </v-sheet>
 </template>
 

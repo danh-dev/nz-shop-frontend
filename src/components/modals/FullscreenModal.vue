@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useCategoryStore } from "../stores/category";
+import useCategoryStore from "../../stores/category";
 import { storeToRefs } from "pinia";
 
-import HomeMainMobileItem from "./HomeMainMobileItem.vue";
-import MenuTree from "./MenuTree.vue";
+import HomeMainMobileItem from "../HomeMainMobileItem.vue";
+import MenuTree from "../MenuTree.vue";
 
 const categoryStore = useCategoryStore();
 const { parentCategories } = storeToRefs(categoryStore);

@@ -1,10 +1,14 @@
 <script setup>
+import { useDisplay } from "vuetify";
+
 import { RouterView } from "vue-router";
 
 import TheHeader from "./components/layouts/TheHeader.vue";
 import TheFooter from "./components/layouts/TheFooter.vue";
-import FullscreenModal from "./components/FullscreenModal.vue";
-import MenuModal from "./components/MenuModal.vue";
+import FullscreenModal from "./components/modals/FullscreenModal.vue";
+import MenuModal from "./components/modals/MenuModal.vue";
+
+const { lgAndUp } = useDisplay();
 </script>
 
 <template>
@@ -15,7 +19,9 @@ import MenuModal from "./components/MenuModal.vue";
 			style="position: relative"
 			id="modal-container"
 		>
-			<RouterView />
+			<v-container :fluid="!lgAndUp">
+				<RouterView />
+			</v-container>
 		</v-main>
 
 		<TheFooter />

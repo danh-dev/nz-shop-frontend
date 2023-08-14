@@ -1,11 +1,11 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import { useDisplay } from "vuetify";
-import { useCategoryStore } from "../stores/category";
+import useCategoryStore from "../stores/category";
 import { storeToRefs } from "pinia";
 import getSlugByName from "../utils/getSlugByName";
 
-import HomeMainTopCarousel from "./HomeMainTopCarousel.vue";
+import TopCarousel from "./chung/TopCarousel.vue";
 import HomeMainTopSliderButtonGroup from "./HomeMainTopSliderButtonGroup.vue";
 import HomeMainTopMenuItem from "./HomeMainTopMenuItem.vue";
 import HomeMainTopMenuList from "./HomeMainTopMenuList.vue";
@@ -153,11 +153,11 @@ const rightBanners = ref([
         :width="mdAndUp ? 'calc(100% - 15.5rem - 12px)' : '100%'"
       >
         <v-sheet height="80%">
-          <HomeMainTopCarousel
+          <TopCarousel
             v-model="model"
             height="100%"
             :gallery="gallery"
-          ></HomeMainTopCarousel>
+          ></TopCarousel>
         </v-sheet>
         <v-sheet height="20%">
           <HomeMainTopSliderButtonGroup
