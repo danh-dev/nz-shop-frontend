@@ -19,13 +19,19 @@ const routes = [
 	{
 		path: "post",
 		name: "admin-post",
-		component: () => import("../views/admin/post/PostList.vue"),
+		component: () => import("../views/post/PostList.vue"),
 	},
 
 	{
 		path: "post/:title",
 		name: "post-detail",
-		component: () => import("../views/admin/post/PostDetailPage.vue"),
+		component: () => import("../views/post/PostDetailPage.vue"),
+	},
+
+	{
+		path: "slider",
+		name: "admin-slider",
+		component: () => import("../views/slider/SliderList.vue"),
 	},
 ];
 

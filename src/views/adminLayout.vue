@@ -76,7 +76,7 @@ const router = useRouter();
 
 watch(router.currentRoute,
     () => {
-      childTitle.value = document.title
+      childTitle.value = document.title;
     }
 );
 
@@ -102,7 +102,7 @@ watch(router.currentRoute,
   inset-block-start: 1rem;
 }
 
-.bar-sticky:after {
+.bar-sticky::after {
   position: absolute;
   z-index: -1;
   -webkit-backdrop-filter: blur(10px);
@@ -112,7 +112,7 @@ watch(router.currentRoute,
   content: "";
   inset-block-start: -1rem;
   inset-inline-end: 0;
-  inset-inlcleine-start: 0;
+  inset-inline-start: 0;
   -webkit-mask: linear-gradient(black, black 18%, transparent 100%);
   mask: linear-gradient(black, black 18%, transparent 100%);
 }
