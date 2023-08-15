@@ -1,6 +1,6 @@
 <script setup>
 
-import {ref, onMounted} from "vue";
+import { ref, onMounted } from "vue";
 
 const scrollTop = ref(0);
 
@@ -21,22 +21,9 @@ const scrollToTop = () => {
 </script>
 
 <template>
-  <VScaleTransition
-      style="transform-origin: center;"
-      class="scroll-to-top d-print-none"
-  >
-    <VBtn
-        v-show="scrollTop > 200"
-        icon
-        density="comfortable"
-        @click="scrollToTop"
-        color="red-accent-4"
-    >
-      <VIcon
-          size="22"
-          color="white"
-          icon="mdi-rocket"
-      />
+  <VScaleTransition style="transform-origin: center;" class="scroll-to-top d-print-none">
+    <VBtn v-show="scrollTop > 200" icon density="comfortable" @click="scrollToTop" color="red-accent-4">
+      <VIcon size="22" color="white" icon="mdi-rocket" />
     </VBtn>
   </VScaleTransition>
 </template>

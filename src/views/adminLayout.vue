@@ -54,7 +54,6 @@
             &copy;
             {{ new Date().getFullYear() }}
             Made With ❤️‍🔥🧠🍀 By Group 4 - T1.2210.E1
-
             </span>
           </div>
         </footer>
@@ -99,12 +98,13 @@ watch(router.currentRoute,
 .bar-sticky {
   position: sticky;
   top: 0;
+  z-index: 3;
   inset-block-start: 1rem;
 }
 
-.bar-sticky::after {
+/* .bar-sticky::before {
   position: absolute;
-  z-index: -1;
+  z-index: 1;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   background-repeat: repeat;
@@ -115,7 +115,7 @@ watch(router.currentRoute,
   inset-inline-start: 0;
   -webkit-mask: linear-gradient(black, black 18%, transparent 100%);
   mask: linear-gradient(black, black 18%, transparent 100%);
-}
+} */
 .btn-close{
   position: absolute;
   top:5px;

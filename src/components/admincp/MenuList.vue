@@ -61,9 +61,9 @@ const cruds = ref([
       </template>
     </v-list-item>
     <!-- Begin:  Pages -->
-    <v-list-item href="/admincp/page" title="Page">
+    <v-list-item href="/admincp/page" title="Pages">
       <template v-slot:prepend>
-        <v-icon>mdi-image-multiple-outline</v-icon>
+        <v-icon>mdi-book-open-page-variant-outline</v-icon>
       </template>
     </v-list-item>
   </v-list>

@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 const routes = [
 	{
 		path: "/",
 		redirect: to => {
-			return { name: 'dashboard-admin' }
+			return { name: "dashboard-admin" };
 		},
 	},
 	{
@@ -32,6 +33,24 @@ const routes = [
 		path: "slider",
 		name: "admin-slider",
 		component: () => import("../views/slider/SliderList.vue"),
+	},
+
+	{
+		path: "slider",
+		name: "slider-detail",
+		component: () => import("../views/slider/SliderDetailPage.vue"),
+	},
+
+	{
+		path: "page",
+		name: "admin-page",
+		component: () => import("../views/page/PageList.vue"),
+	},
+
+	{
+		path: "page/:name",
+		name: "page-detail",
+		component: () => import("../views/page/PageDetail.vue"),
 	},
 ];
 
