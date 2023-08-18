@@ -25,6 +25,11 @@ const routes = [
 		path: "product/:code",
 		component: () => import("../views/admin/product/ProductDetail.vue"),
 	},
+	{
+		name: "admin-product-create",
+		path: "product/create",
+		component: () => import("../views/admin/product/ProductCreate.vue"),
+	},
 ];
 
 export default routes;

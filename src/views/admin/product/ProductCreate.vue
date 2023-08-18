@@ -26,10 +26,6 @@ const validationMore = ref(
   }
 );
 
-// const variantErrorMessages = computed(() => {
-//   return variants.value.map(item => [item[0].value, item[1].value]);
-// });
-
 const submit = async () => {
   let productRes = {};
   let moreRes = {};
@@ -43,6 +39,9 @@ const submit = async () => {
   };
 
   if (mainForm.value.radio.value) {
+    if (!created.value) {
+      mainForm.value.radio.errorMessages = "Chưa có biến thể được tạo!";
+    }
     productRes = {
       data: {
         valid: false,
@@ -139,14 +138,7 @@ const mainForm = ref({
     groupLabel: "Loại sản phẩm",
     labels: ["Đơn biến thể", "Đa biến thể"],
     value: 0,
-    rules: [
-      value => {
-        if (value && !created.value) {
-          return "Chưa có biến thể được tạo!";
-        }
-        return true;
-      }
-    ],
+    errorMessages: "",
   },
   shortDescription: {
     type: "text",
@@ -231,9 +223,7 @@ const pushVariant = () => {
 const singleVariantTextField = ref(JSON.parse(JSON.stringify(more)));
 const multipleVariantTextField = ref([]);
 const multipleVariant = ref([]);
-// const multipleVariantErrorMessages = computed(() => {
-//   return multipleVariantTextField.value.map(item => Object.fromEntries(Object.entries(item).map(([key, value]) => ([key, value.errorMessages]))));
-// });
+
 const createVariant = () => {
   // const result = cartesianProduct(
   //   ...variants.value.map((obj) => obj.values.value.split("|"))
@@ -242,8 +232,6 @@ const createVariant = () => {
   //     arr.map((val, i) => [variants.value[i].key.value, val])
   //   )
   // );
-
-
   const data = getCombinations(variants.value);
   multipleVariant.value = data;
 
@@ -302,7 +290,7 @@ function getCombinations(nestedArray, list = []) {
 
 const created = ref(false);
 
-// watch validation change
+// watch product validation change
 watch(
   () => ({
     name: validationProduct.value.name,
@@ -324,42 +312,7 @@ watch(
   }
 );
 
-//watch input change
-watch(
-  () => ({
-    name: mainForm.value.name.value,
-    lastName: mainForm.value.lastName.value,
-    image: mainForm.value.image.value,
-    shortDescription: mainForm.value.shortDescription,
-    longDescription: mainForm.value.longDescription,
-  }),
-  (newVal, oldVal) => {
-    Object.entries(newVal).forEach(([key, value]) => {
-      if (oldVal[key] !== value) {
-        validationProduct.value[key] = "";
-      }
-    });
-  },
-  {
-    deep: true,
-  }
-);
-
-//watch variant create input change
-// watch(variantErrorMessages, (newVal, oldVal) => {
-//   if (oldVal.length > 0 && newVal.length === oldVal.length) {
-//     newVal.forEach(([value1, value2], index) => {
-//       if (value1 !== oldVal[index][0]) {
-//         variants.value[index][0].errorMessages = "";
-//       }
-//       if (value2 !== oldVal[index][1]) {
-//         variants.value[index][1].errorMessages = "";
-//       }
-//     });
-//   }
-// });
-
-// watch variant
+// watch variant validation change
 watch(validationMore, newVal => {
   if (!Array.isArray(newVal)) {
     Object.entries(newVal).forEach(([key, value]) => {
@@ -376,40 +329,6 @@ watch(validationMore, newVal => {
     });
   }
 });
-
-// watch(
-//   () => ({
-//     code: singleVariantTextField.value.code.value,
-//     quantity: singleVariantTextField.value.quantity.value,
-//     originPrice: singleVariantTextField.value.originPrice.value,
-//     sellPrice: singleVariantTextField.value.sellPrice.value,
-//     discountPrice: singleVariantTextField.value.discountPrice.value,
-//   }),
-//   (newVal, oldVal) => {
-//     Object.entries(newVal).forEach(([key, value]) => {
-//       if (oldVal[key] !== value) {
-//         singleVariantTextField.value[key].errorMessages = "";
-//       }
-//     });
-//   },
-//   {
-//     deep: true,
-//   }
-// );
-
-// watch(multipleVariantErrorMessages, (newVal, oldVal) => {
-//   if (oldVal.length === newVal.length) {
-//     newVal.forEach((item, index) => {
-//       Object.entries(item).forEach(([key, value]) => {
-//         if (oldVal[index][key] !== value) {
-//           console.log(multipleVariantTextField.value[index]);
-//           multipleVariantTextField.value[index][key].errorMessages = "";
-//         }
-//       });
-//     });
-//   }
-
-// });
 
 </script>
 
@@ -431,6 +350,7 @@ watch(validationMore, newVal => {
               :label="value.label"
               :error-messages="value.errorMessages"
               variant="outlined"
+              @update:model-value="value.errorMessages = ''"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -448,6 +368,7 @@ watch(validationMore, newVal => {
               :prepend-inner-icon="value.icon"
               variant="outlined"
               show-size
+              @update:model-value="value.errorMessages = ''"
             >
               <template
                 v-if="value.multiple"
@@ -487,7 +408,8 @@ watch(validationMore, newVal => {
                 inline
                 :label="value.groupLabel"
                 v-model="value.value"
-                :rules="value.rules"
+                :error-messages="value.errorMessages"
+                @update:model-value="value.errorMessages = ''"
               >
                 <v-radio
                   v-for="(label, index) in value.labels"
@@ -601,9 +523,9 @@ watch(validationMore, newVal => {
                         :label="value.label"
                         v-model="value.value"
                         :error-messages="value.errorMessages"
-                        @update:model-value="value.errorMessages = ''"
                         class="mr-2"
                         variant="outlined"
+                        @update:model-value="value.errorMessages = ''"
                       ></v-text-field>
                     </v-col>
                   </template>

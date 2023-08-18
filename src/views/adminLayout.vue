@@ -1,20 +1,36 @@
 <template>
   <v-app>
     <aside>
-      <v-navigation-drawer v-model="drawer" class="pa-3" elevation="1">
+      <v-navigation-drawer
+        v-model="drawer"
+        class="pa-3"
+        elevation="1"
+      >
         <template #prepend>
           <RouterLink
-              to="/admincp"
-              class="app-logo d-flex align-center gap-x-3 app-title-wrapper"
+            to="/admincp"
+            class="app-logo d-flex align-center gap-x-3 app-title-wrapper"
           >
-            <img id="logoShop" src="/assets/NZShop-Text.svg" alt="logo shop">
+            <img
+              id="logoShop"
+              src="/assets/NZShop-Text.svg"
+              alt="logo shop"
+            >
           </RouterLink>
-          <v-btn density="compact" class="btn-close hidden-lg-and-up" icon="mdi-close" @click.stop="drawer = !drawer"></v-btn>
+          <v-btn
+            density="compact"
+            class="btn-close hidden-lg-and-up"
+            icon="mdi-close"
+            @click.stop="drawer = !drawer"
+          ></v-btn>
         </template>
-        <MenuList/>
+        <MenuList />
         <template #append>
           <div class="pa-2">
-            <v-btn block color="blue-grey-darken-4">
+            <v-btn
+              block
+              color="blue-grey-darken-4"
+            >
               Logout
             </v-btn>
           </div>
@@ -24,36 +40,50 @@
     <v-main style="background-color: #f8f7fa;">
       <v-container class="position-relative">
         <header class="bar-sticky">
-          <v-toolbar rounded class="bg-white m-card">
+          <v-toolbar
+            rounded
+            class="bg-white m-card"
+          >
             <div class="hidden-lg-and-up  ms-3">
-              <v-btn prepend-icon="mdi-apps" variant="tonal" class="font-weight-bold bg-red-darken-1" @click.stop="drawer = !drawer">
+              <v-btn
+                prepend-icon="mdi-apps"
+                variant="tonal"
+                class="font-weight-bold bg-red-darken-1"
+                @click.stop="drawer = !drawer"
+              >
                 Tính năng
               </v-btn>
             </div>
-            <v-toolbar-title class="text-h6 font-weight-bold text-blue-grey-darken-1">{{ childTitle?childTitle:"Trang admin" }}</v-toolbar-title>
+            <v-toolbar-title class="text-h6 font-weight-bold text-blue-grey-darken-1">
+              {{ childTitle ? childTitle : "Trang admin" }}
+            </v-toolbar-title>
             <div class="hidden-md-and-down ms-3">
-              <v-btn prepend-icon="mdi-apps" variant="tonal" class="font-weight-bold bg-red-darken-1">
+              <v-btn
+                prepend-icon="mdi-apps"
+                variant="tonal"
+                class="font-weight-bold bg-red-darken-1"
+              >
                 Tính năng
               </v-btn>
             </div>
             <v-avatar class="ma-2">
               <v-img
-                  src="https://cdn.vuetifyjs.com/images/john.jpg"
-                  alt="John"
+                src="https://cdn.vuetifyjs.com/images/john.jpg"
+                alt="John"
               ></v-img>
             </v-avatar>
           </v-toolbar>
         </header>
         <main>
-          <router-view/>
+          <router-view />
         </main>
         <footer>
           <div class="ms-1 ma-3">
             <!-- 👉 Footer: left content -->
             <span class="d-flex align-center">
-            &copy;
-            {{ new Date().getFullYear() }}
-            Made With ❤️‍🔥🧠🍀 By Group 4 - T1.2210.E1
+              &copy;
+              {{ new Date().getFullYear() }}
+              Made With ❤️‍🔥🧠🍀 By Group 4 - T1.2210.E1
 
             </span>
           </div>
@@ -65,7 +95,7 @@
 
 <script setup>
 import MenuList from "../components/admincp/MenuList.vue";
-import {onMounted, ref, watch} from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const drawer = ref(true);
@@ -75,9 +105,9 @@ const route = useRoute();
 const router = useRouter();
 
 watch(router.currentRoute,
-    () => {
-      childTitle.value = document.title
-    }
+  () => {
+    childTitle.value = document.title;
+  }
 );
 
 // onMounted(() => {
@@ -100,25 +130,12 @@ watch(router.currentRoute,
   position: sticky;
   top: 0;
   inset-block-start: 1rem;
+  z-index: 1;
 }
 
-.bar-sticky:after {
+.btn-close {
   position: absolute;
-  z-index: -1;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  background-repeat: repeat;
-  block-size: calc(64px + 1rem + 0.5rem);
-  content: "";
-  inset-block-start: -1rem;
-  inset-inline-end: 0;
-  inset-inlcleine-start: 0;
-  -webkit-mask: linear-gradient(black, black 18%, transparent 100%);
-  mask: linear-gradient(black, black 18%, transparent 100%);
-}
-.btn-close{
-  position: absolute;
-  top:5px;
+  top: 5px;
   right: 5px;
   z-index: 3;
 
