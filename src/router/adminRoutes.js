@@ -16,7 +16,7 @@ const routes = [
 		name: "admin-user",
 		component: () => import("../views/admin/user/UserList.vue"),
 	},
-
+	// Post router:
 	{
 		path: "post",
 		name: "admin-post",
@@ -24,11 +24,17 @@ const routes = [
 	},
 
 	{
-		path: "post/:title",
-		name: "post-detail",
-		component: () => import("../views/post/PostDetailPage.vue"),
+		path: "post/add",
+		name: "post-add",
+		component: () => import("../views/post/AddNewPost.vue"),
 	},
 
+	{
+		path: "post/edit/:title",
+		name: "post-edit",
+		component: () => import("../views/post/EditPost.vue"),
+	},
+// Slider router:
 	{
 		path: "slider",
 		name: "admin-slider",
@@ -36,11 +42,17 @@ const routes = [
 	},
 
 	{
-		path: "slider",
-		name: "slider-detail",
-		component: () => import("../views/slider/SliderDetailPage.vue"),
+		path: "slider/add",
+		name: "slider-add",
+		component: () => import("../views/slider/AddNewSlider.vue"),
 	},
 
+	{
+		path: "slider/edit/:name",
+		name: "slider-edit",
+		component: () => import("../views/slider/EditSlider.vue"),
+	},
+// Page router:
 	{
 		path: "page",
 		name: "admin-page",
@@ -48,9 +60,15 @@ const routes = [
 	},
 
 	{
-		path: "page/:name",
+		path: "page/add",
+		name: "page-add",
+		component: () => import("../views/page/AddNewPage.vue"),
+	},
+
+	{
+		path: "page/edit/:name",
 		name: "page-detail",
-		component: () => import("../views/page/PageDetail.vue"),
+		component: () => import("../views/page/EditPage.vue"),
 	},
 ];
 

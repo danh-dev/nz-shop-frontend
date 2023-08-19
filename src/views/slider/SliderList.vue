@@ -43,86 +43,6 @@ const sliders = ref([
     date: "15/06/2023",
     status: "Hoạt động"
   },
-  {
-    id: 6,
-    name: "z flip5|fold5",
-    title: "Mở bán giá sốc",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/fold-flip-5-sliding.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 7,
-    name: "xiaomi pad 6",
-    title: "Mở bán giá tốt",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/fold-flip-5-sliding.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 8,
-    name: "oppo renno 10",
-    title: "Dẫn đầu xu hướng",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/fold-flip-5-sliding.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 9,
-    name: "iphone 14 promax",
-    title: "Mở bán từ 30.999 triệu",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/fold-flip-5-sliding.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 10,
-    name: "ipl tour pro 2",
-    title: "Ưu đãi cực khủng",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/fold-flip-5-sliding.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 11,
-    name: "z flip5|fold5",
-    title: "Mở bán giá sốc",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/fold-flip-5-sliding.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 12,
-    name: "xiaomi pad 6",
-    title: "Mở bán giá tốt",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/fold-flip-5-sliding.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 13,
-    name: "oppo renno 10",
-    title: "Dẫn đầu xu hướng",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/fold-flip-5-sliding.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 14,
-    name: "iphone 14 promax",
-    title: "Mở bán từ 30.999 triệu",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/fold-flip-5-sliding.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 15,
-    name: "ipl tour pro 2",
-    title: "Ưu đãi cực khủng",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/fold-flip-5-sliding.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
 ]);
 // Code for pagination
 const page = ref(1);
@@ -143,7 +63,7 @@ const updatePage = (event) => {
   <div v-if="sliders.length > 0">
     <div class="d-flex justify-space-between my-5">
       <h3 class="da">Danh sách Slider</h3>
-      <v-btn color="info" variant="tonal" class="text-none">Thêm mới</v-btn>
+      <v-btn :to="`/admincp/slider/add`" color="info" variant="tonal" class="text-none">Thêm mới</v-btn>
     </div>
     <v-table hover class="text-body-2 m-card my-3">
       <thead>
@@ -187,13 +107,12 @@ const updatePage = (event) => {
           <td>
             <div class="d-flex align-center justify-center">
               <v-btn size="small" variant="tonal" icon="mdi-text-box-edit-outline" color="success" class="text-none"
-                :to="`/admincp/slider/${getSlugByName(item.name)}`">
+                :to="`/admincp/slider/edit/${getSlugByName(item.name)}`">
               </v-btn>
               <v-btn href="#" size="small" variant="tonal" icon="mdi-trash-can-outline" color="red-accent-4"
                 class="text-none" onclick="return confirm('Bạn muốn xóa slider này ?')">
               </v-btn>
-              <v-btn size="small" variant="text" icon="mdi-dots-vertical" color=""
-                class="text-none">
+              <v-btn size="small" variant="text" icon="mdi-dots-vertical" color="" class="text-none">
               </v-btn>
             </div>
           </td>

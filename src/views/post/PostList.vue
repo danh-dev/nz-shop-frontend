@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 import getSlugByName from "../../utils/getSlugByName.js";
 import GlobalPagination from "../../components/globals/globalpagination.vue";
 
-const articles = ref([
+const posts = ref([
   {
     id: 1,
     title: "Cách cài đèn flash khi có cuộc gọi đến cho iPhone 13 giúp bạn không bỏ lỡ bất kỳ cuộc gọi nào",
@@ -129,7 +129,7 @@ const page = ref(1);
 const rowsPerPage = 8;
 
 const numberOfPage = computed(() => {
-  return Math.ceil(articles.value.length / rowsPerPage);
+  return Math.ceil(posts.value.length / rowsPerPage);
 });
 
 const updatePage = (event) => {
@@ -140,10 +140,10 @@ const updatePage = (event) => {
 </script>
 
 <template>
-  <div v-if="articles.length > 0">
+  <div v-if="posts.length > 0">
     <div class="d-flex justify-space-between my-5">
-      <h3 class="da">Danh sách bài viết</h3>
-      <v-btn color="info" variant="tonal" class="text-none">Thêm mới</v-btn>
+      <h3 class="">Danh sách bài viết</h3>
+      <v-btn href="" :to="`/admincp/post/add/`" color="info" variant="tonal" class="text-none">Thêm mới</v-btn>
     </div>
     <v-table hover class="post text-body-2 m-card my-3">
       <thead>
@@ -173,7 +173,7 @@ const updatePage = (event) => {
       </thead>
 
       <tbody>
-        <tr v-for="item in articles.slice((page - 1) * rowsPerPage, page * rowsPerPage)" :key="item.id">
+        <tr v-for="item in posts.slice((page - 1) * rowsPerPage, page * rowsPerPage)" :key="item.id">
           <td class="text-center">{{ item.id }}</td>
           <td> <p class="more">{{ item.title }}</p> </td>
           <td class="text-center">{{ item.author }}</td>
@@ -182,17 +182,11 @@ const updatePage = (event) => {
           <td class="text-center">{{ item.type }}</td>
           <td>
             <div class="d-flex align-center justify-space-between">
-              <!-- <v-btn size="small" variant="tonal" icon="mdi-newspaper-variant-outline"
-                color="info" class="text-none" >
-              </v-btn> -->
               <v-btn size="small" variant="tonal" icon="mdi-text-box-edit-outline" color="success" class="text-none"
-                :to="`/admincp/page/${getSlugByName(item.title)}`">
+                :to="`/admincp/post/edit/${getSlugByName(item.title)}`">
               </v-btn>
               <v-btn size="small" variant="tonal" icon="mdi-trash-can-outline" color="red-accent-4" class="text-none"
                 onclick="return confirm('Bạn muốn xóa bài viết này ?')">
-              </v-btn>
-              <v-btn size="small" variant="text" icon="mdi-dots-vertical" color=""
-                class="text-none">
               </v-btn>
             </div>
 
@@ -200,7 +194,7 @@ const updatePage = (event) => {
         </tr>
       </tbody>
     </v-table>
-    <GlobalPagination v-if="articles.length > rowsPerPage" :page="page" :numberOfPages="numberOfPage"
+    <GlobalPagination v-if="posts.length > rowsPerPage" :page="page" :numberOfPages="numberOfPage"
       @update:page="updatePage" />
   </div>
 

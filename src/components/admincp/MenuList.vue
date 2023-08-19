@@ -49,19 +49,19 @@ const cruds = ref([
     </v-list-group>
 
     <!-- Begin:  Posts -->
-    <v-list-item href="/admincp/post" title="Posts">
+    <v-list-item :to="`/admincp/post`" title="Posts">
       <template v-slot:prepend>
         <v-icon>mdi-newspaper-variant-multiple</v-icon>
       </template>
     </v-list-item>
     <!-- Begin:  Sliders -->
-    <v-list-item href="/admincp/slider" title="Sliders">
+    <v-list-item :to="`/admincp/slider`" title="Sliders">
       <template v-slot:prepend>
         <v-icon>mdi-image-multiple-outline</v-icon>
       </template>
     </v-list-item>
     <!-- Begin:  Pages -->
-    <v-list-item href="/admincp/page" title="Pages">
+    <v-list-item :to="`/admincp/page`" title="Pages">
       <template v-slot:prepend>
         <v-icon>mdi-book-open-page-variant-outline</v-icon>
       </template>

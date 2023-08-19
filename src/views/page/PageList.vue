@@ -66,7 +66,7 @@ const updatePage = (event) => {
   <div v-if="pages.length > 0">
     <div class="d-flex justify-space-between my-5">
       <h3 class="da">Danh sách trang</h3>
-      <v-btn color="info" variant="tonal" class="text-none">Thêm mới</v-btn>
+      <v-btn :to="`/admincp/page/add`" color="info" variant="tonal" class="text-none">Thêm mới</v-btn>
     </div>
     <v-table hover class="post text-body-2 m-card my-3">
       <thead>
@@ -102,7 +102,7 @@ const updatePage = (event) => {
           <td>
             <div class="d-flex align-center justify-space-between">
               <v-btn size="small" variant="tonal" icon="mdi-text-box-edit-outline"
-                color="success" class="text-none" :to="`/admincp/page/${getSlugByName(item.name)}`">
+                color="success" class="text-none" :to="`/admincp/page/edit/${getSlugByName(item.name)}`">
               </v-btn>
               <v-btn size="small" variant="tonal" icon="mdi-trash-can-outline"
                 color="red-accent-4" class="text-none" onclick="return confirm('Bạn muốn xóa bài viết này ?')" >
