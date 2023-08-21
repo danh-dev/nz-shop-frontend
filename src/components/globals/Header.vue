@@ -7,16 +7,16 @@ import { ref } from "vue";
 const cartStore = useCartStore();
 const userStore = userData();
 
-const errors = ref([])
+const errors = ref([]);
 const logout = async () => {
   try {
-    await axios.post('logout', {
+    await axios.post("logout", {
       user_id: userStore.id,
     });
     userStore.logout();
     localStorage.removeItem("accessToken");
   } catch (e) {
-    errors.value = e.response.data.errors
+    errors.value = e.response.data.errors;
   }
 };
 </script>

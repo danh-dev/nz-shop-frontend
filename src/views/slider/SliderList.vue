@@ -1,62 +1,38 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
+import axios from "axios";
+import { useRouter } from "vue-router";
 import getSlugByName from "../../utils/getSlugByName.js";
 import GlobalPagination from "../../components/globals/globalpagination.vue";
-const sliders = ref([
-  {
-    id: 1,
-    name: "z flip5|fold5",
-    title: "Mở bán giá sốc",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/fold-flip-5-sliding.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 2,
-    name: "xiaomi pad 6",
-    title: "Mở bán giá tốt",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/mo-ban-xiaomi-pad-6-slide.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 3,
-    name: "oppo renno 10",
-    title: "Dẫn đầu xu hướng",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/78FD7174-0C85-4E5D-A07D-4BD660CAF818.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 4,
-    name: "remi watch 3 active",
-    title: "Mở bán giá hấp dẫn",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/redmi%20watch%203%20acitve%20sliding.png",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-  {
-    id: 5,
-    name: "ipl tour pro 2",
-    title: "Ưu đãi cực khủng",
-    image: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/pre-tai-nghe-jbl-tour-pro2-slide.jpg",
-    date: "15/06/2023",
-    status: "Hoạt động"
-  },
-]);
-// Code for pagination
+// Slider API
+const url = "http://127.0.0.1:8000/";
+const sliders = ref([]);
+const router = useRouter();
+onMounted(async () => {
+  const response = await axios.get(`${url}api/sliders`);
+  sliders.value = response.data.data;
+});
+
+async function deleteSlider(id) {
+  try {
+    await axios.delete(`http://127.0.0.1:8000/api/sliders/delete/${id}`);
+  } catch (error) {
+    console.log("Error delete post: ", error);
+  }
+}
+function editSlider(name) {
+  router.push(`slider/edit/${name}`);
+}
+
+// pagination
 const page = ref(1);
 const rowsPerPage = 8;
-
 const numberOfPage = computed(() => {
   return Math.ceil(sliders.value.length / rowsPerPage);
 });
-
 const updatePage = (event) => {
   page.value = event;
 };
-// Code for pagination
-
 </script>
 
 <template>
@@ -68,9 +44,9 @@ const updatePage = (event) => {
     <v-table hover class="text-body-2 m-card my-3">
       <thead>
         <tr>
-          <th class="font-weight-bold text-center" style="width: 5%;">
+          <!-- <th class="font-weight-bold text-center" style="width: 5%;">
             ID
-          </th>
+          </th> -->
           <th class="font-weight-bold text-center" style="width: 20%;">
             Tên
           </th>
@@ -94,22 +70,18 @@ const updatePage = (event) => {
 
       <tbody>
         <tr v-for="item in sliders.slice((page - 1) * rowsPerPage, page * rowsPerPage)" :key="item.id">
-          <td class="text-center">
-            <div>{{ item.id }}</div>
-          </td>
-          <td>
-            <div class="more text-uppercase text-center">{{ item.name }}</div>
-          </td>
+          <!-- <td class="text-center"><div>{{ item.id }}</div></td> -->
+          <td><div class="more text-uppercase text-left">{{ item.name }}</div></td>
           <td class="text-center">{{ item.title }}</td>
-          <td class="text-center"> <v-img :src="item.image" width="75" class="rounded-lg" /></td>
-          <td class="text-center">{{ item.date }}</td>
+          <td class="text-center d-flex align-center justify-center"> <img :src="url + item.image" width="80" class="rounded-lg" :alt="item.name" /></td>
+          <td class="text-center">{{ item.created_at }}</td>
           <td class="text-center">{{ item.status }}</td>
           <td>
             <div class="d-flex align-center justify-center">
-              <v-btn size="small" variant="tonal" icon="mdi-text-box-edit-outline" color="success" class="text-none"
+              <v-btn @click="editSlider(getSlugByName(item.name))" size="small" variant="tonal" icon="mdi-text-box-edit-outline" color="success" class="text-none"
                 :to="`/admincp/slider/edit/${getSlugByName(item.name)}`">
               </v-btn>
-              <v-btn href="#" size="small" variant="tonal" icon="mdi-trash-can-outline" color="red-accent-4"
+              <v-btn @click="deleteSlider(item.id)" size="small" variant="tonal" icon="mdi-trash-can-outline" color="red-accent-4"
                 class="text-none" onclick="return confirm('Bạn muốn xóa slider này ?')">
               </v-btn>
               <v-btn size="small" variant="text" icon="mdi-dots-vertical" color="" class="text-none">
@@ -125,7 +97,7 @@ const updatePage = (event) => {
   </div>
 
   <div v-else class="d-flex flex-column justify-center align-center pa-5">
-    <img src="../../../public/updating.png" alt="updating" class="w-25">
+    <!-- <v-text-field color="success" variant="text" class="w-25" loading disabled></v-text-field> -->
     <p>Đang cập nhật mới dữ liệu...</p>
   </div>
 </template>

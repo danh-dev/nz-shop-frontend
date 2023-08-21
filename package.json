@@ -10,6 +10,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^39.0.1",
+    "@ckeditor/ckeditor5-vue": "^5.1.0",
     "@unhead/vue": "^1.2.2",
     "axios": "^1.4.0",
     "pinia": "^2.1.3",

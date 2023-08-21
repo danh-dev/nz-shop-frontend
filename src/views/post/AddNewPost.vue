@@ -1,70 +1,62 @@
-<!-- eslint-disable no-console -->
-<!-- eslint-disable no-dupe-keys -->
-<!-- eslint-disable camelcase -->
-<script>
+<script setup>
+import { ref } from "vue";
 import axios from "axios";
-export default {
-  data: () => ({
-    valid: false,
+import { useRouter } from "vue-router";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+// import { Essentials } from "@ckeditor/ckeditor5-essentials";
+// import { Bold, Italic } from "@ckeditor/ckeditor5-basic-styles";
+// import { Link } from "@ckeditor/ckeditor5-link";
+// import { Paragraph } from "@ckeditor/ckeditor5-paragraph";
+const router = useRouter();
+const newPost = ref({
+  title: "",
+  author: "",
+  image: [],
+  content: "",
+  type: "",
+});
 
-    title: "",
-    author: "",
-    nameRules: [
-      value => {
-        if (value) { return true; }
+const editor = ref(ClassicEditor);
+const editorData = ref("");
+const editorConfig = ref({
+  // plugins: [
+  //   Essentials,
+  //   Bold,
+  //   Italic,
+  //   Link,
+  //   Paragraph
+  // ],
 
-        return "Tiêu đề bài viết bắt buộc nhập.";
-      },
-      value => {
-        if (value?.length <= 10) { return true; }
+  // toolbar: {
+  //   items: [
+  //     "bold",
+  //     "italic",
+  //     "link",
+  //     "undo",
+  //     "redo"
+  //   ],
+  // }
+});
 
-        return "Tác giả bắt buộc nhập.";
-      },
-    ],
-
-    image: null,
-    imageRules: [
-      value => {
-        if (value) { return true; }
-        return "Dung lượng ảnh không vượt quá 2MB.";
-      }
-    ],
-
-    content: "",
-    contentlRules: [
-      value => {
-        if (value) { return true; }
-
-        return "Nội dung bài viết nên nhiều hơn 500 từ.";
-      },
-    ],
-  }),
-
-  dataPost() {
-    return {
-      newPost: {
-        title: "",
-        author: "",
-        image: "",
-        date_created: "",
-        type: "",
-        content: "",
-      }
-    };
-  },
-  methods: {
-    async createPost() {
-      try {
-        const response = await axios
-          .post("http://127.0.0.1:8000/api/products", this.newPost);
-        if (response.data.status === 201) {
-          this.$router.push("/admincp/post");
-        }
-      } catch (error) {
-        console.log("Error add new post: ", error);
-      }
+async function createPost() {
+  const formData = new FormData();
+  Object.entries(newPost.value).forEach(([key, value]) => {
+    if (key === "image") {
+      formData.append(key, value[0]);
     }
-  },
+    else {
+      formData.append(key, value);
+    }
+  });
+  try {
+    const response = await axios.post("http://127.0.0.1:8000/api/posts", formData);
+    if (response.data.status === 201) {
+      router.push("/admincp/post");
+    }
+  } catch (e) {
+    console.log("error", e);
+  }
+
 };
 
 </script>
@@ -72,26 +64,36 @@ export default {
 <style></style>
 
 <template>
-  <v-form v-model="valid">
+  <v-form @submit.prevent="createPost">
     <v-container class="m-card my-3">
       <h2>Chi tiết bài viết mới</h2>
       <v-row>
         <v-col cols="12" md="12">
           <div>
-            <v-text-field v-model="title" :rules="nameRules" :counter="20" label="Tiêu đề bài viết:"
-              required></v-text-field>
-            <v-text-field v-model="author" :rules="nameRules" :counter="20" label="Tác giả:" required></v-text-field>
-            <v-text-field v-model="image" type="file" label="Upload hình ảnh:" required></v-text-field>
-            <v-text-field v-model="date_created" type="date" required></v-text-field>
-            <v-select label="Loại tin tức" :items="['Tin sản phẩm', 'Tin thị trường']"></v-select>
-            <v-textarea v-model="content" :rules="contentlRules" :counter="3000" label="Nội dung bài viết:"
-              required></v-textarea>
+            <v-text-field variant="underlined" v-model="newPost.title" :rules="[v => !!v || 'Tiêu đề bắt buộc nhập.']"
+              :counter="20" label="Tiêu đề bài viết:"></v-text-field>
+
+            <v-text-field variant="underlined" v-model="newPost.author" :rules="[v => !!v || 'Tác giả bắt buộc nhập.']"
+              :counter="20" label="Tác giả:"></v-text-field>
+
+            <v-file-input variant="underlined" :rules="[]" counter multiple show-size
+              prepend-inner-icon="mdi-image-outline" prepend-icon="" v-model="newPost.image"
+              label="Upload hình ảnh:"></v-file-input>
+
+            <v-select variant="underlined" v-model="newPost.type" :rules="[v => !!v || 'Vui lòng lựa chọn.']"
+              label="Loại tin tức" :items="['Tin sản phẩm', 'Tin thị trường']"></v-select>
+
+            <v-textarea variant="underlined" v-model="newPost.content"
+              :rules="[v => !!v || 'Nội dung không quá 5000 ký.']" :counter="5000"
+              label="Nội dung bài viết:"></v-textarea>
 
             <v-btn class="me-2" type="submit" color="info" variant="tonal">Đăng bài</v-btn>
-            <v-btn href="" type="reset" color="text-darken-3" variant="tonal">Hủy bỏ</v-btn>
+            <v-btn :to="`/admincp/post`" type="reset" color="text-darken-3" variant="tonal">Hủy bỏ</v-btn>
           </div>
         </v-col>
       </v-row>
     </v-container>
   </v-form>
+
+  <ckeditor :editor="editor" v-model="editorData" :config="editorConfig"></ckeditor>
 </template>
