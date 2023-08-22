@@ -8,14 +8,25 @@ import GlobalPagination from "../../components/globals/globalpagination.vue";
 const url = "http://127.0.0.1:8000/";
 const posts = ref([]);
 const router = useRouter();
-onMounted(async () => {
-  const response = await axios.get(`${url}api/posts`);
-  posts.value = response.data.data;
+const fetchPost = onMounted(async () => {
+  try {
+    const response = await axios.get(`${url}api/posts`);
+    if (response.data.status === 200) {
+      posts.value = response.data.data.reverse();
+    } else if (response.data.status === 404) {
+      posts.value = [];
+      console.log("Something error");
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
 });
 
 async function deletePost(id) {
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/posts/delete/${id}`);
+    await axios
+      .delete(`http://127.0.0.1:8000/api/posts/delete/${id}`);
+    fetchPost();
   } catch (error) {
     console.log("Error delete post: ", error);
   }
@@ -78,12 +89,13 @@ const updatePage = (event) => {
           <td class="text-center">{{ item.author }}</td>
           <td class="text-center d-flex align-center justify-center"> <img :src="url + item.image" width="80"
               :alt="item.title" class="rounded-lg" /></td>
-          <td class="text-center">{{ item.created_at }}</td>
+          <td class="text-center">{{ item.created_at.slice(0, 10) }}</td>
           <td class="text-center">{{ item.type }}</td>
           <td>
             <div class="d-flex align-center justify-space-between">
-              <v-btn @click="editPost(getSlugByName(item.title))" size="small" variant="tonal" icon="mdi-text-box-edit-outline"
-                color="success" class="text-none" :to="`/admincp/post/edit/${getSlugByName(item.title)}`">
+              <v-btn @click="editPost(getSlugByName(item.title))" size="small" variant="tonal"
+                icon="mdi-text-box-edit-outline" color="success" class="text-none"
+                :to="`/admincp/post/edit/${getSlugByName(item.title)}`">
               </v-btn>
               <v-btn @click="deletePost(item.id)" size="small" variant="tonal" icon="mdi-trash-can-outline"
                 color="red-accent-4" class="text-none" onclick="return confirm('Bạn muốn xóa bài viết này ?')">

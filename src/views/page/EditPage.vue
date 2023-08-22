@@ -1,26 +1,30 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 const url = "http://127.0.0.1:8000/";
 const editPage = ref({
+  id: null,
   name: "",
   author: "",
   content: ""
 });
-// eslint-disable-next-line no-unused-vars
-async function fetchProduct() {
+
+async function fetchPage() {
   try {
-    const response = await axios.get(`${url}api/pages/${this.id}`);
+    const response = await axios
+      .get(`${url}api/pages/${this.id}`);
     if (response.data.status === 200) {
-      this.editPage = response.data.data;
+      editPage.value = response.data.data;
     }
   } catch (error) {
     console.log("Error fetch page: ", error);
   }
-};
+}
+
 async function updatePage() {
   try {
-    const response = await axios.put(`${url}api/pages/edit/${this.id}`);
+    const response = await axios
+      .post(`${url}api/pages/edit/${this.id}`);
     if (response.data.status === 200) {
       this.$router.push("/admincp/page");
     }
@@ -29,33 +33,10 @@ async function updatePage() {
   }
 }
 
-// data: () => ({
-  //   valid: false,
-
-  //   name: "",
-  //   author: "",
-  //   nameRules: [
-  //     value => {
-  //       if (value) { return true; }
-
-  //       return "Tên trang bắt buộc nhập.";
-  //     },
-  //     value => {
-  //       if (value?.length <= 10) { return true; }
-
-  //       return "Tác giả bắt buộc nhập.";
-  //     },
-  //   ],
-
-  //   content: "",
-  //   contentlRules: [
-  //     value => {
-  //       if (value) { return true; }
-
-  //       return "Nội dung trang nên nhiều hơn 500 từ.";
-  //     },
-  //   ],
-  // }),
+onMounted(() => {
+  fetchPage();
+  updatePage();
+});
 </script>
 
 <style></style>
@@ -67,9 +48,15 @@ async function updatePage() {
       <v-row>
         <v-col cols="12" md="12">
           <div>
-            <v-text-field variant="underlined" v-model="editPage.name" :counter="20" label="Tên trang:" required></v-text-field>
-            <v-text-field variant="underlined" v-model="editPage.author" :counter="20" label="Tác giả:" required></v-text-field>
-            <v-textarea variant="underlined" v-model="editPage.content" :counter="3000" label="Nội dung trang:" required></v-textarea>
+            <v-text-field variant="underlined" v-model="editPage.name" :counter="20" label="Tên trang:"
+              required></v-text-field>
+
+            <v-text-field variant="underlined" v-model="editPage.author" :counter="20" label="Tác giả:"
+              required></v-text-field>
+
+            <v-textarea variant="underlined" v-model="editPage.content" :counter="5000" label="Nội dung trang:"
+              required></v-textarea>
+
             <v-btn class="me-2" type="submit" color="info" variant="tonal">Chỉnh sửa</v-btn>
             <v-btn :to="`/admincp/page`" href="" type="reset" color="text-darken-3" variant="tonal">Hủy bỏ</v-btn>
           </div>

@@ -8,14 +8,25 @@ import GlobalPagination from "../../components/globals/globalpagination.vue";
 const url = "http://127.0.0.1:8000/";
 const sliders = ref([]);
 const router = useRouter();
-onMounted(async () => {
-  const response = await axios.get(`${url}api/sliders`);
-  sliders.value = response.data.data;
+const fetchSlider = onMounted(async () => {
+  try {
+    const response = await axios.get(`${url}api/sliders`);
+    if (response.data.status === 200) {
+      sliders.value = response.data.data.reverse();
+    } else if (response.data.status === 404) {
+      sliders.value = [];
+      console.log("Something error");
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
 });
 
 async function deleteSlider(id) {
   try {
-    await axios.delete(`http://127.0.0.1:8000/api/sliders/delete/${id}`);
+    await axios
+      .delete(`http://127.0.0.1:8000/api/sliders/delete/${id}`);
+    fetchSlider();
   } catch (error) {
     console.log("Error delete post: ", error);
   }
@@ -71,18 +82,22 @@ const updatePage = (event) => {
       <tbody>
         <tr v-for="item in sliders.slice((page - 1) * rowsPerPage, page * rowsPerPage)" :key="item.id">
           <!-- <td class="text-center"><div>{{ item.id }}</div></td> -->
-          <td><div class="more text-uppercase text-left">{{ item.name }}</div></td>
+          <td>
+            <div class="more text-uppercase text-left">{{ item.name }}</div>
+          </td>
           <td class="text-center">{{ item.title }}</td>
-          <td class="text-center d-flex align-center justify-center"> <img :src="url + item.image" width="80" class="rounded-lg" :alt="item.name" /></td>
-          <td class="text-center">{{ item.created_at }}</td>
+          <td class="text-center d-flex align-center justify-center"> <img :src="url + item.image" width="80"
+              class="rounded-lg" :alt="item.name" /></td>
+          <td class="text-center">{{ item.created_at.slice(0, 10) }}</td>
           <td class="text-center">{{ item.status }}</td>
           <td>
             <div class="d-flex align-center justify-center">
-              <v-btn @click="editSlider(getSlugByName(item.name))" size="small" variant="tonal" icon="mdi-text-box-edit-outline" color="success" class="text-none"
+              <v-btn @click="editSlider(getSlugByName(item.name))" size="small" variant="tonal"
+                icon="mdi-text-box-edit-outline" color="success" class="text-none"
                 :to="`/admincp/slider/edit/${getSlugByName(item.name)}`">
               </v-btn>
-              <v-btn @click="deleteSlider(item.id)" size="small" variant="tonal" icon="mdi-trash-can-outline" color="red-accent-4"
-                class="text-none" onclick="return confirm('Bạn muốn xóa slider này ?')">
+              <v-btn @click="deleteSlider(item.id)" size="small" variant="tonal" icon="mdi-trash-can-outline"
+                color="red-accent-4" class="text-none" onclick="return confirm('Bạn muốn xóa slider này ?')">
               </v-btn>
               <v-btn size="small" variant="text" icon="mdi-dots-vertical" color="" class="text-none">
               </v-btn>
