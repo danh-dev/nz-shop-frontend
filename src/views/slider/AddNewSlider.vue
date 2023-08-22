@@ -35,26 +35,40 @@ async function createSlider() {
 <template>
   <v-form ref="form" @submit.prevent="createSlider">
     <v-container class="m-card my-3">
-      <h2>Chi tiết Slider mới</h2>
       <v-row>
         <v-col cols="12" md="12">
-          <div>
-            <v-text-field variant="underlined" v-model="newSlider.name" :rules="[v => !!v || 'Tên bắt buộc nhập.']"
-              :counter="20" label="Tên:"></v-text-field>
-
-            <v-text-field variant="underlined" v-model="newSlider.title" :rules="[v => !!v || 'Tiêu đề bắt buộc nhập.']"
-              :counter="20" label="Tiêu đề:"></v-text-field>
-
-            <v-file-input variant="underlined" v-model="newSlider.image" counter multiple show-size
-              :rules="['Dung lượng ảnh tối đa 2 MB']" prepend-inner-icon="mdi-image-outline" prepend-icon=""
-              label="Upload hình ảnh:"></v-file-input>
-
-            <v-select variant="underlined" v-model="newSlider.status" :rules="[v => !!v || 'Vui lòng chọn.']"
-              label="Trạng thái:" :items="['Hoạt động', 'Tạm dừng']"></v-select>
-
-            <v-btn class="me-2" type="submit" color="info" variant="tonal">Đăng bài</v-btn>
-            <v-btn :to="`/admincp/slider`" type="reset" color="text-darken-3" variant="tonal">Hủy bỏ</v-btn>
-          </div>
+          <h2>Chi tiết Slider mới</h2>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="12">
+          <v-text-field variant="underlined" v-model="newSlider.name" :rules="[v => !!v || 'Tên bắt buộc nhập.']"
+            :counter="20" label="Tên:"></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="12">
+          <v-text-field variant="underlined" v-model="newSlider.title" :rules="[v => !!v || 'Tiêu đề bắt buộc nhập.']"
+            :counter="20" label="Tiêu đề:"></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="12">
+          <v-file-input variant="underlined" v-model="newSlider.image" counter multiple show-size
+            :rules="['Dung lượng ảnh tối đa 2 MB']" prepend-inner-icon="mdi-image-outline" prepend-icon=""
+            label="Upload hình ảnh:"></v-file-input>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="12">
+          <v-select variant="underlined" v-model="newSlider.status" :rules="[v => !!v || 'Vui lòng chọn.']"
+            label="Trạng thái:" :items="['Hoạt động', 'Tạm dừng']"></v-select>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="12">
+          <v-btn class="me-2" type="submit" color="info" variant="tonal">Đăng bài</v-btn>
+          <v-btn :to="`/admincp/slider`" type="reset" color="text-darken-3" variant="tonal">Hủy bỏ</v-btn>
         </v-col>
       </v-row>
     </v-container>

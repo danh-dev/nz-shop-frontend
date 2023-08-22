@@ -30,11 +30,11 @@ const routes = [
 	},
 
 	{
-		path: "post/edit/:title",
+		path: "post/edit/:id",
 		name: "post-edit",
 		component: () => import("../views/post/EditPost.vue"),
 	},
-// Slider router:
+	// Slider router:
 	{
 		path: "slider",
 		name: "admin-slider",
@@ -48,11 +48,11 @@ const routes = [
 	},
 
 	{
-		path: "slider/edit/:name",
+		path: "slider/edit/:id",
 		name: "slider-edit",
 		component: () => import("../views/slider/EditSlider.vue"),
 	},
-// Page router:
+	// Page router:
 	{
 		path: "page",
 		name: "admin-page",
@@ -66,7 +66,7 @@ const routes = [
 	},
 
 	{
-		path: "page/edit/:name",
+		path: "page/edit/:id",
 		name: "page-detail",
 		component: () => import("../views/page/EditPage.vue"),
 	},

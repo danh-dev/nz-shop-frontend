@@ -2,13 +2,13 @@
 import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
-import getSlugByName from "../../utils/getSlugByName.js";
+// import getSlugByName from "../../utils/getSlugByName.js";
 import GlobalPagination from "../../components/globals/globalpagination.vue";
 // Post API
 const url = "http://127.0.0.1:8000/";
 const posts = ref([]);
 const router = useRouter();
-const fetchPost = onMounted(async () => {
+const fetchPost = async () => {
   try {
     const response = await axios.get(`${url}api/posts`);
     if (response.data.status === 200) {
@@ -20,7 +20,7 @@ const fetchPost = onMounted(async () => {
   } catch (error) {
     console.log("Error: ", error);
   }
-});
+};
 
 async function deletePost(id) {
   try {
@@ -31,10 +31,11 @@ async function deletePost(id) {
     console.log("Error delete post: ", error);
   }
 }
-function editPost(title) {
-  router.push(`post/edit/${getSlugByName(title)}`);
+function editPost(id) {
+  router.push(`post/edit/${id}`);
 }
 
+onMounted(fetchPost);
 
 // Panigation
 const page = ref(1);
@@ -87,15 +88,14 @@ const updatePage = (event) => {
             <p class="more">{{ item.title }}</p>
           </td>
           <td class="text-center">{{ item.author }}</td>
-          <td class="text-center d-flex align-center justify-center"> <img :src="url + item.image" width="80"
-              :alt="item.title" class="rounded-lg" /></td>
+          <td> <img :src="url + item.image" width="80" :alt="item.title"
+              class="rounded-lg  d-flex align-center justify-center" /></td>
           <td class="text-center">{{ item.created_at.slice(0, 10) }}</td>
           <td class="text-center">{{ item.type }}</td>
           <td>
             <div class="d-flex align-center justify-space-between">
-              <v-btn @click="editPost(getSlugByName(item.title))" size="small" variant="tonal"
-                icon="mdi-text-box-edit-outline" color="success" class="text-none"
-                :to="`/admincp/post/edit/${getSlugByName(item.title)}`">
+              <v-btn @click="editPost(item.id)" size="small" variant="tonal" icon="mdi-text-box-edit-outline"
+                color="success" class="text-none">
               </v-btn>
               <v-btn @click="deletePost(item.id)" size="small" variant="tonal" icon="mdi-trash-can-outline"
                 color="red-accent-4" class="text-none" onclick="return confirm('Bạn muốn xóa bài viết này ?')">
@@ -121,7 +121,7 @@ const updatePage = (event) => {
 .more {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
   overflow: hidden;
 }
 

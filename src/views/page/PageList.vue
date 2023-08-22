@@ -8,7 +8,7 @@ import GlobalPagination from "../../components/globals/globalpagination.vue";
 const url = "http://127.0.0.1:8000/";
 const pages = ref([]);
 const router = useRouter();
-const fetchPage = onMounted(async () => {
+const fetchPage = async () => {
   try {
     const response = await axios.get(`${url}api/pages`);
     if (response.data.status === 200) {
@@ -20,7 +20,7 @@ const fetchPage = onMounted(async () => {
   } catch (error) {
     console.log("Error: ", error);
   }
-});
+};
 
 async function deletePage(id) {
   try {
@@ -35,6 +35,8 @@ function editPage(id) {
   router.push(`page/edit/${id}`);
 }
 
+onMounted(fetchPage);
+
 // Panigation
 const page = ref(1);
 const rowsPerPage = 10;
@@ -44,6 +46,7 @@ const numberOfPage = computed(() => {
 const updatePage = (event) => {
   page.value = event;
 };
+
 
 </script>
 
