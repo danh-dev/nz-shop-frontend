@@ -2,34 +2,31 @@
   <v-sheet class="d-flex justify-center text-body">
     <div class="d-flex align-center my-2 me-4">
       <v-icon size="x-small" color="red-accent-4">mdi-home-circle</v-icon>
-      <a href="/" class=" px-1 link text-dark ">Trang chủ</a>
+      <v-btn :to="`/`" variant="text" class=" px-1 link text-dark ">Trang chủ</v-btn>
     </div>
 
     <div class="d-flex align-center my-2 me-4">
       <v-icon size="x-small" color="red-accent-4">mdi-headphones-box</v-icon>
-      <a href="#" class=" px-1 link text-dark ">Tư vấn </a>
+      <v-btn :to="`/`" variant="text" class=" px-1 link text-dark ">Tư vấn </v-btn>
     </div>
 
     <div class="d-flex align-center my-2 me-4">
       <v-icon size="x-small" color="red-accent-4">mdi-trending-up</v-icon>
-      <a href="/news" class=" px-1 link text-dark ">Thị trường </a>
+      <v-btn variant="text" class=" px-1 link text-dark ">Thị trường </v-btn>
     </div>
 
     <div class="d-flex align-center my-2 me-4">
       <v-icon size="x-small" color="red-accent-4">mdi-newspaper-variant-multiple</v-icon>
-      <a href="/news" class=" px-1 link text-dark ">Sản phẩm </a>
+      <v-btn variant="text" class=" px-1 link text-dark ">Sản phẩm </v-btn>
     </div>
 
     <div class="d-flex align-center my-2 me-4">
       <v-icon size="x-small" color="red-accent-4">mdi-tag-plus</v-icon>
-      <a href="#" class=" px-1 link text-dark ">Khuyến mãi </a>
+      <v-btn :to="`/`" variant="text" class=" px-1 link text-dark ">Khuyến mãi </v-btn>
     </div>
   </v-sheet>
 </template>
 
 <style>
-.link:hover {
-  border-bottom: 1px solid  #c50000;
-}
 
 </style>
