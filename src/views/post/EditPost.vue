@@ -12,17 +12,18 @@ const route = useRoute();
 const posts = ref([]);
 
 const post = ref({
-  name: "",
   title: "",
+  author: "",
   image: "",
-  status: "",
+  content: "",
+  type: "",
 });
 
 const newImage = ref([]);
 
 watch(posts, () => {
   post.value = posts.value.find(item => {
-    return item.id === route.params.id;
+    return item.id === +route.params.id;
   });
 });
 
@@ -30,7 +31,7 @@ const fetchPost = async () => {
   try {
     const response = await axios.get(`${url}api/posts`);
     if (response.data.status === 200) {
-      posts.value = response.data.data.reverse();
+      posts.value = response.data.data;
     } else if (response.data.status === 404) {
       posts.value = [];
       console.log("Something error");
@@ -54,9 +55,9 @@ async function updatePost() {
   formData.append("_method", "PUT");
 
   try {
-    const response = await axios.post(`${url}api/sliders/edit/${post.value.id}`, formData);
+    const response = await axios.post(`${url}api/posts/edit/${post.value.id}`, formData);
     if (response.data.status === 200) {
-      router.push("/admincp/posts");
+      router.push("/admincp/post");
     }
   } catch (e) {
     console.log("error", e);
@@ -78,28 +79,34 @@ onMounted(fetchPost);
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" :counter="20" label="Tiêu đề bài viết:"></v-text-field>
+          <v-text-field variant="underlined" v-model="post.title" :counter="20" label="Tiêu đề bài viết:"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field :counter="20" label="Tác giả:"></v-text-field>
+          <v-text-field variant="underlined" v-model="post.author" :counter="20" label="Tác giả:"></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col class="d-flex">
+          <v-label>Ảnh hiện tại:</v-label>
+          <v-img style="max-width: 200px;" :src="`${url}${post.image}`" class="ms-3 rounded-lg"></v-img>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="12" class="d-flex align-center">
+          <v-file-input v-model="newImage" variant="underlined" prepend-inner-icon="mdi-image-outline" prepend-icon=""
+            label="Upload ảnh mới:"></v-file-input>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-file-input variant="underlined" prepend-inner-icon="mdi-image-outline" prepend-icon=""
-            label="Upload hình ảnh:"></v-file-input>
+          <v-select variant="underlined" v-model="post.type" label="Loại tin tức" :items="['Tin sản phẩm', 'Tin thị trường']"></v-select>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-select variant="underlined" label="Loại tin tức" :items="['Tin sản phẩm', 'Tin thị trường']"></v-select>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12" md="12">
-          <v-textarea variant="underlined" :counter="5000" label="Nội dung bài viết:"></v-textarea>
+          <v-textarea variant="underlined" v-model="post.content" :counter="5000" label="Nội dung bài viết:"></v-textarea>
         </v-col>
       </v-row>
       <v-row>

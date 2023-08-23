@@ -9,15 +9,15 @@ const handleScroll = () => {
 };
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll);
+  window.addEventListener("scroll", handleScroll);
   handleScroll();
 });
 const scrollToTop = () => {
   window.scrollTo({
     top: 0,
-    behavior: 'smooth',
-  })
-}
+    behavior: "smooth",
+  });
+};
 </script>
 
 <template>

@@ -7,7 +7,6 @@ const newSlider = ref({
   name: "",
   title: "",
   image: [],
-  status: "",
 });
 async function createSlider() {
   const formData = new FormData();
@@ -57,12 +56,6 @@ async function createSlider() {
           <v-file-input variant="underlined" v-model="newSlider.image" counter multiple show-size
             :rules="['Dung lượng ảnh tối đa 2 MB']" prepend-inner-icon="mdi-image-outline" prepend-icon=""
             label="Upload hình ảnh:"></v-file-input>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12" md="12">
-          <v-select variant="underlined" v-model="newSlider.status" :rules="[v => !!v || 'Vui lòng chọn.']"
-            label="Trạng thái:" :items="['Hoạt động', 'Tạm dừng']"></v-select>
         </v-col>
       </v-row>
       <v-row>

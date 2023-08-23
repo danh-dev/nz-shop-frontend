@@ -7,15 +7,6 @@ import { useRouter } from "vue-router";
 // import { Bold, Italic } from "@ckeditor/ckeditor5-basic-styles";
 // import { Link } from "@ckeditor/ckeditor5-link";
 // import { Paragraph } from "@ckeditor/ckeditor5-paragraph";
-const router = useRouter();
-const newPost = ref({
-  title: "",
-  author: "",
-  image: [],
-  content: "",
-  type: "",
-});
-
 // const editor = ref(ClassicEditor);
 // const editorData = ref("");
 // const editorConfig = ref({
@@ -37,7 +28,14 @@ const newPost = ref({
 //   //   ],
 //   // }
 // });
-
+const router = useRouter();
+const newPost = ref({
+  title: "",
+  author: "",
+  image: [],
+  content: "",
+  type: "",
+});
 async function createPost() {
   const formData = new FormData();
   Object.entries(newPost.value).forEach(([key, value]) => {
@@ -56,14 +54,13 @@ async function createPost() {
   } catch (e) {
     console.log("error", e);
   }
-
 };
 </script>
 
 <style></style>
 
 <template>
-  <v-form @submit.prevent="createPost">
+  <v-form ref="form" @submit.prevent="createPost">
     <v-container class="m-card my-3">
       <v-row>
         <v-col cols="12" md="12">
@@ -86,8 +83,8 @@ async function createPost() {
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-file-input variant="underlined" v-model="newPost.image" :rules="['Dung lượng ảnh tối đa 2 MB']" counter
-            multiple show-size prepend-inner-icon="mdi-image-outline" prepend-icon="" label="Upload hình ảnh:">
+          <v-file-input variant="underlined" v-model="newPost.image" counter multiple show-size
+            prepend-inner-icon="mdi-image-outline" prepend-icon="" label="Upload hình ảnh:">
           </v-file-input>
         </v-col>
       </v-row>

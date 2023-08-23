@@ -1,21 +1,31 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 // import getSlugByName from "../../utils/getSlugByName.js";
-import GlobalPagination from "../../components/globals/globalpagination.vue";
+import GlobalPagination from "../../components/globals/GlobalPagination.vue";
 // Post API
 const url = "http://127.0.0.1:8000/";
 const posts = ref([]);
 const router = useRouter();
+const filteredPosts = ref([]);
+const selected = ref(null);
+
+watch(selected, () => {
+  if (selected.value) {
+    filteredPosts.value = posts.value.filter(item => item.isDeleted);
+  } else {
+    filteredPosts.value = posts.value.filter(item => !item.isDeleted);
+  }
+});
+
 const fetchPost = async () => {
   try {
     const response = await axios.get(`${url}api/posts`);
     if (response.data.status === 200) {
       posts.value = response.data.data.reverse();
-    } else if (response.data.status === 404) {
-      posts.value = [];
-      console.log("Something error");
+      filteredPosts.value = posts.value;
+      selected.value = 0;
     }
   } catch (error) {
     console.log("Error: ", error);
@@ -39,7 +49,7 @@ onMounted(fetchPost);
 
 // Panigation
 const page = ref(1);
-const rowsPerPage = 8;
+const rowsPerPage = 10;
 const numberOfPage = computed(() => {
   return Math.ceil(posts.value.length / rowsPerPage);
 });
@@ -49,18 +59,18 @@ const updatePage = (event) => {
 </script>
 
 <template>
-  <div v-if="posts.length > 0">
+  <div>
     <div class="d-flex justify-space-between my-5">
       <h3 class="">Danh sách bài viết</h3>
+      <v-select v-model="selected" label="Tình trạng" variant="outlined" :items="[{
+        title: 'Hoạt động', value: 0}, { title: 'Đã xóa', value: 1, }]" density="compact" style="margin: 0 10%;">
+      </v-select>
       <v-btn :to="`/admincp/post/add/`" color="info" variant="tonal" class="text-none">Thêm mới</v-btn>
     </div>
-    <v-table hover class="post text-body-2 m-card my-3">
+    <v-table hover class="post text-body-2 m-card my-3" v-if="posts.length > 0">
       <thead>
         <tr>
-          <!-- <th class="font-weight-bold text-center" style="width: 5%;">
-            ID
-          </th> -->
-          <th class="font-weight-bold text-center" style="width: 30%;">
+          <th class="font-weight-bold text-center" style="width: 20%;">
             Tiêu đề
           </th>
           <th class="font-weight-bold text-center" style="width: 15%">
@@ -75,6 +85,7 @@ const updatePage = (event) => {
           <th class="font-weight-bold text-center" style="width: 15%;">
             Loại tin tức
           </th>
+          <th class="font-weight-bold text-center">Trạng thái</th>
           <th class="font-weight-bold text-center" style="width: 10%">
             Chức năng
           </th>
@@ -82,8 +93,7 @@ const updatePage = (event) => {
       </thead>
 
       <tbody>
-        <tr v-for="item in posts.slice((page - 1) * rowsPerPage, page * rowsPerPage)" :key="item.id">
-          <!-- <td class="text-center">{{ item.id }}</td> -->
+        <tr v-for="item in filteredPosts.slice((page - 1) * rowsPerPage, page * rowsPerPage)" :key="item.id">
           <td>
             <p class="more">{{ item.title }}</p>
           </td>
@@ -92,10 +102,11 @@ const updatePage = (event) => {
               class="rounded-lg  d-flex align-center justify-center" /></td>
           <td class="text-center">{{ item.created_at.slice(0, 10) }}</td>
           <td class="text-center">{{ item.type }}</td>
+          <td class="text-center">{{ item.isDeleted ? 'Đã xóa' : 'Hoạt động' }}</td>
           <td>
             <div class="d-flex align-center justify-space-between">
               <v-btn @click="editPost(item.id)" size="small" variant="tonal" icon="mdi-text-box-edit-outline"
-                color="success" class="text-none">
+                color="success" class="text-none" :to="`/admincp/slider/edit/${item.id}`">
               </v-btn>
               <v-btn @click="deletePost(item.id)" size="small" variant="tonal" icon="mdi-trash-can-outline"
                 color="red-accent-4" class="text-none" onclick="return confirm('Bạn muốn xóa bài viết này ?')">
@@ -109,11 +120,6 @@ const updatePage = (event) => {
     </v-table>
     <GlobalPagination v-if="posts.length > rowsPerPage" :page="page" :numberOfPages="numberOfPage"
       @update:page="updatePage" />
-  </div>
-
-  <div v-else class="d-flex flex-column justify-center align-center pa-5">
-    <!-- <v-text-field color="success" variant="text" class="w-25" loading disabled></v-text-field> -->
-    <p>Đang cập nhật mới dữ liệu...</p>
   </div>
 </template>
 
