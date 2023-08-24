@@ -2,6 +2,7 @@
 import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
+import ContentEditor from "../../components/globals/ContentEditor.vue";
 
 // Post API
 const url = "http://127.0.0.1:8000/";
@@ -107,6 +108,7 @@ onMounted(fetchPost);
       <v-row>
         <v-col cols="12" md="12">
           <v-textarea variant="underlined" v-model="post.content" :counter="5000" label="Nội dung bài viết:"></v-textarea>
+          <ContentEditor variant="underlined" v-model="post.content" :counter="5000" :rules="[v => !!v || 'Nội dung không quá 5000 ký.']"/>
         </v-col>
       </v-row>
       <v-row>

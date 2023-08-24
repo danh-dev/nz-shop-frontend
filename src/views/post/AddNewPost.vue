@@ -2,31 +2,32 @@
 import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import ContentEditor from "../../components/globals/ContentEditor.vue";
 // import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 // import { Essentials } from "@ckeditor/ckeditor5-essentials";
 // import { Bold, Italic } from "@ckeditor/ckeditor5-basic-styles";
 // import { Link } from "@ckeditor/ckeditor5-link";
 // import { Paragraph } from "@ckeditor/ckeditor5-paragraph";
 // const editor = ref(ClassicEditor);
-// const editorData = ref("");
+// const editorData = ref(prop.modelValue || "");
 // const editorConfig = ref({
-//   // plugins: [
-//   //   Essentials,
-//   //   Bold,
-//   //   Italic,
-//   //   Link,
-//   //   Paragraph
-//   // ],
+//   plugins: [
+//     Essentials,
+//     Bold,
+//     Italic,
+//     Link,
+//     Paragraph
+//   ],
 
-//   // toolbar: {
-//   //   items: [
-//   //     "bold",
-//   //     "italic",
-//   //     "link",
-//   //     "undo",
-//   //     "redo"
-//   //   ],
-//   // }
+//   toolbar: {
+//     items: [
+//       "bold",
+//       "italic",
+//       "link",
+//       "undo",
+//       "redo"
+//     ],
+//   }
 // });
 const router = useRouter();
 const newPost = ref({
@@ -96,12 +97,10 @@ async function createPost() {
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <!-- <ckeditor :editor="editor" v-model="newPost.content" :config="editorConfig" style="height: 500px;"
-            :rules="[v => !!v || 'Nội dung không quá 5000 ký.']" :counter="5000" label="Nội dung bài viết:">
-          </ckeditor> -->
-          <v-textarea variant="underlined" v-model="newPost.content" :rules="[v => !!v || 'Nội dung không quá 5000 ký.']"
+          <v-textarea name="editor" variant="underlined" v-model="newPost.content" :rules="[v => !!v || 'Nội dung không quá 5000 ký.']"
             :counter="5000" label="Nội dung bài viết:">
           </v-textarea>
+          <ContentEditor variant="underlined" v-model="newPost.content" :rules="[v => !!v || 'Nội dung không quá 5000 ký.']"/>
         </v-col>
       </v-row>
       <v-row>
