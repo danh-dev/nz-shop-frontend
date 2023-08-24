@@ -1,21 +1,52 @@
-<script setup></script>
+<script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import { useRoute } from "vue-router";
+import getSlugByName from "../utils/getSlugByName";
+
+// Page API
+const url = "http://127.0.0.1:8000/";
+const route = useRoute();
+const pages = ref([]);
+const page = ref({
+  name: "",
+  author: "",
+  content: ""
+});
+
+const fetchPage = async () => {
+  const response = await axios.get(`${url}api/pages`);
+  if (response.data.status === 200) {
+    pages.value = response.data.data;
+    page.value = pages.value.find((page) => {
+      return getSlugByName(page.name) === route.params.name;
+    });
+  }
+};
+
+onMounted(fetchPage);
+</script>
 <style></style>
 
 <template>
-  <v-sheet class="m-card my-3">
-    <h2 class="text-center py-3">Quy định về quản lý dữ liệu tại hệ thống cửa hàng</h2>
-    <v-sheet class="pa-3 text-justify">
-      Để việc tiếp nhận sản phẩm được nhanh và tốt hơn, Quý khách hàng vui lòng lưu ý quy định sau:
-      Gỡ bỏ hoặc Cung cấp mật khẩu màn hình.
-      Thoát tất cả tài khoản bảo mật cá nhân như: Apple iCloud, Samsung Account, MiCloud, Google, .v.v…
-      Vui lòng chủ động tự sao lưu dữ liệu trước khi gửi máy. (Hướng dẫn chi tiết với Android | Hướng dẫn chi tiết với
-      iOS).
-      Khách hàng cần sao lưu dữ liệu khi tiếp nhận, kỹ thuật viên hỗ trợ lưu giữ danh bạ, hình ảnh và video; không sao lưu
-      ứng dụng và dữ liệu trên ứng dụng. Thời gian lưu trữ dữ liệu tại cửa hàng: 20 ngày kể từ ngày tiếp nhận sản phẩm.
-      Chúng tôi hoàn toàn ý thức được tầm quan trọng của dữ liệu của khách hàng và luôn cố gắng hết sức để hỗ trợ - hướng
-      dẫn khách hàng trong việc sao lưu dữ liệu. Tuy nhiên, cửa hàng không chịu trách nhiệm về việc mất bất cứ dữ liệu
-      trong mọi trường hợp.
+  <v-row>
+    <v-col :cols="12">
+      <v-sheet class="border rounded-xl px-4 text-justify mx-10">
+        <v-btn color="danger" variant="flat" class="my-2 text-h6 text-white rounded-xl">Tin tức</v-btn>
+        <h2>{{ page.name }}</h2>
 
-      Kính mong nhận được sự thấu hiểu và hợp tác từ phía khách hàng.
-  </v-sheet>
-</v-sheet></template>
+        <v-sheet class="d-flex align-center my-3">
+          <img src="/assets/unknow.png" class="rounded-circle" style="width: 40px; height: 40px;">
+          <div class="mx-2">
+            <h5>{{ page.author }}</h5>
+            <p class="text-caption">{{ page.created_at }}</p>
+          </div>
+        </v-sheet>
+
+        <v-sheet>
+          <p class="py-2">{{ page.content }}</p>
+        </v-sheet>
+      </v-sheet>
+    </v-col>
+  </v-row>
+</template>

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import ProductPage from "../views/ProductPage.vue";
 import NewsList from "../views/NewsList.vue";
 import NewsPage from "../views/NewsPage.vue";
+import PageList from "../views/PageList.vue";
 import PageDetail from "../views/PageDetail.vue";
 
 const router = createRouter({
@@ -34,12 +35,16 @@ const router = createRouter({
 			component: NewsList,
 		},
 		{
-			path: "/news/:newsName",
+			path: "/news/:title",
 			component: NewsPage,
 		},
 		// page router
 		{
 			path: "/page",
+			component: PageList,
+		},
+		{
+			path: "/page/:name",
 			component: PageDetail,
 		},
 	],

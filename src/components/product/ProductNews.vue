@@ -32,7 +32,7 @@ const { productArticles } = storeToRefs(useNewsStore());
 			</tbody>
 		</v-table><br>
 
-		<v-btn href="/news" color="red-accent-4" class="text-white" append-icon="mdi-chevron-down" location="center">
+		<v-btn :to="`/news`" color="red-accent-4" class="text-white" append-icon="mdi-chevron-down" location="center">
 			Xem tất cả bài viết
 		</v-btn>
 	</v-sheet>

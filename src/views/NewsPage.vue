@@ -1,8 +1,8 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
-// import router from "../router/index.js";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
+// import GlobalLoader from "../components/globals/GlobalLoader.vue";
 import useNewsStore from "../stores/useNewsStore.js";
 import { storeToRefs } from "pinia";
 import getSlugByName from "../utils/getSlugByName.js";
@@ -11,52 +11,34 @@ import NewsSideBar from "../components/news/NewsSideBar.vue";
 const { relatedArticles } = storeToRefs(useNewsStore());
 // Post API
 const url = "http://127.0.0.1:8000/";
-
-// const router = useRouter();
 const route = useRoute();
-const router = useRouter();
-
+// const loading = ref(false);
 const posts = ref([]);
-const error = ref([]);
-
-// const post = ref({
-//   title: "",
-//   author: "",
-//   image: "",
-//   content: "",
-//   type: "",
-// });
-
-// watch(posts, () => {
-//   post.value = posts.value.find(item => {
-//     return item.name === route.params.name;
-//   });
-// });
+const post = ref({
+  title: "",
+  author: "",
+  image: "",
+  content: "",
+  created_at: ""
+});
 
 const fetchPost = async () => {
   try {
     const response = await axios.get(`${url}api/posts`);
+    // loading.value = true;
     if (response.data.status === 200) {
       posts.value = response.data.data;
-    } else if (response.data.status === 404) {
-      posts.value = [];
-      console.log("Something error");
+      post.value = posts.value.find((post) => {
+        return getSlugByName(post.title) === route.params.title;
+      });
     }
-  } catch (e) {
-    error.value.push(e);
+  } catch (error) {
+    console.log("Error: ", error);
+    // loading.value = true;
   }
 };
 
 onMounted(fetchPost);
-
-
-// const { findArticleBySlug } = useNewsStore();
-
-// onBeforeMount(() => {
-//   const newsName = router.currentRoute.value.params.newsName;
-//   post.value = findArticleBySlug(newsName);
-// });
-
 
 </script>
 
@@ -64,39 +46,29 @@ onMounted(fetchPost);
   <v-sheet>
     <v-row class="container-fluid">
       <v-col :cols="12" class="">
-        <NewsSideBar style="margin-bottom: 60px;" />
+        <NewsSideBar />
       </v-col>
     </v-row>
 
     <v-row>
-      <v-col :cols="12" v-for="post of posts" :key="post.id">
+      <v-col :cols="12">
         <div>
-          <v-img src="" class="rounded-lg mb-2 w-100" />
+          <v-img :src="`${url}${post.image}`" width="100%" height="80%" class="rounded-xl mb-2" />
         </div>
         <v-sheet class="border rounded-xl px-4 text-justify mx-10" style="position: relative; top: -80px;">
           <v-btn color="danger" variant="flat" class="my-2 text-h6 text-white rounded-xl">Tin tức</v-btn>
-          <h2 :v-model="post.title"></h2>
+          <h2>{{ post.title }}</h2>
 
           <v-sheet class="d-flex align-center my-3">
             <img src="/assets/unknow.png" class="rounded-circle" style="width: 40px; height: 40px;">
             <div class="mx-2">
-              <h5 :v-model="post.author"></h5>
-              <p class="text-caption" :v-model="post.created_at"></p>
+              <h5>{{ post.author }}</h5>
+              <p class="text-caption">{{ post.created_at.slice(0,10) }}</p>
             </div>
           </v-sheet>
 
           <v-sheet>
-            <p class="py-2" :v-model="post.content"></p>
-          </v-sheet>
-
-          <v-sheet>
-            <h1 class="py-4"></h1>
-            <div>
-              <p></p>
-              <div>
-                <v-img class="rounded my-2" />
-              </div>
-            </div>
+            <p class="py-2">{{ post.content }}</p>
           </v-sheet>
 
           <v-btn color="danger" variant="flat" class="mt-3 text-h6 rounded-xl">Bài viết liên quan</v-btn>
@@ -110,6 +82,7 @@ onMounted(fetchPost);
         </v-sheet>
       </v-col>
     </v-row>
+    <!-- <GlobalLoader :loading="loading" /> -->
   </v-sheet>
 </template>
 
