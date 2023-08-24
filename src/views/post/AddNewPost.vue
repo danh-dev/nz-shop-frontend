@@ -100,7 +100,7 @@ async function createPost() {
           <v-textarea name="editor" variant="underlined" v-model="newPost.content" :rules="[v => !!v || 'Nội dung không quá 5000 ký.']"
             :counter="5000" label="Nội dung bài viết:">
           </v-textarea>
-          <ContentEditor variant="underlined" v-model="newPost.content" :rules="[v => !!v || 'Nội dung không quá 5000 ký.']"/>
+          <ContentEditor v-model="newPost.content"/>
         </v-col>
       </v-row>
       <v-row>

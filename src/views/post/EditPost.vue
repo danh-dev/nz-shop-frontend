@@ -78,39 +78,47 @@ onMounted(fetchPost);
           <h2>Chi tiết bài viết</h2>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" md="12">
           <v-text-field variant="underlined" v-model="post.title" :counter="20" label="Tiêu đề bài viết:"></v-text-field>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" md="12">
           <v-text-field variant="underlined" v-model="post.author" :counter="20" label="Tác giả:"></v-text-field>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col class="d-flex">
           <v-label>Ảnh hiện tại:</v-label>
           <v-img style="max-width: 200px;" :src="`${url}${post.image}`" class="ms-3 rounded-lg"></v-img>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" md="12" class="d-flex align-center">
           <v-file-input v-model="newImage" variant="underlined" prepend-inner-icon="mdi-image-outline" prepend-icon=""
             label="Upload ảnh mới:"></v-file-input>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" md="12">
-          <v-select variant="underlined" v-model="post.type" label="Loại tin tức" :items="['Tin sản phẩm', 'Tin thị trường']"></v-select>
+          <v-select variant="underlined" v-model="post.type" label="Loại tin tức"
+            :items="['Tin sản phẩm', 'Tin thị trường']"></v-select>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" md="12">
           <v-textarea variant="underlined" v-model="post.content" :counter="5000" label="Nội dung bài viết:"></v-textarea>
-          <ContentEditor variant="underlined" v-model="post.content" :counter="5000" :rules="[v => !!v || 'Nội dung không quá 5000 ký.']"/>
+          <ContentEditor v-model="post.content" />
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" md="12">
           <v-btn class="me-2" type="submit" color="info" variant="tonal">Đăng bài</v-btn>

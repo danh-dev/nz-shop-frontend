@@ -2,6 +2,7 @@
 import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
+import ContentEditor from "../../components/globals/ContentEditor.vue";
 
 // Post API
 const url = "http://127.0.0.1:8000/";
@@ -85,9 +86,9 @@ onMounted(fetchPage);
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-textarea variant="underlined" v-model="page.content" :counter="5000"
-              label="Nội dung trang:">
-            </v-textarea>
+          <v-textarea name="editor" variant="underlined" v-model="page.content" :counter="6000" label="Nội dung trang:">
+          </v-textarea>
+          <ContentEditor v-model="page.content" />
         </v-col>
       </v-row>
       <v-row>

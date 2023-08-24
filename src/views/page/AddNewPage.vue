@@ -1,7 +1,8 @@
-v-textarea<script setup>
+<script setup>
 import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import ContentEditor from "../../components/globals/ContentEditor.vue";
 
 const router = useRouter();
 const newPage = ref({
@@ -57,9 +58,10 @@ async function createPage() {
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-textarea variant="underlined" v-model="newPage.content"
-            :rules="[v => !!v || 'Nội dung không quá 5000 ký tự.']" :counter="5000" label="Nội dung trang:" required>
+          <v-textarea name="editor" variant="underlined" v-model="newPage.content"
+            :rules="[v => !!v || 'Nội dung không quá 5000 ký tự.']" :counter="6000" label="Nội dung trang:" required>
           </v-textarea>
+          <ContentEditor v-model="newPage.content"/>
         </v-col>
       </v-row>
       <v-row>
