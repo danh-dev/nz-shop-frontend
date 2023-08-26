@@ -1,182 +1,157 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 
+const url = "http://127.0.0.1:8000/";
 const loading = ref(false);
+
+const categories = ref([]);
 
 const requiredMessage = "Không được để trống!";
 
-const validationProduct = ref({
-  valid: true,
-  name: "",
-  lastName: "",
-  image: "",
-  gallery: "",
-  shortDescription: "",
-  longDescription: "",
-});
-
-const validationMore = ref(
-  {
-    code: "",
-    originPrice: "",
-    sellPrice: "",
-    discountPrice: "",
-    quantity: "",
-  }
-);
-
 const submit = async () => {
-  let productRes = {};
-  let moreRes = {};
-  const product = {
-    name: mainForm.value.name.value,
-    lastName: mainForm.value.lastName.value,
-    image: mainForm.value.image.value,
-    gallery: mainForm.value.gallery.value,
-    shortDescription: mainForm.value.shortDescription.value,
-    longDescription: mainForm.value.longDescription.value,
-  };
+  const formData = new FormData();
+
+  if (mainForm.value.category.value) {
+    formData.append("categoryId", mainForm.value.category.value);
+  }
+  formData.append("name", mainForm.value.name.value);
+  if (mainForm.value.image.value.length > 0) {
+    formData.append("image", mainForm.value.image.value[0]);
+  }
+  if (mainForm.value.gallery.value.length > 0) {
+    for (const item of mainForm.value.gallery.value) {
+      formData.append("gallery[]", item);
+    }
+  }
+  formData.append("shortDescription", mainForm.value.shortDescription.value);
+  formData.append("longDescription", mainForm.value.longDescription.value);
+
+  const more = [];
 
   if (mainForm.value.radio.value) {
-    if (!created.value) {
+    if (created.value) {
+      multipleVariant.value.forEach((item, index) => {
+        const singleValue = {
+          sku: multipleVariantTextField.value[index].sku.value,
+          quantity: multipleVariantTextField.value[index].quantity.value,
+          "origin_price": multipleVariantTextField.value[index].originPrice.value,
+          "sell_price": multipleVariantTextField.value[index].sellPrice.value,
+          "discount_price": multipleVariantTextField.value[index].discountPrice.value || undefined,
+        };
+        singleValue.value = Object.entries(item).reduce((pre, [key, value], index, self) => {
+          if (index !== self.length - 1) {
+            return pre += `${key}-${value}|`;
+          }
+          return pre += `${key}-${value}`;
+        }, "");
+        more.push(singleValue);
+      });
+      formData.append("type", 1);
+    }
+    else {
       mainForm.value.radio.errorMessages = "Chưa có biến thể được tạo!";
     }
-    productRes = {
-      data: {
-        valid: false,
-        name: "a",
-        lastName: "",
-        image: "",
-        gallery: "",
-        shortDescription: "Không được để trống!",
-        longDescription: "",
-      }
-    };
-    moreRes = {
-      data: [
-        {
-          code: "123",
-          originPrice: "",
-          sellPrice: "",
-          discountPrice: "a",
-          quantity: "",
-        },
-        {
-          code: "123",
-          originPrice: "",
-          sellPrice: "",
-          discountPrice: "a",
-          quantity: "",
-        },
-      ]
-    };
-
   }
   else {
-    productRes = {
-      data: {
-        valid: false,
-        name: "a",
-        lastName: "",
-        image: "",
-        gallery: "",
-        shortDescription: "Không được để trống!",
-        longDescription: "",
-      }
+    const singleValue = {
+      sku: singleVariantTextField.value.sku.value,
+      quantity: singleVariantTextField.value.quantity.value,
+      "origin_price": singleVariantTextField.value.originPrice.value,
+      "sell_price": singleVariantTextField.value.sellPrice.value,
+      "discount_price": singleVariantTextField.value.discountPrice.value,
     };
-    moreRes = {
-      data: {
-        code: "",
-        originPrice: "a",
-        sellPrice: "",
-        discountPrice: "",
-        quantity: "",
-      }
-    };
+    more.push(singleValue);
+    formData.append("type", 0);
   }
+  formData.append("more", JSON.stringify(more));
 
-  validationProduct.value = productRes.data;
-  validationMore.value = moreRes.data;
+  if (more.length > 0) {
+    try {
+      loading.value = true;
+      const res = await axios.post(`${url}api/products`, formData);
+      loading.value = false;
+      if (res.status === 201) {
+        // status.value = true;
+      }
+    }
+    catch ({ response: { status, data } }) {
+      loading.value = false;
+      if (status === 400) {
+        if (data.message === "Failed in product creation!") {
+          for (const [key, value] of Object.entries(data.errors)) {
+            mainForm.value[key].errorMessages = value;
+          }
+        }
+        else if (mainForm.value.radio.value) {
+          for (const index in data.errors) {
+            for (const [key, value] of Object.entries(data.errors[index])) {
+              multipleVariantTextField.value[index][key].errorMessages = value;
+            }
+          }
+        }
+        else {
+          for (const [key, value] of Object.entries(data.errors[0])) {
+            singleVariantTextField.value[key].errorMessages = value;
+          }
+        }
+      }
+      else {
+        // push
+        console.log(data);
+      }
+    }
+  }
 };
 
 const mainForm = ref({
-  name: {
-    type: "text",
-    label: "Tên sản phẩm",
-    value: "",
-    errorMessages: "",
+  category: {
+    value: null,
   },
-  lastName: {
-    type: "text",
-    label: "Last name",
+  name: {
     value: "",
     errorMessages: "",
   },
   image: {
-    type: "file",
-    label: "Image",
     value: [],
-    chips: false,
-    multiple: false,
-    counter: false,
-    icon: "mdi-image-outline",
     errorMessages: "",
   },
   gallery: {
-    type: "file",
-    label: "Gallery",
     value: [],
-    chips: true,
-    multiple: true,
-    counter: true,
-    icon: "mdi-image-multiple-outline",
-    errorMessages: "",
-  },
-  radio: {
-    type: "radio",
-    groupLabel: "Loại sản phẩm",
-    labels: ["Đơn biến thể", "Đa biến thể"],
-    value: 0,
     errorMessages: "",
   },
   shortDescription: {
-    type: "text",
-    label: "Mô tả ngắn",
     value: "",
     errorMessages: "",
   },
   longDescription: {
-    type: "text",
-    label: "Mô tả chi tiết",
     value: "",
     errorMessages: "",
-  }
+  },
+  radio: {
+    value: 0,
+    errorMessages: "",
+  },
 });
 
 const more = {
-  code: {
-    label: "Mã sản phẩm",
+  sku: {
     value: "",
     errorMessages: "",
   },
   quantity: {
-    label: "Số lượng",
     value: "",
     errorMessages: "",
   },
   originPrice: {
-    label: "Giá gốc",
     value: "",
     errorMessages: "",
   },
   sellPrice: {
-    label: "Giá bán",
     value: "",
     errorMessages: "",
   },
   discountPrice: {
-    label: "Giá khuyến mãi",
     value: "",
     errorMessages: "",
   },
@@ -248,6 +223,7 @@ function cartesianProduct(...arrays) {
     [[]]
   );
 }
+
 function getCombinations(nestedArray, list = []) {
   // initialize an empty array to store the final result
   let result = [];
@@ -290,43 +266,15 @@ function getCombinations(nestedArray, list = []) {
 
 const created = ref(false);
 
-// watch product validation change
-watch(
-  () => ({
-    name: validationProduct.value.name,
-    lastName: validationProduct.value.lastName,
-    image: validationProduct.value.image,
-    gallery: validationProduct.value.gallery,
-    shortDescription: validationProduct.value.shortDescription,
-    longDescription: validationProduct.value.longDescription,
-  }),
-  (newVal, oldVal) => {
-    Object.entries(newVal).forEach(([key, value]) => {
-      if (oldVal[key] !== value) {
-        mainForm.value[key].errorMessages = value;
-      }
-    });
-  },
-  {
-    deep: true,
+onMounted(async () => {
+  try {
+    const res = await axios.get(`${url}api/categories`);
+    if (res.status === 200) {
+      categories.value = res.data.data;
+    }
   }
-);
-
-// watch variant validation change
-watch(validationMore, newVal => {
-  if (!Array.isArray(newVal)) {
-    Object.entries(newVal).forEach(([key, value]) => {
-      singleVariantTextField.value[key].errorMessages = value;
-    });
-  }
-  else {
-    newVal.forEach((item, index) => {
-      Object.entries(item).forEach(([key, value]) => {
-        if (multipleVariantTextField.value.length > 0) {
-          multipleVariantTextField.value[index][key].errorMessages = value;
-        }
-      });
-    });
+  catch (e) {
+    console.log(e);
   }
 });
 
@@ -338,250 +286,338 @@ watch(validationMore, newVal => {
       validate-on="submit lazy"
       @submit.prevent="submit"
     >
-      <h1>Hello</h1>
-      <template
-        v-for="([key, value]) in Object.entries(mainForm)"
-        :key="key"
-      >
-        <v-row v-if="value.type === 'text'">
-          <v-col cols="12">
-            <v-text-field
-              v-model="value.value"
-              :label="value.label"
-              :error-messages="value.errorMessages"
-              variant="outlined"
-              @update:model-value="value.errorMessages = ''"
-            ></v-text-field>
-          </v-col>
-        </v-row>
+      <v-row>
+        <v-col cols="12">
+          <h1>Sản phẩm mới</h1>
+        </v-col>
+      </v-row>
 
-        <v-row v-if="value.type === 'file'">
-          <v-col cols="12">
-            <v-file-input
-              v-model="value.value"
-              :label="value.label"
-              :chips="value.chips"
-              :multiple="value.multiple"
-              :counter="value.counter"
-              :error-messages="value.errorMessages"
-              prepend-icon=""
-              :prepend-inner-icon="value.icon"
-              variant="outlined"
-              show-size
-              @update:model-value="value.errorMessages = ''"
-            >
+      <v-row>
+        <v-col cols="12">
+          <v-autocomplete
+            placeholder="Nhập để tìm kiếm"
+            v-model="mainForm.category.value"
+            :items="categories"
+            item-title="name"
+            item-value="id"
+            label="Danh mục"
+            variant="outlined"
+            prepend-inner-icon="mdi-list-box-outline"
+            hide-no-data
+            hint="Không bắt buộc"
+            persistent-hint
+            clearable
+          ></v-autocomplete>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12">
+          <v-text-field
+            v-model="mainForm.name.value"
+            label="Tên sản phẩm"
+            :error-messages="mainForm.name.errorMessages"
+            variant="outlined"
+            @update:model-value="mainForm.name.errorMessages = ''"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12">
+          <v-file-input
+            v-model="mainForm.image.value"
+            label="Hình ảnh chính"
+            :error-messages="mainForm.image.errorMessages"
+            prepend-icon=""
+            prepend-inner-icon="mdi-image-outline"
+            variant="outlined"
+            show-size
+            @update:model-value="mainForm.image.errorMessages = ''"
+          >
+
+          </v-file-input>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12">
+          <v-file-input
+            v-model="mainForm.gallery.value"
+            label="Hình ảnh trưng bày"
+            :error-messages="mainForm.gallery.errorMessages"
+            prepend-icon=""
+            prepend-inner-icon="mdi-image-multiple-outline"
+            variant="outlined"
+            show-size
+            chips
+            multiple
+            counter
+            @update:model-value="mainForm.gallery.errorMessages = ''"
+          >
+            <template v-slot:selection="{ fileNames }">
               <template
-                v-if="value.multiple"
-                v-slot:selection="{ fileNames }"
+                v-for="(fileName, index) in fileNames"
+                :key="fileName"
               >
-
-                <template
-                  v-for="(fileName, index) in fileNames"
-                  :key="fileName"
+                <v-chip
+                  v-if="index < 3"
+                  color="primary"
+                  label
+                  size="small"
+                  class="me-2"
                 >
-                  <v-chip
-                    v-if="index < 3"
-                    color="primary"
-                    label
-                    size="small"
-                    class="me-2"
-                  >
-                    {{ fileName }}
-                  </v-chip>
+                  {{ fileName }}
+                </v-chip>
 
-                  <span
-                    v-else-if="index === 3"
-                    class="text-overline text-grey-darken-3 mx-2"
-                  >
-                    +{{ value.value.length - 3 }} File(s)
-                  </span>
-                </template>
+                <span
+                  v-else-if="index === 3"
+                  class="text-overline text-grey-darken-3 mx-2"
+                >
+                  +{{ mainForm.gallery.value.length - 3 }} File(s)
+                </span>
               </template>
-            </v-file-input>
-          </v-col>
-        </v-row>
+            </template>
+          </v-file-input>
+        </v-col>
+      </v-row>
 
-        <template v-if="value.type === 'radio'">
+      <v-row>
+        <v-col cols="12">
+          <v-text-field
+            v-model="mainForm.shortDescription.value"
+            label="Mô tả ngắn"
+            :error-messages="mainForm.shortDescription.errorMessages"
+            variant="outlined"
+            @update:model-value="mainForm.shortDescription.errorMessages = ''"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12">
+          <v-text-field
+            v-model="mainForm.longDescription.value"
+            label="Mô tả chi tiết"
+            :error-messages="mainForm.longDescription.errorMessages"
+            variant="outlined"
+            @update:model-value="mainForm.longDescription.errorMessages = ''"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12">
+          <v-radio-group
+            inline
+            label="Loại sản phẩm"
+            v-model="mainForm.radio.value"
+            :error-messages="mainForm.radio.errorMessages"
+            @update:model-value="mainForm.radio.errorMessages = ''"
+          >
+            <v-radio
+              label="Đơn biến thể"
+              :value="0"
+            ></v-radio>
+            <v-radio
+              label="Đa biến thể"
+              :value="1"
+            ></v-radio>
+          </v-radio-group>
+        </v-col>
+      </v-row>
+      <template v-if="mainForm.radio.value">
+        <template v-if="!created">
           <v-row>
             <v-col cols="12">
-              <v-radio-group
-                inline
-                :label="value.groupLabel"
-                v-model="value.value"
-                :error-messages="value.errorMessages"
-                @update:model-value="value.errorMessages = ''"
-              >
-                <v-radio
-                  v-for="(label, index) in value.labels"
-                  :label="label"
-                  :value="index"
-                  :key="index"
-                ></v-radio>
-              </v-radio-group>
+              <v-btn @click="pushVariant">Thêm</v-btn>
             </v-col>
           </v-row>
-          <template v-if="value.value">
-            <template v-if="!created">
-              <v-row>
-                <v-col cols="12">
-                  <v-btn @click="pushVariant">Thêm</v-btn>
-                </v-col>
-              </v-row>
-              <v-row
-                v-for="(variant, index) in   variants  "
-                :key="index"
+          <v-row
+            v-for="(variant, index) in variants"
+            :key="index"
+          >
+            <v-col cols="3">
+              <v-text-field
+                :label="variant[0].label"
+                v-model="variant[0].value"
+                :error-messages="variant[0].errorMessages"
+                variant="outlined"
+                @update:model-value="variant[0].errorMessages = ''"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="9">
+              <v-text-field
+                :label="variant[1].label"
+                v-model="variant[1].value"
+                :placeholder="variant[1].placeholder"
+                :error-messages="variant[1].errorMessages"
+                append-icon="mdi-close"
+                variant="outlined"
+                @click:append="variants = variants.filter(item => item !== variant)"
+                @update:model-value="variant[1].errorMessages = ''"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
+              <v-btn
+                v-if="variants.length > 0"
+                @click="createVariant"
               >
-                <v-col cols="3">
-                  <v-text-field
-                    :label="variant[0].label"
-                    v-model="variant[0].value"
-                    :error-messages="variant[0].errorMessages"
-                    variant="outlined"
-                    @update:model-value="variant[0].errorMessages = ''"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="9">
-                  <v-text-field
-                    :label="variant[1].label"
-                    v-model="variant[1].value"
-                    :placeholder="variant[1].placeholder"
-                    :error-messages="variant[1].errorMessages"
-                    append-icon="mdi-close"
-                    variant="outlined"
-                    @click:append="variants = variants.filter(item => item !== variant)"
-                    @update:model-value="variant[1].errorMessages = ''"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="12">
-                  <v-btn
-                    v-if="variants.length > 0"
-                    @click="createVariant"
-                  >
-                    Tạo các biến thể
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </template>
-            <v-row v-else>
-              <v-col
-                class="d-flex align-center"
-                cols="12"
-              >
-                <div>{{ variants.length }} biến thể đã được tạo</div>
-                <v-btn @click="created = false">
-                  Sửa
-                </v-btn>
+                Tạo các biến thể
+              </v-btn>
+            </v-col>
+          </v-row>
+        </template>
+        <v-row v-else>
+          <v-col
+            class="d-flex align-center"
+            cols="12"
+          >
+            <div>{{ variants.length }} biến thể đã được tạo</div>
+            <v-btn @click="created = false">
+              Sửa
+            </v-btn>
+          </v-col>
+        </v-row>
+        <template v-if="multipleVariant && created">
+          <template
+            v-for="(variantProduct, index) in multipleVariant"
+            :key="index"
+          >
+            <v-row>
+              <v-col cols="12">
+                <v-chip
+                  v-for="(entry, index) in Object.entries(variantProduct)"
+                  :key="index"
+                >
+                  {{ entry[0] }}: {{ entry[1] }}
+                </v-chip>
               </v-col>
             </v-row>
-            <template v-if="multipleVariant && created">
-              <template
-                v-for="(variantProduct, index) in multipleVariant  "
-                :key="index"
-              >
-                <v-row>
-                  <v-col cols="12">
-                    <v-chip
-                      v-for="(entry, index) in Object.entries(variantProduct)"
-                      :key="index"
-                    >
-                      {{ entry[0] }}: {{ entry[1] }}
-                    </v-chip>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <template
-                    v-for="([key, value], textFieldIndex) in Object.entries(multipleVariantTextField[index])"
-                    :key="key"
-                  >
-                    <v-col
-                      v-if="textFieldIndex < 2"
-                      cols="6"
-                    >
-                      <v-text-field
-                        :label="value.label"
-                        v-model="value.value"
-                        :error-messages="value.errorMessages"
-                        class="mr-2"
-                        variant="outlined"
-                        @update:model-value="value.errorMessages = ''"
-                      ></v-text-field>
-                    </v-col>
-                  </template>
-                </v-row>
-                <v-row>
-                  <template
-                    v-for="([key, value], textFieldIndex) in Object.entries(multipleVariantTextField[index])"
-                    :key="key"
-                  >
-                    <v-col
-                      v-if="textFieldIndex >= 2"
-                      cols="4"
-                    >
-                      <v-text-field
-                        :label="value.label"
-                        v-model="value.value"
-                        :error-messages="value.errorMessages"
-                        class="mr-2"
-                        variant="outlined"
-                        @update:model-value="value.errorMessages = ''"
-                      ></v-text-field>
-                    </v-col>
-                  </template>
-                </v-row>
-              </template>
-            </template>
-          </template>
-          <template v-else>
             <v-row>
-              <template
-                v-for="([key, value], index) in Object.entries(singleVariantTextField)"
-                :key="key"
-              >
-                <v-col
-                  v-if="index < 2"
-                  cols="6"
-                >
-                  <v-text-field
-                    :label="value.label"
-                    v-model="value.value"
-                    :error-messages="value.errorMessages"
-                    class="mr-2"
-                    variant="outlined"
-                    @update:model-value="value.errorMessages = ''"
-                  ></v-text-field>
-                </v-col>
-              </template>
+              <v-col cols="6">
+                <v-text-field
+                  label="Mã sản phẩm"
+                  v-model="multipleVariantTextField[index].sku.value"
+                  :error-messages="multipleVariantTextField[index].sku.errorMessages"
+                  class="mr-2"
+                  variant="outlined"
+                  @update:model-value="multipleVariantTextField[index].sku.errorMessages = ''"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
+                  label="Số lượng"
+                  v-model="multipleVariantTextField[index].quantity.value"
+                  :error-messages="multipleVariantTextField[index].quantity.errorMessages"
+                  class="mr-2"
+                  variant="outlined"
+                  @update:model-value="multipleVariantTextField[index].quantity.errorMessages = ''"
+                ></v-text-field>
+              </v-col>
             </v-row>
             <v-row>
-              <template
-                v-for="([key, value], index) in Object.entries(singleVariantTextField)"
-                :key="key"
-              >
-                <v-col
-                  v-if="index >= 2"
-                  cols="4"
-                >
-                  <v-text-field
-                    :label="value.label"
-                    v-model="value.value"
-                    :error-messages="value.errorMessages"
-                    class="mr-2"
-                    variant="outlined"
-                    @update:model-value="value.errorMessages = ''"
-                  ></v-text-field>
-                </v-col>
-              </template>
-
+              <v-col cols="4">
+                <v-text-field
+                  label="Giá gốc"
+                  v-model="multipleVariantTextField[index].originPrice.value"
+                  :error-messages="multipleVariantTextField[index].originPrice.errorMessages"
+                  class="mr-2"
+                  variant="outlined"
+                  @update:model-value="multipleVariantTextField[index].originPrice.errorMessages = ''"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  label="Giá bán"
+                  v-model="multipleVariantTextField[index].sellPrice.value"
+                  :error-messages="multipleVariantTextField[index].sellPrice.errorMessages"
+                  class="mr-2"
+                  variant="outlined"
+                  @update:model-value="multipleVariantTextField[index].sellPrice.errorMessages = ''"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field
+                  label="Giá khuyến mãi"
+                  v-model="multipleVariantTextField[index].discountPrice.value"
+                  :error-messages="multipleVariantTextField[index].discountPrice.errorMessages"
+                  class="mr-2"
+                  variant="outlined"
+                  @update:model-value="multipleVariantTextField[index].discountPrice.errorMessages = ''"
+                  hint="Không bắt buộc"
+                ></v-text-field>
+              </v-col>
             </v-row>
           </template>
         </template>
       </template>
+      <template v-else>
+        <v-row>
+          <v-col cols="6">
+            <v-text-field
+              label="Mã sản phẩm"
+              v-model="singleVariantTextField.sku.value"
+              :error-messages="singleVariantTextField.sku.errorMessages"
+              class="mr-2"
+              variant="outlined"
+              @update:model-value="singleVariantTextField.sku.errorMessages = ''"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              label="Số lượng"
+              v-model="singleVariantTextField.quantity.value"
+              :error-messages="singleVariantTextField.quantity.errorMessages"
+              class="mr-2"
+              variant="outlined"
+              @update:model-value="singleVariantTextField.quantity.errorMessages = ''"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="4">
+            <v-text-field
+              label="Giá gốc"
+              v-model="singleVariantTextField.originPrice.value"
+              :error-messages="singleVariantTextField.originPrice.errorMessages"
+              class="mr-2"
+              variant="outlined"
+              persistent-hint
+              @update:model-value="singleVariantTextField.originPrice.errorMessages = ''"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="4">
+            <v-text-field
+              label="Giá bán"
+              v-model="singleVariantTextField.sellPrice.value"
+              :error-messages="singleVariantTextField.sellPrice.errorMessages"
+              class="mr-2"
+              variant="outlined"
+              persistent-hint
+              @update:model-value="singleVariantTextField.sellPrice.errorMessages = ''"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="4">
+            <v-text-field
+              label="Giá khuyến mãi"
+              v-model="singleVariantTextField.discountPrice.value"
+              :error-messages="singleVariantTextField.discountPrice.errorMessages"
+              class="mr-2"
+              variant="outlined"
+              persistent-hint
+              @update:model-value="singleVariantTextField.discountPrice.errorMessages = ''"
+              hint="Không bắt buộc"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </template>
+
       <v-row>
         <v-col cols="12">
           <v-btn
-            :loading="loading"
             type="submit"
             class="mt-2"
           >
@@ -589,8 +625,8 @@ watch(validationMore, newVal => {
           </v-btn>
         </v-col>
       </v-row>
-
     </v-form>
+
   </v-container>
 </template>
 

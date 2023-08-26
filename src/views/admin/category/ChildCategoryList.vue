@@ -1,15 +1,24 @@
 <script setup>
+import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted, watch, computed } from "vue";
 import axios from "axios";
 import { mapKeys, camelCase, lowerFirst } from "lodash";
 import GlobalPagination from "../../../components/globals/GlobalPagination.vue";
 import GlobalLoader from "../../../components/globals/GlobalLoader.vue";
 
+const route = useRoute();
+const router = useRouter();
 const url = "http://127.0.0.1:8000/";
-const loading = ref(false);
+
 const status = ref(null);
 
+const loading = ref(false);
+
 const alert = ref([
+  {
+    text: "",
+    show: false,
+  },
   {
     text: "",
     show: false,
@@ -33,93 +42,40 @@ const filter = ref([
   }
 ]);
 
-const products = ref([]);
-const filteredProducts = ref([]);
-const sortedProducts = ref([]);
 const categories = ref([]);
-const categoryId = ref(null);
+const newCategories = ref([]);
+const filteredCategories = ref([]);
+
 const page = ref(1);
-const sort = ref({
-  column: "",
-  ascending: 0,
-});
-const selected = ref(0);
 const rowsPerPage = 5;
 
 const numberOfPages = computed(() => {
-  return Math.ceil(products.value.length / rowsPerPage);
+  return Math.ceil(filteredCategories.value.length / rowsPerPage);
 });
 
-const sortIcon = computed(() => {
-  return sort.value.ascending === 0 ? "" : sort.value.ascending < 0 ? "mdi-chevron-down" : "mdi-chevron-up";
+watch(status, () => {
+  if (status.value) {
+    filteredCategories.value = newCategories.value.filter(item => item.isDeleted);
+  }
+  else {
+    filteredCategories.value = newCategories.value.filter(item => !item.isDeleted);
+  }
 });
-
 
 const updatePage = event => {
   page.value = event;
 };
 
-watch(selected, () => {
-  filteredProducts.value = products.value.filter(item => item.categoryId === selected.value);
-  sortedProducts.value = filteredProducts.value;
-});
-
-watch([() => sort.value.column, () => sort.value.ascending], () => {
-  sortedProducts.value = [...filteredProducts.value].sort((a, b) => a[sort.value.column] > b[sort.value.column] ? sort.value.ascending * 1 : sort.value.ascending * -1);
-});
-
-const handleDeleteRecoverButton = (id, name) => {
-  const action = status.value ? "Khôi phục" : "Xoá";
-  alert.value[0].text = `${action} sản phẩm ${name} sẽ ${lowerFirst(action)} tất cả các biến thể của sản phẩm này. Bạn chắc chắn chứ?`;
-  alert.value[1].text = `${action} thành công!`;
-  alert.value[0].show = true;
-  alert.value[1].show = false;
-  tempId.value = id;
-};
-
-const confirmFirstAlert = async () => {
-  alert.value[0].show = false;
-  try {
-    const action = status.value ? "recover" : "delete";
-    const res = await axios.put(`${url}api/products/${action}/${tempId.value}`);
-
-    if (res.status === 200) {
-      await fetchData();
-      alert.value[1].show = true;
-      setTimeout(() => {
-        alert.value[1].show = false;
-      }, 5000);
-    }
-  }
-  catch (e) {
-    console.log(e);
-  }
-};
-
 const fetchData = async () => {
   loading.value = true;
   status.value = null;
-
   try {
-    const res = await axios.get(`${url}api/categories`);
+    const res = await axios.get(`${url}api/categories/${route.params.id}`);
     if (res.status === 200) {
       categories.value = res.data.data.map(category => mapKeys(category, (value, key) => camelCase(key)));
     }
-  }
-  catch (e) {
-    console.log(e);
-  }
-
-  try {
-    const res = await axios.get(`${url}api/products`);
-    if (res.status === 200) {
-      products.value = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
-    }
-
-    filteredProducts.value = products.value;
-    sortedProducts.value = filteredProducts.value;
-    selected.value = categories.value[0].id;
-
+    newCategories.value = categories.value;
+    filteredCategories.value = newCategories.value;
     status.value = 0;
     loading.value = false;
   }
@@ -128,8 +84,56 @@ const fetchData = async () => {
   }
 };
 
-const getCategoryNameById = (id) => {
-  return categories.value.find(item => item.id === id)?.name;
+const handleDeleteRecoverButton = (id, name) => {
+  const action = status.value ? "Khôi phục" : "Xoá";
+  alert.value[0].text = `Bạn muốn ${lowerFirst(action)} danh mục ${name}?`;
+  alert.value[2].text = `${action} thành công!`;
+  alert.value[0].show = true;
+  alert.value[1].show = false;
+  alert.value[2].show = false;
+  tempId.value = id;
+};
+
+const confirmFirstAlert = async () => {
+  alert.value[0].show = false;
+  try {
+    const action = status.value ? "recover" : "delete";
+    const res = await axios.put(`${url}api/categories/${action}/${tempId.value}`);
+
+    if (res.status === 200) {
+      await fetchData();
+      alert.value[2].show = true;
+      setTimeout(() => {
+        alert.value[2].show = false;
+      }, 5000);
+    }
+    if (res.status === 202) {
+      alert.value[1].text = status.value ? "Muốn khôi phục danh mục này phải khôi phục danh mục cha của nó, bạn có muốn thực hiện không?" : "Danh mục này có các danh mục con. Bạn có muốn xoá tất cả danh mục con của nó không?";
+      alert.value[1].show = true;
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+};
+
+const confirmSecondAlert = async () => {
+  alert.value[1].show = false;
+  try {
+    const action = status.value ? "recover" : "delete";
+    const res = await axios.put(`${url}api/categories/${action}-recursively/${tempId.value}`);
+
+    if (res.status === 200) {
+      await fetchData();
+      alert.value[2].show = true;
+      setTimeout(() => {
+        alert.value[2].show = false;
+      }, 5000);
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
 };
 
 onMounted(fetchData);
@@ -138,32 +142,20 @@ onMounted(fetchData);
 <template>
   <div>
     <div class="d-flex align-center my-5">
-      <h1>Product List</h1>
-      <v-autocomplete
-        prepend-inner-icon="mdi-list-box-outline"
-        density="compact"
-        label="Danh mục"
-        :items="categories"
-        item-title="name"
-        item-value="id"
-        v-model="selected"
-        variant="outlined"
-        hide-no-data
-        hide-details
-        style="max-width: 500px;"
-      ></v-autocomplete>
+      <h1>Danh sách danh mục</h1>
       <v-btn
         prepend-icon="mdi-plus"
         class="ms-auto"
         :to="{
-          name: 'admin-product-create',
-
+          name: 'admin-category-create',
         }"
-      >
-        Thêm mới
-      </v-btn>
+      >Thêm mới</v-btn>
     </div>
     <div class="d-flex align-center my-5">
+      <v-btn
+        icon="mdi-arrow-left"
+        @click="router.back()"
+      ></v-btn>
       <v-autocomplete
         class="ms-auto"
         prepend-inner-icon="mdi-list-box-outline"
@@ -177,6 +169,8 @@ onMounted(fetchData);
         style="max-width: 500px;"
       ></v-autocomplete>
     </div>
+
+
     <v-alert
       type="warning"
       :text="alert[0].text"
@@ -202,24 +196,48 @@ onMounted(fetchData);
       </template>
     </v-alert>
     <v-alert
-      type="success"
+      type="error"
       :text="alert[1].text"
       v-model="alert[1].show"
+      variant="tonal"
+    >
+      <template #append>
+        <v-btn
+          density="compact"
+          color="red-accent-4"
+          icon="mdi-window-close"
+          variant="flat"
+          class="mr-2"
+          @click="alert[1].show = false"
+        ></v-btn>
+        <v-btn
+          density="compact"
+          color="success"
+          icon="mdi-check"
+          variant="flat"
+          @click="confirmSecondAlert"
+        ></v-btn>
+      </template>
+    </v-alert>
+    <v-alert
+      type="success"
+      :text="alert[2].text"
+      v-model="alert[2].show"
       variant="tonal"
       closable
     >
     </v-alert>
     <v-table
       hover
-      v-if="products.length > 0"
+      v-if="filteredCategories.length > 0"
     >
       <thead>
         <tr>
           <th
             class="text-left font-weight-bold"
-            style="width: 35%;"
+            style="width: 15%;"
           >
-            Tên sản phẩm
+            Tên danh mục
           </th>
           <th
             class="text-left font-weight-bold"
@@ -229,9 +247,9 @@ onMounted(fetchData);
           </th>
           <th
             class="text-left font-weight-bold"
-            style="width: 10%"
+            style="width: 20%"
           >
-            Danh mục
+            Mô tả
           </th>
           <th
             class="text-left font-weight-bold"
@@ -243,7 +261,7 @@ onMounted(fetchData);
       </thead>
       <tbody>
         <tr
-          v-for="item in products.slice((page - 1) * rowsPerPage, page * rowsPerPage)"
+          v-for="item in filteredCategories.slice((page - 1) * rowsPerPage, page * rowsPerPage) "
           :key="item.id"
         >
           <td>
@@ -255,9 +273,7 @@ onMounted(fetchData);
               width="60"
             ></v-img>
           </td>
-          <td>
-            <div class="more">{{ getCategoryNameById(item.id) }}</div>
-          </td>
+          <td>{{ item.description }}</td>
           <td>
             <div class="d-flex">
               <v-btn
@@ -273,9 +289,10 @@ onMounted(fetchData);
                 size="small"
                 variant="tonal"
                 icon="mdi-information-variant"
+                text="chi tiết"
                 color="info"
                 :to="{
-                  name: 'admin-product-detail',
+                  name: 'admin-subcategory',
                   params: {
                     id: item.id,
                   },
@@ -288,7 +305,7 @@ onMounted(fetchData);
                 icon="mdi-pencil"
                 color="primary"
                 :to="{
-                  name: 'admin-product-update',
+                  name: 'admin-category-update',
                   params: {
                     id: item.id,
                   },
@@ -296,6 +313,7 @@ onMounted(fetchData);
               >
               </v-btn>
             </div>
+
           </td>
         </tr>
       </tbody>
@@ -303,13 +321,13 @@ onMounted(fetchData);
     <v-alert
       v-else
       density="compact"
-      text="Không có sản phẩm"
+      text="Không có danh mục"
       type="info"
       variant="tonal"
     ></v-alert>
 
     <GlobalPagination
-      v-if="products.length > rowsPerPage"
+      v-if="filteredCategories.length > rowsPerPage"
       :numberOfPages="numberOfPages"
       :page="page"
       @update:page="updatePage"

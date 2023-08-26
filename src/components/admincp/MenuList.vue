@@ -78,8 +78,21 @@ const cruds = ref([
 
 
     </v-list-group>
-    <!-- Admin Product Form  -->
-    <v-list-item href="/admincp/product">Product</v-list-item>
+    <!-- Admin Category -->
+    <v-list-item
+      prepend-icon="mdi-list-box-outline"
+      :to="{
+        name: 'admin-category'
+      }"
+    >Category</v-list-item>
+    <!-- Admin Product -->
+    <v-list-item
+      prepend-icon="mdi-package-variant-closed"
+      :to="{
+        name: 'admin-product'
+      }"
+    >Product</v-list-item>
+
   </v-list>
 </template>
 
