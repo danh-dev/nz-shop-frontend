@@ -41,20 +41,22 @@ async function createSlider() {
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="newSlider.name" :rules="[v => !!v || 'Tên bắt buộc nhập.']"
+          <v-text-field variant="underlined" v-model="newSlider.name"
+          :rules="[v => !!v || 'Vui lòng không được để trống.']"
             :counter="20" label="Tên:"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="newSlider.title" :rules="[v => !!v || 'Tiêu đề bắt buộc nhập.']"
+          <v-text-field variant="underlined" v-model="newSlider.title"
+            :rules="[v => !!v || 'Vui lòng không được để trống.']"
             :counter="20" label="Tiêu đề:"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
           <v-file-input variant="underlined" v-model="newSlider.image" counter multiple show-size
-            :rules="['Dung lượng ảnh tối đa 2 MB']" prepend-inner-icon="mdi-image-outline" prepend-icon=""
+            prepend-inner-icon="mdi-image-outline" prepend-icon=""
             label="Upload hình ảnh:"></v-file-input>
         </v-col>
       </v-row>

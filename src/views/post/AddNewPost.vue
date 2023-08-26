@@ -56,6 +56,10 @@ async function createPost() {
     console.log("error", e);
   }
 };
+
+function editContent(event) {
+  newPost.value.content = event;
+};
 </script>
 
 <style></style>
@@ -70,14 +74,15 @@ async function createPost() {
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="newPost.title" :rules="[v => !!v || 'Tiêu đề bắt buộc nhập.']"
-            :counter="20" label="Tiêu đề bài viết:">
+          <v-text-field variant="underlined" v-model="newPost.title"
+            :rules="[v => !!v || 'Vui lòng không để trống.']" :counter="20" label="Tiêu đề bài viết:">
           </v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="newPost.author" :rules="[v => !!v || 'Tác giả bắt buộc nhập.']"
+          <v-text-field variant="underlined" v-model="newPost.author" 
+            :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20" label="Tác giả:">
           </v-text-field>
         </v-col>
@@ -97,10 +102,11 @@ async function createPost() {
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-textarea name="editor" variant="underlined" v-model="newPost.content" :rules="[v => !!v || 'Nội dung không quá 5000 ký.']"
-            :counter="5000" label="Nội dung bài viết:">
+          <v-textarea name="editor" variant="underlined" v-model="newPost.content"
+            :rules="[v => !!v || 'Vui lòng không để trống & không vượt quá 10000 ký tự..']" :counter="10000"
+            label="Nội dung trang:">
           </v-textarea>
-          <ContentEditor v-model="newPost.content"/>
+          <ContentEditor :editorContent="newPost.content" @editContent="editContent" />
         </v-col>
       </v-row>
       <v-row>

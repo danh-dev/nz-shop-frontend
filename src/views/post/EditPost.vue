@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onBeforeMount } from "vue";
 import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 import ContentEditor from "../../components/globals/ContentEditor.vue";
@@ -22,17 +22,14 @@ const post = ref({
 
 const newImage = ref([]);
 
-watch(posts, () => {
-  post.value = posts.value.find(item => {
-    return item.id === +route.params.id;
-  });
-});
-
 const fetchPost = async () => {
   try {
     const response = await axios.get(`${url}api/posts`);
     if (response.data.status === 200) {
       posts.value = response.data.data;
+      post.value = posts.value.find(item => {
+        return item.id === +route.params.id;
+      });
     } else if (response.data.status === 404) {
       posts.value = [];
       console.log("Something error");
@@ -65,7 +62,11 @@ async function updatePost() {
   }
 };
 
-onMounted(fetchPost);
+function editContent(event) {
+  post.value.content = event;
+};
+
+onBeforeMount(fetchPost);
 </script>
 
 <style></style>
@@ -81,13 +82,15 @@ onMounted(fetchPost);
 
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="post.title" :counter="20" label="Tiêu đề bài viết:"></v-text-field>
+          <v-text-field variant="underlined" v-model="post.title" :rules="[v => !!v || 'Vui lòng không để trống.']"
+            :counter="20" label="Tiêu đề bài viết:"></v-text-field>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="post.author" :counter="20" label="Tác giả:"></v-text-field>
+          <v-text-field variant="underlined" v-model="post.author" :rules="[v => !!v || 'Vui lòng không để trống.']"
+            :counter="20" label="Tác giả:"></v-text-field>
         </v-col>
       </v-row>
 
@@ -108,14 +111,17 @@ onMounted(fetchPost);
       <v-row>
         <v-col cols="12" md="12">
           <v-select variant="underlined" v-model="post.type" label="Loại tin tức"
-            :items="['Tin sản phẩm', 'Tin thị trường']"></v-select>
+            :rules="[v => !!v || 'Vui lòng lựa chọn.']" :items="['Tin sản phẩm', 'Tin thị trường']"></v-select>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="12" md="12">
-          <v-textarea variant="underlined" v-model="post.content" :counter="5000" label="Nội dung bài viết:"></v-textarea>
-          <ContentEditor v-model="post.content" />
+          <v-textarea name="editor" variant="underlined" v-model="post.content"
+            :rules="[v => !!v || 'Vui lòng không để trống & không vượt quá 10000 ký tự.']" :counter="10000"
+            label="Nội dung trang:">
+          </v-textarea>
+          <ContentEditor :editorContent="post.content" @editContent="editContent" />
         </v-col>
       </v-row>
 

@@ -1,3 +1,10 @@
+// import { createRouter, createWebHistory } from "vue-router";
+import ProductPage from "../views/ProductPage.vue";
+import NewsList from "../views/post/NewsList.vue";
+import NewsPage from "../views/post/NewsPage.vue";
+import PageList from "../views/PageList.vue";
+import PageDetail from "../views/page/PageDetail.vue";
+
 const routes = [
     {
         path: "",
@@ -31,7 +38,31 @@ const routes = [
     {
         path: ':pathMatch(.*)*',
         component: () => import('../views/404.vue'),
-    }
+    },
+    // Product router
+		{
+			path: "/:productName",
+			component: ProductPage,
+		},
+		// News router
+		{
+			path: "/news",
+			component: NewsList,
+		},
+		{
+			path: "/news/:title",
+			component: NewsPage,
+		},
+		// page router
+		{
+			path: "/page",
+			component: PageList,
+		},
+		{
+			path: "/page/:name",
+			component: PageDetail,
+		},
+
 ];
 
 export default routes;

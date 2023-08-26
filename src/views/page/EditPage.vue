@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onBeforeMount } from "vue";
 import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 import ContentEditor from "../../components/globals/ContentEditor.vue";
@@ -18,17 +18,14 @@ const page = ref({
   content: "",
 });
 
-watch(pages, () => {
-  page.value = pages.value.find(item => {
-    return item.id === +route.params.id;
-  });
-});
-
 const fetchPage = async () => {
   try {
     const response = await axios.get(`${url}api/pages`);
     if (response.data.status === 200) {
       pages.value = response.data.data;
+      page.value = pages.value.find(item => {
+        return item.id === +route.params.id;
+      });
     } else if (response.data.status === 404) {
       pages.value = [];
       console.log("Something error");
@@ -61,7 +58,11 @@ async function updatePage() {
   }
 };
 
-onMounted(fetchPage);
+function editContent(event) {
+  page.value.content = event;
+};
+
+onBeforeMount(fetchPage);
 </script>
 
 <style></style>
@@ -76,19 +77,23 @@ onMounted(fetchPage);
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="page.name" :counter="20" label="Tên trang:"></v-text-field>
+          <v-text-field variant="underlined" v-model="page.name" :rules="[v => !!v || 'Vui lòng không để trống.']"
+            :counter="20" label="Tên trang:"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="page.author" :counter="20" label="Tác giả:"></v-text-field>
+          <v-text-field variant="underlined" v-model="page.author" :rules="[v => !!v || 'Vui lòng không để trống.']"
+            :counter="20" label="Tác giả:"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-textarea name="editor" variant="underlined" v-model="page.content" :counter="6000" label="Nội dung trang:">
+          <v-textarea name="editor" variant="underlined" v-model="page.content"
+            :rules="[v => !!v || 'Vui lòng không để trống & không vượt quá 10000 ký tự..']" :counter="10000"
+            label="Nội dung trang:">
           </v-textarea>
-          <ContentEditor v-model="page.content" />
+          <ContentEditor :editorContent="page.content" @editContent="editContent" />
         </v-col>
       </v-row>
       <v-row>
@@ -98,5 +103,4 @@ onMounted(fetchPage);
         </v-col>
       </v-row>
     </v-container>
-  </v-form>
-</template>
+  </v-form></template>

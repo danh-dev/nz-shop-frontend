@@ -107,13 +107,13 @@ const updatePage = (event) => {
               <td class="text-center">{{ item.isDeleted ? 'Đã xóa' : 'Hoạt động' }}</td>
               <td>
                 <div class="d-flex align-center justify-center">
-                  <v-btn @click="editSlider(item.id)" size="small" variant="tonal" icon="mdi-text-box-edit-outline"
+                  <v-btn @click="editSlider(item.id)" size="x-small" variant="tonal" icon="mdi-pencil"
                     color="success" class="text-none" :to="`/admincp/slider/edit/${item.id}`">
                   </v-btn>
-                  <v-btn @click="deleteSlider(item.id)" size="small" variant="tonal" icon="mdi-trash-can-outline"
+                  <v-btn @click="deleteSlider(item.id)" size="x-small" variant="tonal" icon="mdi-trash-can-outline"
                     color="red-accent-4" class="text-none" onclick="return confirm('Bạn muốn xóa slider này ?')">
                   </v-btn>
-                  <v-btn size="small" variant="text" icon="mdi-dots-vertical" color="" class="text-none">
+                  <v-btn size="x-small" variant="text" icon="mdi-dots-vertical" color="" class="text-none">
                   </v-btn>
                 </div>
               </td>

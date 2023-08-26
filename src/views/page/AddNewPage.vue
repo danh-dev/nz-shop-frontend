@@ -30,6 +30,10 @@ async function createPage() {
     console.log("error", e);
   }
 };
+
+function editContent(event) {
+  newPage.value.content = event;
+};
 </script>
 
 <style></style>
@@ -44,14 +48,14 @@ async function createPage() {
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="newPage.name" :rules="[v => !!v || 'Tên trang bắt buộc nhập.']"
+          <v-text-field variant="underlined" v-model="newPage.name" :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20" label="Tên trang:">
           </v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="newPage.author" :rules="[v => !!v || 'Tác giả bắt buộc nhập.']"
+          <v-text-field variant="underlined" v-model="newPage.author" :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20" label="Tác giả:">
           </v-text-field>
         </v-col>
@@ -59,9 +63,10 @@ async function createPage() {
       <v-row>
         <v-col cols="12" md="12">
           <v-textarea name="editor" variant="underlined" v-model="newPage.content"
-            :rules="[v => !!v || 'Nội dung không quá 5000 ký tự.']" :counter="6000" label="Nội dung trang:" required>
+            :rules="[v => !!v || 'Vui lòng không để trống & không vượt quá 10000 ký tự..']" :counter="10000"
+            label="Nội dung trang:">
           </v-textarea>
-          <ContentEditor v-model="newPage.content"/>
+          <ContentEditor :editorContent="newPage.content" @editContent="editContent" />
         </v-col>
       </v-row>
       <v-row>

@@ -64,49 +64,27 @@ const title8s = ref([
 </script>
 
 <template>
-	<v-btn
-		append-icon="mdi-chevron-down"
-		color="danger"
-		class="text-white"
-		@click="showProductModal()"
-		location="center"
-	>
+	<v-btn append-icon="mdi-chevron-down" color="red-accent-4" class="text-white" @click="showProductModal()"
+		location="center">
 		Xem cấu hình chi tiết
 	</v-btn>
 
-	<!-- Begin: Detail Product Modal -->
-	<div
-		class="product-modal"
-		ref="productModal"
-		@click="hideProductModal()"
-		style="z-index: 2"
-	>
-		<v-sheet
-			position="relative"
-			class="product-modal-container"
-			@click.stop
-		>
-			<v-btn
-				location="right top"
-				position="absolute"
-				variant="text"
-				color="white"
-				icon="mdi-close-circle"
-				@click="hideProductModal()"
-			></v-btn>
+	<!-- Begin: Detail Specifications Modal -->
+	<div class="productModal" rounded="lg" ref="productModal" @click="hideProductModal()" style="z-index: 2">
+		<v-sheet position="relative" class="productModal-container" @click.stop>
 
-			<v-sheet
-				color="danger"
-				rounded="3"
-				class="modal-header d-flex align-center justify-center"
-			>
-				<b class="fw-medium text-uppercase">Thông số kỹ thuật</b>
+			<v-btn location="right top" position="absolute" variant="text" color="white" icon="mdi-close-circle"
+				@click="hideProductModal()">
+			</v-btn>
+
+			<v-sheet color="red-accent-4" rounded="lg" class="modal-header d-flex align-center justify-center">
+				<b class="text-uppercase">Thông số kỹ thuật</b>
 			</v-sheet>
 
-			<v-table class="text-medium modal-body mb-0">
+			<v-table rounded="lg" class="text-body-2 modal-body">
 				<tbody>
 					<tr>
-						<th colspan="2" class="fw-bold">RAM & lưu trữ</th>
+						<td colspan="2" class="font-bold text-danger">RAM & lưu trữ</td>
 					</tr>
 					<tr v-for="title1 in title1s" :key="title1.id">
 						<td class="w-50">{{ title1.title }}</td>
@@ -114,7 +92,7 @@ const title8s = ref([
 					</tr>
 
 					<tr>
-						<th colspan="2" class="fw-bold">Màn hình</th>
+						<td colspan="2" class="font-bold text-danger">Màn hình</td>
 					</tr>
 					<tr v-for="title2 in title2s" :key="title2.id">
 						<td class="w-50">{{ title2.title }}</td>
@@ -122,7 +100,7 @@ const title8s = ref([
 					</tr>
 
 					<tr>
-						<th class="fw-bold" colspan="2">Giao tiếp & kết nối</th>
+						<td colspan="2" class="font-bold text-danger">Giao tiếp & kết nối</td>
 					</tr>
 					<tr v-for="title3 in title3s" :key="title3.id">
 						<td class="w-50">{{ title3.title }}</td>
@@ -130,7 +108,7 @@ const title8s = ref([
 					</tr>
 
 					<tr>
-						<th colspan="2" class="fw-bold">Camera sau</th>
+						<td colspan="2" class="font-bold text-danger">Camera sau</td>
 					</tr>
 					<tr v-for="title4 in title4s" :key="title4.id">
 						<td class="w-50">{{ title4.title }}</td>
@@ -138,7 +116,7 @@ const title8s = ref([
 					</tr>
 
 					<tr>
-						<th colspan="2" class="fw-bold">Camera trước</th>
+						<td colspan="2" class="font-bold text-danger">Camera trước</td>
 					</tr>
 					<tr v-for="title5 in title5s" :key="title5.id">
 						<td class="w-50">{{ title5.title }}</td>
@@ -146,7 +124,7 @@ const title8s = ref([
 					</tr>
 
 					<tr>
-						<td colspan="2" class="fw-bold">Pin & công nghệ sạc</td>
+						<td colspan="2" class="font-bold text-danger">Pin & công nghệ sạc</td>
 					</tr>
 					<tr v-for="title6 in title6s" :key="title6.id">
 						<td class="w-50">{{ title6.title }}</td>
@@ -154,7 +132,7 @@ const title8s = ref([
 					</tr>
 
 					<tr>
-						<td colspan="2" class="fw-bold">Vi xử lý & đồ họa</td>
+						<td colspan="2" class="font-bold text-danger">Vi xử lý & đồ họa</td>
 					</tr>
 					<tr v-for="title7 in title7s" :key="title7.id">
 						<td class="w-50">{{ title7.title }}</td>
@@ -162,7 +140,7 @@ const title8s = ref([
 					</tr>
 
 					<tr>
-						<td colspan="2" class="fw-bold">Thiết kế & Trọng lượng</td>
+						<td colspan="2" class="font-bold text-danger">Thiết kế & Trọng lượng</td>
 					</tr>
 					<tr v-for="title8 in title8s" :key="title8.id">
 						<td class="w-50">{{ title8.title }}</td>
@@ -171,19 +149,14 @@ const title8s = ref([
 				</tbody>
 			</v-table>
 
-			<v-sheet class="modal-footer d-flex justify-center align-center">
-				<v-btn
-					id="product-modal-close-btn"
-					class="text-white"
-					color="danger"
-					type="submit"
-					@click="hideProductModal()"
-					>Đóng</v-btn
-				>
+			<v-sheet class="d-flex justify-center">
+				<v-btn id="productModal-close-btn" class="text-white w-25" color="red-accent-4" type="submit"
+					@click="hideProductModal()">Đóng
+				</v-btn>
 			</v-sheet>
 		</v-sheet>
 	</div>
-	<!-- End: Detail Product Modal -->
+	<!-- End: Detail Specifications Modal -->
 </template>
 
 <style></style>

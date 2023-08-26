@@ -77,12 +77,12 @@ onMounted(fetchSlider);
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field v-model="slider.name" variant="underlined" :counter="20" label="Tên:"></v-text-field>
+          <v-text-field v-model="slider.name" :rules="[v => !!v || 'Vui lòng không được để trống.']" variant="underlined" :counter="20" label="Tên:"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field v-model="slider.title" variant="underlined" :counter="20" label="Tiêu đề:"
+          <v-text-field v-model="slider.title" :rules="[v => !!v || 'Vui lòng không được để trống.']" variant="underlined" :counter="20" label="Tiêu đề:"
             required></v-text-field>
         </v-col>
       </v-row>
@@ -95,7 +95,7 @@ onMounted(fetchSlider);
       <v-row>
         <v-col cols="12" md="12" class="d-flex align-center">
           <v-file-input v-model="newImage" variant="underlined" prepend-inner-icon="mdi-image-outline" prepend-icon=""
-            label="Upload ảnh mới:"></v-file-input>
+           label="Upload ảnh mới:"></v-file-input>
         </v-col>
       </v-row>
       <v-row>

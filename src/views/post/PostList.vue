@@ -20,6 +20,7 @@ watch(selected, () => {
 });
 
 const fetchPost = async () => {
+  selected.value = null;
   try {
     const response = await axios.get(`${url}api/posts`);
     if (response.data.status === 200) {
@@ -105,13 +106,13 @@ const updatePage = (event) => {
           <td class="text-center">{{ item.isDeleted ? 'Đã xóa' : 'Hoạt động' }}</td>
           <td>
             <div class="d-flex align-center justify-space-between">
-              <v-btn @click="editPost(item.id)" size="small" variant="tonal" icon="mdi-text-box-edit-outline"
+              <v-btn @click="editPost(item.id)" size="x-small" variant="tonal" icon="mdi-pencil"
                 color="success" class="text-none" :to="`/admincp/slider/edit/${item.id}`">
               </v-btn>
-              <v-btn @click="deletePost(item.id)" size="small" variant="tonal" icon="mdi-trash-can-outline"
+              <v-btn @click="deletePost(item.id)" size="x-small" variant="tonal" icon="mdi-trash-can-outline"
                 color="red-accent-4" class="text-none" onclick="return confirm('Bạn muốn xóa bài viết này ?')">
               </v-btn>
-              <v-btn size="small" variant="text" icon="mdi-dots-vertical" color="" class="text-none">
+              <v-btn size="x-small" variant="text" icon="mdi-dots-vertical" color="" class="text-none">
               </v-btn>
             </div>
           </td>
