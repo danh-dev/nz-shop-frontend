@@ -7,12 +7,12 @@ import "vuetify/styles";
 import { createVuetify } from "vuetify";
 
 import App from "./App.vue";
-import router from "./router";
+import router from "./router/index.js";
 
 // Vuetify
 const vuetify = createVuetify({
 	icons: {
-		defaultSet: "mdi", // This is already the default value - only for display purposes
+		defaultSet: "mdi",
 	},
 	defaults: {},
 });
@@ -22,5 +22,9 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 app.use(vuetify);
+
+app.config.globalProperties.formatPrice = value => {
+	return parseFloat(value).toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+};
 
 app.mount("#app");

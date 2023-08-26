@@ -1,5 +1,6 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+
+import { RouterView } from "vue-router";
 import UserLayout from "./components/UserLayout.vue";
 import UserMenu from "./components/UserMenu.vue";
 import UserCard from "./components/UserCard.vue";
@@ -10,11 +11,23 @@ import UserBill from "./components/UserBill.vue";
 
 
 
+import Header from "@/components/globals/header.vue";
 
 </script>
 
 <template>
-	<RouterView></RouterView>
+  <v-app>
+    <Header />
+    <v-main>
+      <v-container>
+        <RouterView />
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
-<style scoped></style>
+<style>
+.m-pointer {
+  cursor: pointer;
+}
+</style>
