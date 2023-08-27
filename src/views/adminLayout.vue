@@ -1,5 +1,27 @@
 <template>
   <v-app>
+    <v-overlay
+        :model-value="siteStore.isLoading"
+        class="align-center justify-center"
+        scrim="#fff"
+        :persistent="true"
+    >
+      <v-progress-circular
+          color="red-darken-2"
+          indeterminate
+          size="72"
+      ></v-progress-circular>
+    </v-overlay>
+    <v-snackbar v-model="isSuccess" transition="scroll-y-reverse-transition" location="top end"
+               color="green-darken-1"
+               :timeout="2000">
+      {{ siteStore.Message}}
+    </v-snackbar>
+    <v-snackbar v-model="isError" transition="scroll-y-reverse-transition" location="bottom end"
+               color="red-darken-1"
+               :timeout="2000">
+      {{ siteStore.Message }}
+    </v-snackbar>
     <aside>
       <v-navigation-drawer v-model="drawer" class="pa-3" elevation="1">
         <template #prepend>
@@ -9,7 +31,8 @@
           >
             <img id="logoShop" src="/assets/NZShop-Text.svg" alt="logo shop">
           </RouterLink>
-          <v-btn density="compact" class="btn-close hidden-lg-and-up" icon="mdi-close" @click.stop="drawer = !drawer"></v-btn>
+          <v-btn density="compact" class="btn-close hidden-lg-and-up" icon="mdi-close"
+                 @click.stop="drawer = !drawer"></v-btn>
         </template>
         <MenuList/>
         <template #append>
@@ -26,15 +49,15 @@
         <header class="bar-sticky">
           <v-toolbar rounded class="bg-white m-card">
             <div class="hidden-lg-and-up  ms-3">
-              <v-btn prepend-icon="mdi-apps" variant="tonal" class="font-weight-bold bg-red-darken-1" @click.stop="drawer = !drawer">
+              <v-btn prepend-icon="mdi-apps" variant="tonal" class="font-weight-bold bg-red-darken-1"
+                     @click.stop="drawer = !drawer">
                 Tính năng
               </v-btn>
             </div>
-            <v-toolbar-title class="text-h6 font-weight-bold text-blue-grey-darken-1">{{ childTitle?childTitle:"Trang admin" }}</v-toolbar-title>
+            <v-toolbar-title class="text-h6 font-weight-bold text-blue-grey-darken-1">
+              {{ route.meta.title ? route.meta.title : "Trang admin" }}
+            </v-toolbar-title>
             <div class="hidden-md-and-down ms-3">
-              <v-btn prepend-icon="mdi-apps" variant="tonal" class="font-weight-bold bg-red-darken-1">
-                Tính năng
-              </v-btn>
             </div>
             <v-avatar class="ma-2">
               <v-img
@@ -44,10 +67,10 @@
             </v-avatar>
           </v-toolbar>
         </header>
-        <main>
+        <main class="my-3">
           <router-view/>
         </main>
-        <footer>
+        <footer class="footer-sticky">
           <div class="ms-1 ma-3">
             <!-- 👉 Footer: left content -->
             <span class="d-flex align-center">
@@ -65,46 +88,40 @@
 
 <script setup>
 import MenuList from "../components/admincp/MenuList.vue";
-import {onMounted, ref, watch} from "vue";
-import { useRoute, useRouter } from "vue-router";
+import {computed, ref} from "vue";
+import {useRoute, useRouter} from "vue-router";
+import {siteData} from "@/stores/globals";
 
 const drawer = ref(true);
-const childTitle = ref();
+
+const siteStore = siteData();
+
+
+const isError = computed(()=>String(siteStore.Status).toLowerCase()==="error")
+const isSuccess = computed(()=>String(siteStore.Status).toLowerCase()==="ok")
 
 const route = useRoute();
 const router = useRouter();
 
-watch(router.currentRoute,
-    () => {
-      childTitle.value = document.title
-    }
-);
 
-// onMounted(() => {
-//   if (route.meta.title) {
-//     console.log(route.meta.title)
-//     childTitle.value = route.meta.title;
-//   }
-// });
-
-// onBeforeRouteUpdate((to, from, next) => {
-//   if (to.meta.title) {
-//     titleChild.value = route.meta.title;
-//   }
-//   next();
-// });
 </script>
 
 <style scoped>
+main {
+  min-height: 83vh;
+}
+
 .bar-sticky {
   position: sticky;
   top: 0;
   inset-block-start: 1rem;
+  z-index: 10;
 }
 
 .bar-sticky:after {
   position: absolute;
   z-index: -1;
+  width: 100%;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   background-repeat: repeat;
@@ -116,9 +133,10 @@ watch(router.currentRoute,
   -webkit-mask: linear-gradient(black, black 18%, transparent 100%);
   mask: linear-gradient(black, black 18%, transparent 100%);
 }
-.btn-close{
+
+.btn-close {
   position: absolute;
-  top:5px;
+  top: 5px;
   right: 5px;
   z-index: 3;
 

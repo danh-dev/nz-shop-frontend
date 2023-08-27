@@ -1,14 +1,14 @@
 <template>
   <div>
     <v-btn
-        @click="cartStore.add(1)"
+        @click="cartStore.add(3)"
     >
       Add to cart
     </v-btn>
   </div>
 </template>
 <script setup>
-import {useCartStore} from "../stores/cart"
+import {useCartStore} from "@/stores/cart"
 
 const cartStore = useCartStore();
 </script>

@@ -16,6 +16,23 @@ const routes = [
         meta: { auth: "true" },
         component: () => import("../views/Register.vue"),
     },
+    {
+        path: "verify-email",
+        name: "verify-email-page",
+        component: () => import("../views/Verify.vue"),
+    },
+    {
+        path: "forgot-password",
+        name: "forgot-password-page",
+        meta: { auth: "true" },
+        component: () => import("../views/ForgotPassword.vue"),
+    },
+    {
+        path: "reset-password",
+        name: "reset-password-page",
+        meta: { auth: "true" },
+        component: () => import("../views/ResetPassword.vue"),
+    },
     // Cart feature
     {
         path: "cart",
@@ -27,6 +44,12 @@ const routes = [
         name: "checkout-page",
         meta: { auth: "login" },
         component: () => import("../views/cart/CheckOut.vue"),
+    },
+    {
+        path: "test",
+        name: "test-page",
+        // meta: { auth: "login" },
+        component: () => import("../views/test.vue"),
     },
     {
         path: ':pathMatch(.*)*',

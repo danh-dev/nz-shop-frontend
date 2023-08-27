@@ -112,6 +112,7 @@ const onSubmit = () => {
       if (isValid)
         register()
     })
+    v2_captcha.value = false;
   }
 }
 </script>

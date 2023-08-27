@@ -1,6 +1,6 @@
 <script setup>
 import { useCartStore } from "@/stores/cart";
-import { userData } from "../../stores/userData";
+import { userData } from "@/stores/userData";
 import axios from "axios";
 import { ref } from "vue";
 
@@ -10,7 +10,7 @@ const userStore = userData();
 const errors = ref([])
 const logout = async () => {
   try {
-    await axios.post('logout', {
+    await axios.get('logout', {
       user_id: userStore.id,
     });
     userStore.logout();
