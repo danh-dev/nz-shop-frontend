@@ -47,9 +47,9 @@
   >
     <v-card>
       <v-card-title>
-        <span>{{errorTitle}}</span>
+        <span>{{ errorTitle }}</span>
       </v-card-title>
-      {{errorContent}}
+      {{ errorContent }}
       <v-card-actions>
         <v-btn
             color="primary"
@@ -66,21 +66,22 @@
 <script setup>
 import {useCartStore} from "@/stores/cart";
 import {siteData} from "@/stores/globals";
-import {ref} from "vue"
+import {ref} from "vue";
+
 const siteStore = siteData();
 const cartStore = useCartStore();
 const showError = ref(false);
 const errorTitle = ref();
 const errorContent = ref();
-const cartError = (value) =>{
-  if(value==='max'){
+const cartError = (value) => {
+  if (value === "max") {
     errorTitle.value = "Xin lỗi!";
     errorContent.value = "Số lượng sản phẩm đã đạt đến mức tối đa " +
         "Quý khách có nhu cầu mua số lượng nhiều vui lòng liên hệ phòng bán hàng doanh nghiệp B2B" +
         "Mr.Danh -  03599xxxxxx";
     showError.value = !showError.value;
   }
-}
+};
 const deleteProductInCart = (id) => {
   if (confirm("Are you sure?")) {
     siteStore.isLoading = true;

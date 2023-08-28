@@ -12,15 +12,13 @@
           size="72"
       ></v-progress-circular>
     </v-overlay>
-    <v-snackbar v-model="isSuccess" transition="scroll-y-reverse-transition" location="top end"
-                color="green-darken-1"
-                :timeout="2000">
-      {{ siteStore.Message}}
-    </v-snackbar>
-    <v-snackbar v-model="isError" transition="scroll-y-reverse-transition" location="bottom end"
-                color="red-darken-1"
-                :timeout="2000">
-      {{ siteStore.Message }}
+    <v-snackbar v-for="(message, index) in siteStore.apiMessages"
+                :key="index"
+                v-model="message.show" transition="scroll-y-reverse-transition" location="bottom end"
+                :color="message.status==='error'?'red-darken-1':'green-darken-1'"
+                :style="{ bottom: `${index * 60}px` }"
+    >
+      {{ message.message }}
     </v-snackbar>
     <Header/>
     <v-main>
@@ -32,14 +30,10 @@
 </template>
 <script setup>
 import {RouterView} from "vue-router";
-import { siteData } from "@/stores/globals";
+import {siteData} from "@/stores/globals";
 import Header from "@/components/globals/Header.vue";
-import {computed} from "vue";
+
 const siteStore = siteData();
-
-
-const isError = computed(()=>String(siteStore.Status).toLowerCase()==="error")
-const isSuccess = computed(()=>String(siteStore.Status).toLowerCase()==="ok")
 </script>
 
 <style scoped></style>

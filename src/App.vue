@@ -1,9 +1,7 @@
 <script setup>
-
 import {RouterView} from "vue-router";
 import ScrollToTop from "@/components/globals/ScrollToTop.vue";
 import {useRecaptchaProvider} from "vue-recaptcha";
-
 useRecaptchaProvider();
 </script>
 
