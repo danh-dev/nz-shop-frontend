@@ -84,11 +84,11 @@ const fetchComments = async () => {
 };
 
 const getUserNameById = id => users.value.find(item => item.id === id)?.full_name;
-const getProductsTitleById = id => products.value.find(item => item.id === id)?.title;
+const getProductsTitleById = id => products.value.find(item => item.id === id)?.name;
 
 const handleCheckButton = async id => {
     try {
-        const res = await axios.put(`http://127.0.0.1:8000/api/comments/approve/${id}`);
+        const res = await axios.put(`http://127.0.0.1:8000/api/product-comments/approve/${id}`);
         if (res.status === 200) {
             await fetchComments();
             console.log(res.data.message);
@@ -101,7 +101,7 @@ const handleCheckButton = async id => {
 
 const handleDeleteButton = async id => {
     try {
-        const res = await axios.put(`http://127.0.0.1:8000/api/comments/delete/${id}`);
+        const res = await axios.put(`http://127.0.0.1:8000/api/product-comments/delete/${id}`);
         if (res.status === 200) {
             await fetchComments();
             console.log(res.data.message);
