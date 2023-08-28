@@ -4,8 +4,6 @@ import axios from "axios";
 
 const comments = ref([]);
 const filteredComments = ref([]);
-const users = ref([]);
-const posts = ref([]);
 
 const status = ref(0);
 const statuses = [
@@ -37,14 +35,18 @@ watch([status, comments], () => {
     }
 });
 
-const fetchUsers = async () => {
+watch(comments, newComments => {
+    for (const comment of newComments) {
+        fetchUser(comment);
+        fetchPost(comment);
+    }
+});
+
+const fetchUser = async comment => {
     try {
-        const res = await axios.get("http://127.0.0.1:8000/api/users");
+        const res = await axios.get(`http://127.0.0.1:8000/api/post-comments/${comment.id}/user`);
         if (res.status === 200) {
-            users.value = res.data.data;
-        }
-        if (res.status === 204) {
-            console.log("ko co gi");
+            comment.user = res.data.data.full_name;
         }
     }
     catch (e) {
@@ -52,14 +54,11 @@ const fetchUsers = async () => {
     }
 };
 
-const fetchPosts = async () => {
+const fetchPost = async comment => {
     try {
-        const res = await axios.get("http://127.0.0.1:8000/api/posts");
+        const res = await axios.get(`http://127.0.0.1:8000/api/post-comments/${comment.id}/post`);
         if (res.status === 200) {
-            posts.value = res.data.data;
-        }
-        if (res.status === 204) {
-            console.log("ko co gi");
+            comment.post = res.data.data.title;
         }
     }
     catch (e) {
@@ -82,8 +81,6 @@ const fetchComments = async () => {
     }
 };
 
-const getUserNameById = id => users.value.find(item => item.id === id)?.full_name;
-const getPostTitleById = id => posts.value.find(item => item.id === id)?.title;
 
 const handleCheckButton = async id => {
     try {
@@ -111,11 +108,7 @@ const handleDeleteButton = async id => {
     }
 };
 
-onMounted(async () => {
-    await fetchComments();
-    await fetchUsers();
-    await fetchPosts();
-});
+onMounted(fetchComments);
 </script>
 
 <template>
@@ -163,9 +156,9 @@ onMounted(async () => {
         <tbody>
             <tr
                 v-for="item in filteredComments"
-                :key="item.name"
+                :key="item.id"
             >
-                <td>{{ getUserNameById(item.user_id) }}</td>
+                <td>{{ item.user }}</td>
                 <td>
                     <div class="review"><v-tooltip
                             width="350px"
@@ -181,8 +174,8 @@ onMounted(async () => {
                             activator="parent"
                             location="top"
                             attach
-                        >{{ getPostTitleById(item.post_id) }}
-                        </v-tooltip>{{ getPostTitleById(item.post_id) }}</div>
+                        >{{ item.post }}
+                        </v-tooltip>{{ item.post }}</div>
                 </td>
                 <td>{{ item.updated_at }}</td>
                 <td>

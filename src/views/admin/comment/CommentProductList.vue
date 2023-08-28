@@ -4,8 +4,6 @@ import axios from "axios";
 
 const comments = ref([]);
 const filteredComments = ref([]);
-const users = ref([]);
-const products = ref([]);
 
 const status = ref(0);
 const statuses = [
@@ -37,35 +35,12 @@ watch([status, comments], () => {
     }
 });
 
-const fetchUsers = async () => {
-    try {
-        const res = await axios.get("http://127.0.0.1:8000/api/users");
-        if (res.status === 200) {
-            users.value = res.data.data;
-        }
-        if (res.status === 204) {
-            console.log("ko co gi");
-        }
+watch(comments, newComments => {
+    for (const comment of newComments) {
+        fetchUser(comment);
+        fetchProduct(comment);
     }
-    catch (e) {
-        console.log(e);
-    }
-};
-
-const fetchProducts = async () => {
-    try {
-        const res = await axios.get("http://127.0.0.1:8000/api/products");
-        if (res.status === 200) {
-            products.value = res.data.data;
-        }
-        if (res.status === 204) {
-            console.log("ko co gi");
-        }
-    }
-    catch (e) {
-        console.log(e);
-    }
-};
+});
 
 const fetchComments = async () => {
     try {
@@ -80,11 +55,31 @@ const fetchComments = async () => {
     catch (e) {
         console.log(e);
     }
-
 };
 
-const getUserNameById = id => users.value.find(item => item.id === id)?.full_name;
-const getProductsTitleById = id => products.value.find(item => item.id === id)?.name;
+const fetchUser = async comment => {
+    try {
+        const res = await axios.get(`http://127.0.0.1:8000/api/product-comments/${comment.id}/user`);
+        if (res.status === 200) {
+            comment.user = res.data.data.full_name;
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+};
+
+const fetchProduct = async comment => {
+    try {
+        const res = await axios.get(`http://127.0.0.1:8000/api/product-comments/${comment.id}/product`);
+        if (res.status === 200) {
+            comment.product = res.data.data.name;
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+};
 
 const handleCheckButton = async id => {
     try {
@@ -112,11 +107,7 @@ const handleDeleteButton = async id => {
     }
 };
 
-onMounted(async () => {
-    await fetchComments();
-    await fetchUsers();
-    await fetchProducts();
-});
+onMounted(fetchComments);
 </script>
 
 <template>
@@ -145,7 +136,7 @@ onMounted(async () => {
                     class="text-left"
                     style="width: 25%;"
                 >
-                    Bài viết
+                    Sản phẩm
                 </th>
                 <th
                     class="text-left"
@@ -164,9 +155,9 @@ onMounted(async () => {
         <tbody>
             <tr
                 v-for="item in filteredComments"
-                :key="item.name"
+                :key="item.id"
             >
-                <td>{{ getUserNameById(item.user_id) }}</td>
+                <td>{{ item.user }}</td>
                 <td>
                     <div class="review"><v-tooltip
                             width="350px"
@@ -182,8 +173,8 @@ onMounted(async () => {
                             activator="parent"
                             location="top"
                             attach
-                        >{{ getProductsTitleById(item.product_id) }}
-                        </v-tooltip>{{ getProductsTitleById(item.product_id) }}</div>
+                        >{{ item.product }}
+                        </v-tooltip>{{ item.product }}</div>
                 </td>
                 <td>{{ item.updated_at }}</td>
                 <td>
