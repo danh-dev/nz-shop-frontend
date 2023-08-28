@@ -17,7 +17,7 @@
                 {{ formatPrice(product.priceSale) }}
               </span>
               <span :class="!product.priceSale ?
-                  'text-body-1 text-red-accent-4 font-weight-bold' : 'regular-price text-body-2'
+                'text-body-1 text-red-accent-4 font-weight-bold' : 'regular-price text-body-2'
                 ">
                 {{ formatPrice(product.priceRegular) }}
               </span>
@@ -95,4 +95,5 @@ const cartStore = useCartStore();
   padding: 8px 5px;
   margin-left: 10px;
   width: 25px;
-}</style>
+}
+</style>

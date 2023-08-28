@@ -13,17 +13,17 @@ import HomeMainProductSlider from "../components/product/HomeMainProductSlider.v
 import product from "../product";
 
 import { onMounted, ref, watch } from "vue";
-// import router from "../router";
+import router from "../router";
 // import useProductStore from "../stores/useProductStore";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 
 const { xs } = useDisplay();
 
 // const { findProductBySlug } = useProductStore();
-// onMounted(() => {
-// 	const productName = router.currentRoute.value.params.productNameName;
-// 	product.value = findProductBySlug(productName);
-// });
+onMounted(() => {
+	const productName = router.currentRoute.value.params.productNameName;
+	// product.value = findProductBySlug(productName);
+});
 
 // Product photos Slider
 const model = ref(0);
@@ -84,10 +84,11 @@ watch(model, (cur, pre) => {
 									<a href="#"><v-img :src="props.product.image" class="w-100" /></a>
 									<div class="pa-1 text-center">
 										<p class="text-body-2 font-bold"><a href="#">{{ props.product.name }}</a></p>
-										<v-rating half-increments :model-value="props.product.rating" color="yellow-darken-3" readonly
-											density="compact" size="small" class="mx-2">
+										<v-rating half-increments :model-value="props.product.rating"
+											color="yellow-darken-3" readonly density="compact" size="small" class="mx-2">
 										</v-rating>
-										<v-sheet class="pa-2 text-center text-danger d-flex align-center justify-space-between">
+										<v-sheet
+											class="pa-2 text-center text-danger d-flex align-center justify-space-between">
 											<p class="text-danger font-bold">{{ formatPrice(props.product.priceSale) }}</p>
 											<p class="text-muted text-decoration-line-through text-medium">
 												{{ formatPrice(props.product.price) }}
@@ -114,7 +115,7 @@ watch(model, (cur, pre) => {
 		<!-- Product Gallery -->
 		<v-row>
 			<v-col :cols="12">
-				<v-sheet class="d-none d-sm-none d-md-none d-lg-block" >
+				<v-sheet class="d-none d-sm-none d-md-none d-lg-block">
 					<h4 class="text-uppercase text-danger">Sản phẩm tương tự</h4>
 					<HomeMainProductSlider :products="product.productGallery" :products-show="5">
 						<template #default="{ props }">
@@ -123,9 +124,10 @@ watch(model, (cur, pre) => {
 								<v-sheet>
 									<a href="#"><v-img :src="props.product.image" class="w-100" /></a>
 									<div class="pa-1 text-center">
-										<p href="#" class="text-body-2 font-bold"><a href="#">{{ props.product.name }}</a></p>
-										<v-rating half-increments :model-value="props.product.rating" color="yellow-darken-3" readonly
-											density="compact" size="small" class="mx-2">
+										<p href="#" class="text-body-2 font-bold"><a href="#">{{ props.product.name }}</a>
+										</p>
+										<v-rating half-increments :model-value="props.product.rating"
+											color="yellow-darken-3" readonly density="compact" size="small" class="mx-2">
 										</v-rating>
 										<v-sheet class="pa-2 text-center d-flex align-center justify-space-between">
 											<p class="text-danger font-bold">{{ formatPrice(props.product.priceSale) }}</p>

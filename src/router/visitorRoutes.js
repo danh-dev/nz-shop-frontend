@@ -1,3 +1,11 @@
+import ProductDetailPage from "../views/ProductDetailPage.vue";
+import NewsPage from "../views/NewsPage.vue";
+import NewsDetailPage from "../views/NewsDetailPage.vue";
+import ProductPage from "../views/ProductPage.vue";
+import NewsList from "../views/NewsList.vue";
+import PageList from "../views/PageList.vue";
+import PageDetail from "../views/PageDetail.vue";
+
 const routes = [
 	{
 		path: "",
@@ -31,6 +39,88 @@ const routes = [
 	{
 		path: ":pathMatch(.*)*",
 		component: () => import("../views/404.vue"),
+	},
+	// Product router
+	{
+		path: "/home/:productName",
+		component: ProductDetailPage,
+	},
+	// News router
+	{
+		path: "/news",
+		component: NewsPage,
+	},
+	{
+		path: "/news/:newsName",
+		component: NewsDetailPage,
+	},
+	{
+		name: "user",
+		path: "/user",
+		redirect: () => {
+			return { name: "user-home" };
+		},
+		component: () => import("@/components/user/UserLayout.vue"),
+		children: [
+			{
+				name: "user-home",
+				path: "/user/home",
+				component: () => import("@/views/user/UserHome.vue"),
+			},
+			{
+				name: "user-history",
+				path: "/user/history",
+				component: () => import("@/views/user/UserHistory.vue"),
+			},
+			{
+				name: "user-history-detail",
+				path: "/user/history/detail/:code",
+				component: () => import("@/views/user/UserHistoryDetail.vue"),
+			},
+			{
+				name: "user-promotion",
+				path: "/user/promotion",
+				component: () => import("@/views/user/UserPromotion.vue"),
+			},
+			{
+				name: "user-account",
+				path: "/user/account",
+				component: () => import("@/views/user/UserAccount.vue"),
+			},
+			{
+				name: "user-change-password",
+				path: "/user/account/change-password",
+				component: () => import("@/views/user/UserPassword.vue"),
+			},
+			{
+				name: "user-feedback",
+				path: "/user/feedback",
+				component: () => import("@/views/user/UserFeedback.vue"),
+			},
+			// Product router
+			{
+				path: "/:productName",
+				component: ProductPage,
+			},
+			// News router
+			{
+				path: "/news",
+				component: NewsList,
+			},
+			{
+				path: "/news/:title",
+				component: NewsPage,
+			},
+			// page router
+			{
+				path: "/page",
+				component: PageList,
+			},
+			{
+				path: "/page/:name",
+				component: PageDetail,
+			},
+		],
 	},
 ];
 

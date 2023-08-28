@@ -1,7 +1,6 @@
-import { deburr } from "lodash";
 const getSlugByName = slug => {
-  // Normalize the title to remove accents and special characters
-  const normalizedTitle = deburr(slug)
+  // Normalize the title to remove accents and special characters 
+  const normalizedTitle = slug
     .normalize("NFKD")
     .replace(/[^\w\s-]/g, "")
     .trim();
