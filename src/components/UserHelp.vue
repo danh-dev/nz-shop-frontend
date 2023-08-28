@@ -8,9 +8,9 @@ defineProps({ img: String });
         rounded="lg"
     >
         <v-avatar
+            size="60"
             rounded="0"
             class="ma-3"
-            size="50"
             :image="img"
         />
         <v-card-title class="d-flex flex-column">

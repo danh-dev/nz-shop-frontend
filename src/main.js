@@ -2,7 +2,10 @@ import "@mdi/font/css/materialdesignicons.css"; // Ensure you are using css-load
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-// Vuetify
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import "./axios";
+import { VueRecaptchaPlugin } from "vue-recaptcha";
+import { createHead } from "@unhead/vue";
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
 
@@ -17,11 +20,19 @@ const vuetify = createVuetify({
 	defaults: {},
 });
 
-const app = createApp(App);
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
-app.use(createPinia());
+const head = createHead();
+
+const app = createApp(App);
+app.use(pinia);
 app.use(router);
 app.use(vuetify);
+app.use(head);
+app.use(VueRecaptchaPlugin, {
+	v2SiteKey: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
+});
 
 app.config.globalProperties.formatPrice = value => {
 	return parseFloat(value).toLocaleString("vi-VN", { style: "currency", currency: "VND" });

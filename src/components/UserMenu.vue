@@ -10,7 +10,7 @@ defineProps({
 				class="mb-3"
 				variant="elevated"
 				size="160"
-				image="https://tse4.mm.bing.net/th?id=OIF.KkNJGnjHefW6cs0H12qmpw&pid=Api&P=0&h=180"
+				image="https://quotetheanime.com/wp-content/uploads/2022/10/tanjiro-2.jpg"
 			></v-avatar>
 			<v-list-item-title class="text-body-2 font-weight-bold text-center"> {{ user.name }} </v-list-item-title>
 		</v-list-item>
@@ -79,6 +79,7 @@ defineProps({
 				<v-list-item-title> Tài khoản của bạn </v-list-item-title>
 			</v-list-item>
 			<v-list-item
+				:to="{ name: `user-feedback` }"
 				class="px-2 py-0"
 				value="note"
 				color="red-accent-4"
