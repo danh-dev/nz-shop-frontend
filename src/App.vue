@@ -1,14 +1,16 @@
 <script setup>
-
 import { RouterView } from "vue-router";
+import { useRecaptchaProvider } from "vue-recaptcha";
+
 import GlobalLoader from "@/components/globals/GlobalLoader.vue";
 import useLoadingStore from "@/stores/loading";
 import ScrollToTop from "@/components/globals/ScrollToTop.vue";
-import { useRecaptchaProvider } from "vue-recaptcha";
 // import Footer from "./components/copy/Footer.vue";
 
 const loadingStore = useLoadingStore();
 useRecaptchaProvider();
+
+
 </script>
 
 <template>
@@ -19,7 +21,7 @@ useRecaptchaProvider();
 
 <style>
 .m-pointer {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 .more {
@@ -48,8 +50,8 @@ a {
 }
 
 @media (min-width: 1920px) {
-  .v-container {
-    max-width: 1200px !important;
-  }
+	.v-container {
+		max-width: 1200px !important;
+	}
 }
 </style>

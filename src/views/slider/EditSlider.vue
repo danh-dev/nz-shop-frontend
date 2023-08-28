@@ -100,8 +100,8 @@ onMounted(fetchSlider);
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-btn class="me-2" type="submit" color="info" variant="tonal">Chỉnh sửa</v-btn>
-          <v-btn :to="`/admincp/slider`" type="reset" color="text-darken-3" variant="tonal">Hủy bỏ</v-btn>
+          <v-btn class="me-2" type="submit">Xác nhận</v-btn>
+          <v-btn :to="`/admincp/slider`" type="reset">Hủy bỏ</v-btn>
         </v-col>
       </v-row>
     </v-container>

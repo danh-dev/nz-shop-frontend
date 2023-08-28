@@ -1,3 +1,6 @@
+import HomePage from "../views/HomePage.vue";
+import CategoryPage from "../views/CategoryPage.vue";
+
 // import { createRouter, createWebHistory } from "vue-router";
 import ProductPage from "../views/ProductPage.vue";
 import NewsList from "../views/post/NewsList.vue";
@@ -5,6 +8,16 @@ import NewsPage from "../views/post/NewsPage.vue";
 import PageDetail from "../views/page/PageDetail.vue";
 
 const routes = [
+    {
+        name: "home",
+        path: "/",
+        component: HomePage,
+    },
+    {
+        name: "categories",
+        path: "/categories/:slugs+",
+        component: CategoryPage,
+    },
     {
         path: "",
         name: "index-page",
@@ -35,8 +48,8 @@ const routes = [
         component: () => import("../views/cart/CheckOut.vue"),
     },
     {
-        path: ':pathMatch(.*)*',
-        component: () => import('../views/404.vue'),
+        path: ":pathMatch(.*)*",
+        component: () => import("../views/404.vue"),
     },
     // Product router
     {

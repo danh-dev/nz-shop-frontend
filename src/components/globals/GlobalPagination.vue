@@ -10,6 +10,7 @@ defineEmits(["update:page"]);
 <template>
   <div class="text-center">
     <v-pagination
+      color="red-accent-4"
       :model-value="page"
       @update:model-value="$emit('update:page', $event)"
       :length="numberOfPages"

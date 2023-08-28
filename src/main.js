@@ -3,7 +3,6 @@ import CKEditor from "@ckeditor/ckeditor5-vue";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
-import "./axios";
 import { VueRecaptchaPlugin } from "vue-recaptcha";
 import { createHead } from "@unhead/vue";
 import "vuetify/styles";
@@ -15,7 +14,8 @@ import App from "./App.vue";
 const vuetify = createVuetify({
 	icons: {
 		defaultSet: "mdi",
-	}, default: {}
+	},
+	defaults: {}
 });
 
 const pinia = createPinia();

@@ -137,8 +137,8 @@ onBeforeMount(fetchPost);
 
       <v-row>
         <v-col cols="12" md="12">
-          <v-btn class="me-2" type="submit" color="info" variant="tonal">Đăng bài</v-btn>
-          <v-btn :to="`/admincp/post`" type="reset" color="text-darken-3" variant="tonal">Hủy bỏ</v-btn>
+          <v-btn class="me-2" type="submit">Xác nhận</v-btn>
+          <v-btn :to="`/admincp/post`" type="reset">Hủy bỏ</v-btn>
         </v-col>
       </v-row>
     </v-container>
