@@ -303,6 +303,7 @@
                     density="compact"
                     chips
                     label="Sản phẩm"
+                    :rules="[(value) => (this.formTypeCoupon === 'onproduct' && !value) || 'Vui lòng chọn sản phẩm']"
                     :items="formProductList"
                     multiple
                     clearable
@@ -481,6 +482,7 @@
                           autocomplete="off"
                           persistent-hint
                           density="compact"
+                          multiple
                           chips
                           hint="Tìm tài khoản theo email"
                       >
@@ -592,7 +594,7 @@ const formCouponRequests = computed(() => {
   if (formMaxValue.value) {
     result.MaxValue = formMaxValue.value;
   }
-  return result;
+  return Object.keys(result).length === 0 ? null : result;
 });
 const totalData = computed(() => {
   return coupons.value.length;
@@ -856,6 +858,7 @@ const fetchRoleList = async () => {
 };
 const openForm = (index) => {
   addRequest.value = false;
+  formOpen.value = true;
   if (typeof index !== "undefined") {
     // console.log("run with" + index);
     formId.value = coupons.value[index].id;
@@ -864,12 +867,13 @@ const openForm = (index) => {
     formTypeCoupon.value = coupons.value[index].type_coupon;
     formDateStart.value = coupons.value[index].date_start;
     formDateEnd.value = coupons.value[index].date_end;
+    formSelectProduct.value = coupons.value[index].value.split("|")[1];
     formLimitTime.value = coupons.value[index].limit_time;
     formStatus.value = coupons.value[index].status;
-    console.log(coupons.value[index].coupon_requests);
     setTimeout(() => formTypeValue.value = coupons.value[index].type_value, 1);
     setTimeout(() => formValue.value = coupons.value[index].value.split("|")[0], 2);
     if (coupons.value[index].coupon_requests) {
+      console.log(!!coupons.value[index].coupon_requests)
       addRequest.value = true;
       setTimeout(() => {
         formForUser.value = JSON.parse(coupons.value[index].coupon_requests).forUser || null;
@@ -891,6 +895,7 @@ const openForm = (index) => {
     formDateStart.value = null;
     formDateEnd.value = null;
     formLimitTime.value = null;
+    formSelectProduct.value = null;
     formStatus.value = null;
     formForUser.value = null;
     formForRole.value = null;
@@ -899,7 +904,6 @@ const openForm = (index) => {
     formMinCart.value = null;
     formMaxValue.value = null;
   }
-  formOpen.value = true;
 };
 const generateCoupon = async () => {
 
@@ -915,10 +919,36 @@ const generateCoupon = async () => {
   }
 };
 const createCoupon = async () => {
+  formSelectProduct.value = formSelectProduct.value || [10, 23, 4];
+  try {
+    siteStore.isLoading = true;
+    console.log(formCouponRequests.value)
+    let res = await axios.post("createCoupon", {
+      name: formName.value,
+      code: formCode.value,
+      type_coupon: formTypeCoupon.value,
+      value: formValue.value,
+      product_id: formSelectProduct.value,
+      type_value: formTypeValue.value,
+      date_start: formDateStart.value,
+      date_end: formDateEnd.value,
+      limit_time: formLimitTime.value,
+      status: formStatus.value,
+      coupon_requests: formCouponRequests.value,
+    });
+    siteStore.hasRes(res);
+  } catch (e) {
+    siteStore.errorSystem();
+    console.log(e);
+  } finally {
+    siteStore.isLoading = false;
+  }
+};
+const updateCoupon = async (id) => {
   formSelectProduct.value = formSelectProduct.value || 10;
   try {
     siteStore.isLoading = true;
-    let res = await axios.post("createCoupon", {
+    let res = await axios.put(`/updateCoupon/${id}`, {
       name: formName.value,
       code: formCode.value,
       type_coupon: formTypeCoupon.value,
@@ -962,6 +992,15 @@ const onSubmit = () => {
       formOpen.value = false;
     }
     fetchCouponList();
+  });
+};
+const onUpdate = (id) => {
+  dataForm.value?.validate().then(({valid: isValid}) => {
+    if (isValid) {
+      updateCoupon(id);
+      formOpen.value = false;
+    }
+    fetchCouponList(searchQuery.value, selectDateStart.value, selectDateEnd.value, selectedType.value, selectedStatus.value);
   });
 };
 // onMounted
