@@ -1,7 +1,7 @@
 <script setup>
-import UserCard from "../components/UserCard.vue";
-import UserCarousel from "../components/UserCarousel.vue";
-import UserCardItem from "../components/UserCardItem.vue";
+import UserCard from "@/components/user/UserCard.vue";
+import UserCarousel from "@/components/user/UserCarousel.vue";
+import UserCardItem from "@/components/user/UserCardItem.vue";
 defineProps({ user: Object });
 </script>
 
@@ -20,8 +20,6 @@ defineProps({ user: Object });
             :user="{ id, name, rank, date, point } = user"
             class="mb-4"
         ></UserCard>
-        <UserCardItem :user="user">
-        </UserCardItem>
 
     </v-sheet>
 </template>

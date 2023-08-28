@@ -29,42 +29,42 @@ const routes = [
 		redirect: () => {
 			return { name: "user-home" };
 		},
-		component: () => import("../components/UserLayout.vue"),
+		component: () => import("@/components/user/UserLayout.vue"),
 		children: [
 			{
 				name: "user-home",
 				path: "/user/home",
-				component: () => import("../views/UserHome.vue"),
+				component: () => import("@/views/user/UserHome.vue"),
 			},
 			{
 				name: "user-history",
 				path: "/user/history",
-				component: () => import("../views/UserHistory.vue"),
+				component: () => import("@/views/user/UserHistory.vue"),
 			},
 			{
 				name: "user-history-detail",
 				path: "/user/history/detail/:code",
-				component: () => import("../views/UserHistoryDetail.vue"),
+				component: () => import("@/views/user/UserHistoryDetail.vue"),
 			},
 			{
 				name: "user-promotion",
 				path: "/user/promotion",
-				component: () => import("../views/UserPromotion.vue"),
+				component: () => import("@/views/user/UserPromotion.vue"),
 			},
 			{
 				name: "user-account",
 				path: "/user/account",
-				component: () => import("../views/UserAccount.vue"),
+				component: () => import("@/views/user/UserAccount.vue"),
 			},
 			{
 				name: "user-change-password",
 				path: "/user/account/change-password",
-				component: () => import("../views/UserPassword.vue"),
+				component: () => import("@/views/user/UserPassword.vue"),
 			},
 			{
 				name: "user-feedback",
 				path: "/user/feedback",
-				component: () => import("../views/UserFeedback.vue"),
+				component: () => import("@/views/user/UserFeedback.vue"),
 			},
 		],
 	},

@@ -1,5 +1,5 @@
 <script setup>
-import UserHelp from "../components/UserHelp.vue";
+import UserHelp from "@/components/user/UserHelp.vue";
 </script>
 
 <template>

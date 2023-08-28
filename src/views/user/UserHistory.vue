@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, computed } from "vue";
-import UserBill from "../components/UserBill.vue";
+import UserBill from "@/components/user/UserBill.vue";
 const props = defineProps({
     user: Object,
     orders: Array
@@ -73,9 +73,6 @@ watch(selected, () => {
 
                 </v-card>
             </v-sheet>
-        </v-sheet>
-        <v-sheet>
-            <v-date-picker color="primary"></v-date-picker>
         </v-sheet>
         <v-list class="d-flex">
             <v-list-item

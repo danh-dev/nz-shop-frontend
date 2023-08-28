@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onBeforeMount, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import UserBill1 from "../components/UserBill1.vue";
+import UserBill1 from "@/components/user/UserBill1.vue";
 const props = defineProps({
     orders: Array,
     user: Object,
