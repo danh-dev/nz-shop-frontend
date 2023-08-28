@@ -2,24 +2,40 @@ import "@mdi/font/css/materialdesignicons.css"; // Ensure you are using css-load
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-// Vuetify
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import CKEditor from "@ckeditor/ckeditor5-vue";
+import { VueRecaptchaPlugin } from "vue-recaptcha";
+import { createHead } from "@unhead/vue";
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
-
+import router from "./router/index.js";
 import App from "./App.vue";
-import router from "./router";
 
 // Vuetify
 const vuetify = createVuetify({
 	icons: {
-		defaultSet: "mdi", // This is already the default value - only for display purposes
+		defaultSet: "mdi",
 	},
+	defaults: {}
 });
 
-const app = createApp(App);
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
-app.use(createPinia());
+const head = createHead();
+
+const app = createApp(App);
+app.use(pinia);
 app.use(router);
 app.use(vuetify);
+app.use(head);
+app.use(VueRecaptchaPlugin, {
+	v2SiteKey: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+});
+app.use(CKEditor);
+
+app.config.globalProperties.formatPrice = (value) => {
+	return parseFloat(value).toLocaleString("vi-VN", { "style": "currency", "currency": "VND" });
+};
 
 app.mount("#app");
