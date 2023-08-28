@@ -14,6 +14,7 @@ import { Essentials } from '@ckeditor/ckeditor5-essentials';
 import { FontBackgroundColor, FontColor, FontFamily, FontSize } from '@ckeditor/ckeditor5-font';
 import { Heading } from '@ckeditor/ckeditor5-heading';
 import {
+	AutoImage,
 	Image,
 	ImageCaption,
 	ImageInsert,
@@ -23,7 +24,7 @@ import {
 	ImageUpload
 } from '@ckeditor/ckeditor5-image';
 import { Indent, IndentBlock } from '@ckeditor/ckeditor5-indent';
-import { Link } from '@ckeditor/ckeditor5-link';
+import { Link, LinkImage } from '@ckeditor/ckeditor5-link';
 import { List, ListProperties, TodoList } from '@ckeditor/ckeditor5-list';
 import { MediaEmbed } from '@ckeditor/ckeditor5-media-embed';
 import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
@@ -35,6 +36,7 @@ import {
 	TableToolbar
 } from '@ckeditor/ckeditor5-table';
 import { TextTransformation } from '@ckeditor/ckeditor5-typing';
+import { SimpleUploadAdapter } from '@ckeditor/ckeditor5-upload';
 
 // You can read more about extending the build with additional plugins in the "Installing plugins" guide.
 // See https://ckeditor.com/docs/ckeditor5/latest/installation/plugins/installing-plugins.html for details.
@@ -42,6 +44,7 @@ import { TextTransformation } from '@ckeditor/ckeditor5-typing';
 class Editor extends DecoupledEditor {
 	public static override builtinPlugins = [
 		Alignment,
+		AutoImage,
 		Autoformat,
 		BlockQuote,
 		Bold,
@@ -63,11 +66,13 @@ class Editor extends DecoupledEditor {
 		IndentBlock,
 		Italic,
 		Link,
+		LinkImage,
 		List,
 		ListProperties,
 		MediaEmbed,
 		Paragraph,
 		PasteFromOffice,
+		SimpleUploadAdapter,
 		Strikethrough,
 		Table,
 		TableCellProperties,
@@ -120,7 +125,8 @@ class Editor extends DecoupledEditor {
 				'toggleImageCaption',
 				'imageStyle:inline',
 				'imageStyle:block',
-				'imageStyle:side'
+				'imageStyle:side',
+				'linkImage'
 			]
 		},
 		table: {

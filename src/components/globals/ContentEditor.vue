@@ -4,13 +4,13 @@ import { component as CKEditor } from "@ckeditor/ckeditor5-vue";
 
 import Editor from "ckeditor5-custom-build/build/ckeditor";
 
-
 defineProps({
   editorContent: String
 });
 
 defineEmits(["editContent"]);
 
+const url = "http://127.0.0.1:8000/";
 
 const onReady = editor => {
   editor.ui.getEditableElement().parentElement.insertBefore(
@@ -19,7 +19,26 @@ const onReady = editor => {
   );
 };
 
-const editorConfig = ref({});
+const editorConfig = ref({
+  simpleUpload: {
+    // The URL that the images are uploaded to.
+    uploadUrl: `${url}api/description`,
+
+    // Enable the XMLHttpRequest.withCredentials property.
+    // withCredentials: true,
+
+    // Headers sent along with the XMLHttpRequest to the upload server.
+    headers: {
+      "X-CSRF-TOKEN": "CSRF-Token",
+      Authorization: "Bearer <JSON Web Token>"
+    }
+  },
+  image: {
+    upload: {
+      types: ["jpeg", "png", "jpg", "gif", "webp", "svg+xml", "bmp"],
+    }
+  }
+});
 </script>
 
 <style></style>
