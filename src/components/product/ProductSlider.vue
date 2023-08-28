@@ -2,8 +2,10 @@
 <script setup>
 import ProductSliderArrow from "./ProductSliderArrow.vue";
 defineProps({
-	images: Array,
+	gallery: String,
 });
+
+const url = "http://127.0.0.1:8000/";
 </script>
 
 <template>
@@ -29,10 +31,9 @@ defineProps({
 			/>
 		</template>
 		<v-carousel-item
-			v-for="image in images"
-			:key="image.id"
-			:src="image.src"
-			cover
+			v-for="image in gallery.split('|')"
+			:key="image"
+			:src="`${url}${image}`"
 			height="100%"
 		/>
 	</v-carousel>

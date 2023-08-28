@@ -34,6 +34,7 @@ const newPost = ref({
   title: "",
   author: "",
   image: [],
+  description: "",
   content: "",
   type: "",
 });
@@ -72,21 +73,23 @@ function editContent(event) {
           <h2>Chi tiết bài viết mới</h2>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="newPost.title"
-            :rules="[v => !!v || 'Vui lòng không để trống.']" :counter="20" label="Tiêu đề bài viết:">
+          <v-text-field variant="underlined" v-model="newPost.title" :rules="[v => !!v || 'Vui lòng không để trống.']"
+            :counter="20" label="Tiêu đề bài viết:">
           </v-text-field>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="newPost.author" 
-            :rules="[v => !!v || 'Vui lòng không để trống.']"
+          <v-text-field variant="underlined" v-model="newPost.author" :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20" label="Tác giả:">
           </v-text-field>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" md="12">
           <v-file-input variant="underlined" v-model="newPost.image" counter multiple show-size
@@ -94,12 +97,23 @@ function editContent(event) {
           </v-file-input>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" md="12">
           <v-select variant="underlined" v-model="newPost.type" :rules="[v => !!v || 'Vui lòng lựa chọn.']"
             label="Loại tin tức:" :items="['Tin sản phẩm', 'Tin thị trường']"></v-select>
         </v-col>
       </v-row>
+
+      <v-row>
+        <v-col cols="12" md="12">
+          <v-textarea variant="underlined" v-model="newPost.description"
+            :rules="[v => !!v || 'Vui lòng không để trống']" :counter="10000"
+            label="Mô tả:">
+          </v-textarea>
+        </v-col>
+      </v-row>
+
       <v-row>
         <v-col cols="12" md="12">
           <v-textarea name="editor" variant="underlined" v-model="newPost.content"
@@ -109,6 +123,7 @@ function editContent(event) {
           <ContentEditor :editorContent="newPost.content" @editContent="editContent" />
         </v-col>
       </v-row>
+
       <v-row>
         <v-col cols="12" md="12">
           <v-btn class="me-2" type="submit" color="info" variant="tonal">Đăng bài</v-btn>

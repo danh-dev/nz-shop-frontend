@@ -12,7 +12,7 @@
 
     <div class="d-flex align-center my-2 me-4">
       <v-icon size="x-small" color="red-accent-4">mdi-trending-up</v-icon>
-      <v-btn :to="`/news`" variant="text" class=" px-1" density="compact">Thị trường </v-btn>
+      <v-btn :to="`/sale`" variant="text" class=" px-1" density="compact">Thị trường </v-btn>
     </div>
 
     <div class="d-flex align-center my-2 me-4">

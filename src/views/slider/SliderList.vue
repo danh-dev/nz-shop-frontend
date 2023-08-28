@@ -20,6 +20,7 @@ watch(selected, () => {
 });
 
 const fetchSlider = async () => {
+  selected.value = null;
   try {
     const response = await axios.get(`${url}api/sliders`);
     if (response.data.status === 200) {
@@ -65,19 +66,20 @@ const updatePage = (event) => {
       <div>
         <div class="d-flex justify-space-between my-5">
           <h3 class="da">Danh sách Slider</h3>
-          <v-select v-model="selected" label="Tình trạng" variant="outlined" :items="[{
-            title: 'Hoạt động', value: 0
-          }, { title: 'Đã xóa', value: 1, }]" density="compact" style="margin: 0 10%;">
+          <v-select v-model="selected" label="Tình trạng" variant="outlined"
+            :items="[{ title: 'Hoạt động', value: 0 }, { title: 'Đã xóa', value: 1, }]" density="compact"
+            style="margin: 0 10%;">
           </v-select>
           <v-btn :to="`/admincp/slider/add`" color="info" variant="tonal" class="text-none">Thêm mới</v-btn>
         </div>
+
         <v-table hover class="text-body-2 m-card my-3" v-if="sliders.length > 0">
           <thead>
             <tr>
-              <th class="font-weight-bold text-center" style="width: 20%;">
+              <th class="font-weight-bold text-center" style="width: 25%;">
                 Tên
               </th>
-              <th class="font-weight-bold text-center" style="width: 23.5%;">
+              <th class="font-weight-bold text-center" style="width: 20%;">
                 Tiêu đề
               </th>
               <th class="font-weight-bold text-center" style="width: 10%">
@@ -87,7 +89,7 @@ const updatePage = (event) => {
                 Ngày tạo
               </th>
               <th class="font-weight-bold text-center">Tình trạng</th>
-              <th class="font-weight-bold text-center">
+              <th class="font-weight-bold text-center" style="width: 10%">
                 Chức năng
               </th>
             </tr>
@@ -107,8 +109,8 @@ const updatePage = (event) => {
               <td class="text-center">{{ item.isDeleted ? 'Đã xóa' : 'Hoạt động' }}</td>
               <td>
                 <div class="d-flex align-center justify-center">
-                  <v-btn @click="editSlider(item.id)" size="x-small" variant="tonal" icon="mdi-pencil"
-                    color="success" class="text-none" :to="`/admincp/slider/edit/${item.id}`">
+                  <v-btn @click="editSlider(item.id)" size="x-small" variant="tonal" icon="mdi-pencil" color="success"
+                    class="text-none" :to="`/admincp/slider/edit/${item.id}`">
                   </v-btn>
                   <v-btn @click="deleteSlider(item.id)" size="x-small" variant="tonal" icon="mdi-trash-can-outline"
                     color="red-accent-4" class="text-none" onclick="return confirm('Bạn muốn xóa slider này ?')">
@@ -128,10 +130,4 @@ const updatePage = (event) => {
   </v-row>
 </template>
 <style>
-.more {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-}
 </style>

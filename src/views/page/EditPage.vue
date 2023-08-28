@@ -89,10 +89,10 @@ onBeforeMount(fetchPage);
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-textarea name="editor" variant="underlined" v-model="page.content"
+          <!-- <v-textarea name="editor" variant="underlined" v-model="page.content"
             :rules="[v => !!v || 'Vui lòng không để trống & không vượt quá 10000 ký tự..']" :counter="10000"
             label="Nội dung trang:">
-          </v-textarea>
+          </v-textarea> -->
           <ContentEditor :editorContent="page.content" @editContent="editContent" />
         </v-col>
       </v-row>

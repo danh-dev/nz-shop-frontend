@@ -64,14 +64,15 @@ const updatePage = (event) => {
     <div class="d-flex justify-space-between my-5">
       <h3 class="">Danh sách bài viết</h3>
       <v-select v-model="selected" label="Tình trạng" variant="outlined" :items="[{
-        title: 'Hoạt động', value: 0}, { title: 'Đã xóa', value: 1, }]" density="compact" style="margin: 0 10%;">
+        title: 'Hoạt động', value: 0
+      }, { title: 'Đã xóa', value: 1, }]" density="compact" style="margin: 0 10%;">
       </v-select>
       <v-btn :to="`/admincp/post/add/`" color="info" variant="tonal" class="text-none">Thêm mới</v-btn>
     </div>
-    <v-table hover class="post text-body-2 m-card my-3" v-if="posts.length > 0">
+    <v-table hover class="post text-body-2 text-justify m-card my-3" v-if="posts.length > 0">
       <thead>
         <tr>
-          <th class="font-weight-bold text-center" style="width: 20%;">
+          <th class="font-weight-bold text-center" style="width: 35%;">
             Tiêu đề
           </th>
           <th class="font-weight-bold text-center" style="width: 15%">
@@ -83,9 +84,9 @@ const updatePage = (event) => {
           <th class="font-weight-bold text-center" style="width: 15%;">
             Ngày tạo
           </th>
-          <th class="font-weight-bold text-center" style="width: 15%;">
+          <!-- <th class="font-weight-bold text-center">
             Loại tin tức
-          </th>
+          </th> -->
           <th class="font-weight-bold text-center">Trạng thái</th>
           <th class="font-weight-bold text-center" style="width: 10%">
             Chức năng
@@ -95,19 +96,22 @@ const updatePage = (event) => {
 
       <tbody>
         <tr v-for="item in filteredPosts.slice((page - 1) * rowsPerPage, page * rowsPerPage)" :key="item.id">
-          <td>
+          <td class="titlePost">
+            <v-tooltip activator="parent" location="Anchor" width="35%" color="#fff">
+              <p class="more">{{ item.title }}</p>
+            </v-tooltip>
             <p class="more">{{ item.title }}</p>
           </td>
           <td class="text-center">{{ item.author }}</td>
           <td> <img :src="url + item.image" width="80" :alt="item.title"
               class="rounded-lg  d-flex align-center justify-center" /></td>
           <td class="text-center">{{ item.created_at.slice(0, 10) }}</td>
-          <td class="text-center">{{ item.type }}</td>
+          <!-- <td class="text-center">{{ item.type }}</td> -->
           <td class="text-center">{{ item.isDeleted ? 'Đã xóa' : 'Hoạt động' }}</td>
           <td>
             <div class="d-flex align-center justify-space-between">
-              <v-btn @click="editPost(item.id)" size="x-small" variant="tonal" icon="mdi-pencil"
-                color="success" class="text-none" :to="`/admincp/slider/edit/${item.id}`">
+              <v-btn @click="editPost(item.id)" size="x-small" variant="tonal" icon="mdi-pencil" color="success"
+                class="text-none" :to="`/admincp/slider/edit/${item.id}`">
               </v-btn>
               <v-btn @click="deletePost(item.id)" size="x-small" variant="tonal" icon="mdi-trash-can-outline"
                 color="red-accent-4" class="text-none" onclick="return confirm('Bạn muốn xóa bài viết này ?')">
@@ -125,6 +129,7 @@ const updatePage = (event) => {
 </template>
 
 <style>
+
 .more {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -132,28 +137,4 @@ const updatePage = (event) => {
   overflow: hidden;
 }
 
-.tooltip {
-  position: relative;
-  display: inline-block;
-}
-
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: auto;
-  height: 100px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-
-  /* Position the tooltip */
-  position: absolute;
-  top: auto;
-  z-index: 1;
-}
-
-.tooltip:hover .tooltiptext {
-  visibility: initial;
-}
 </style>

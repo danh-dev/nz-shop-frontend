@@ -94,7 +94,7 @@ const updatePage = (event) => {
           <tbody>
             <tr v-for="item in pages.slice((page - 1) * rowsPerPage, page * rowsPerPage)" :key="item.id">
               <td>
-                <div class="text-uppercase">{{ item.name }}</div>
+                <div>{{ item.name }}</div>
               </td>
               <td class="text-center">{{ item.author }}</td>
               <td class="text-center">{{ item.created_at.slice(0, 10) }}</td>

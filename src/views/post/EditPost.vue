@@ -16,6 +16,7 @@ const post = ref({
   title: "",
   author: "",
   image: "",
+  description: "",
   content: "",
   type: "",
 });
@@ -117,10 +118,19 @@ onBeforeMount(fetchPost);
 
       <v-row>
         <v-col cols="12" md="12">
-          <v-textarea name="editor" variant="underlined" v-model="post.content"
+          <v-textarea variant="underlined" v-model="post.description"
+            :rules="[v => !!v || 'Vui lòng không để trống']" :counter="10000"
+            label="Mô tả:">
+          </v-textarea>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="12" md="12">
+          <!-- <v-textarea name="editor" variant="underlined" v-model="post.content"
             :rules="[v => !!v || 'Vui lòng không để trống & không vượt quá 10000 ký tự.']" :counter="10000"
             label="Nội dung trang:">
-          </v-textarea>
+          </v-textarea> -->
           <ContentEditor :editorContent="post.content" @editContent="editContent" />
         </v-col>
       </v-row>

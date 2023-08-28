@@ -1,12 +1,18 @@
 <script setup>
-import useNewsStore from "../../stores/useNewsStore.js";
-import { storeToRefs } from "pinia";
 import getSlugByName from "../../utils/getSlugByName.js";
-const { productArticles } = storeToRefs(useNewsStore());
+
+defineProps({
+	posts: Array,
+});
+const url = "http://127.0.0.1:8000/";
 </script>
 
 <template>
-	<v-sheet elevation="3" rounded="lg" class="d-none d-md-none d-lg-block">
+	<v-sheet
+		elevation="3"
+		rounded="lg"
+		class="d-none d-md-none d-lg-block"
+	>
 		<v-table class="news text-medium my-3 py-2">
 			<thead>
 				<tr>
@@ -18,24 +24,41 @@ const { productArticles } = storeToRefs(useNewsStore());
 					</th>
 				</tr>
 			</thead>
-			<tbody v-for="productArticle in productArticles" :key="productArticle.id">
+
+			<tbody
+				v-for="item in posts"
+				:key="item.id"
+			>
 				<tr>
-					<th style="width: 40%">
-						<img class="w-100 d-flex align-center py-2" :src="productArticle.image" alt="" />
+					<th style="width: 40%;">
+						<img
+							class="w-100 d-flex align-center rounded-lg my-1"
+							:src="`${url}${item.image}`"
+							:alt="item.title"
+						/>
 					</th>
-					<td class="py-1">
-						<a :href="`/news/${getSlugByName(productArticle.title)}`" class="text-decoration-none text-dark">
-							{{ productArticle.title }}
+					<td>
+						<a
+							:href="`/news/${getSlugByName(item.title)}`"
+							class="text-decoration-none text-caption more"
+						>
+							{{ item.title }}
 						</a>
 					</td>
 				</tr>
-			</tbody>
-		</v-table><br>
+		</tbody>
+	</v-table><br>
 
-		<v-btn :to="`/news`" color="red-accent-4" class="text-white" append-icon="mdi-chevron-down" location="center">
-			Xem tất cả bài viết
-		</v-btn>
-	</v-sheet>
-</template>
+	<v-btn
+		:to="`/news`"
+		color="red-accent-4"
+		class="text-white"
+		append-icon="mdi-chevron-down"
+		location="center"
+	>
+		Xem tất cả bài viết
+	</v-btn>
 
-<style></style>
+</v-sheet></template>
+
+<style scoped></style>
