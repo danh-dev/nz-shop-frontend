@@ -1,10 +1,16 @@
 <script setup>
 import { useDisplay } from "vuetify";
+import { useCartStore } from "@/stores/cart";
+import { userData } from "@/stores/userData";
 
 import HeaderButton from "../HeaderButton.vue";
 import HeaderLogo from "../HeaderLogo.vue";
 
-const { lgAndUp } = useDisplay();
+const { lgAndUp, mdAndUp } = useDisplay();
+const cartStore = useCartStore();
+const userStore = userData();
+
+
 </script>
 
 <template>
@@ -19,23 +25,27 @@ const { lgAndUp } = useDisplay();
 		>
 			<HeaderLogo class="order-first" />
 			<HeaderButton
-				class="d-none d-sm-block "
+				class="d-none d-sm-block"
 				id="categories"
 			>
 				<template #icon>mdi-list-box-outline</template>
 				<template #label>Danh mục</template>
 			</HeaderButton>
 
-			<v-text-field
-				variant="solo"
-				hide-details
-				prepend-inner-icon="mdi-magnify"
-				label="Bạn cần tìm gì?"
-				single-line
-				density="compact"
-			/>
+			<v-row style="max-width: 380px; min-width: 250px">
+				<v-col cols="12">
+					<v-text-field
+						variant="solo"
+						hide-details
+						prepend-inner-icon="mdi-magnify"
+						label="Bạn cần tìm gì?"
+						single-line
+						density="compact"
+					/></v-col>
+			</v-row>
 
-			<HeaderButton class="d-none d-sm-block pa-1">
+
+			<!-- <HeaderButton class="d-none d-sm-block pa-1">
 				<template #icon>mdi-phone</template>
 				<template #label>Gọi mua hàng</template>
 			</HeaderButton>
@@ -43,39 +53,40 @@ const { lgAndUp } = useDisplay();
 			<HeaderButton class="order-first order-sm-0 pa-1">
 				<template #icon>mdi-store</template>
 				<template #label>Cửa hàng gần bạn</template>
-			</HeaderButton>
+			</HeaderButton> -->
 
-			<HeaderButton class="pa-1">
+			<HeaderButton href="/tracking">
 				<template #icon>mdi-truck-fast</template>
 				<template #label>Tra cứu đơn hàng</template>
 			</HeaderButton>
 
-			<HeaderButton class="pa-1">
+			<HeaderButton href="/cart">
 				<template #icon>mdi-shopping-outline</template>
 				<template #label>Giỏ hàng</template>
 				<template #badge>
 					<v-badge
-						content="2"
+						:content="cartStore.totalUnit"
 						color="primary"
 						max="9"
-						:offset-y="lgAndUp ? 0 : -10"
-						:inline=lgAndUp
-						:floating=!lgAndUp
+						:offset-y="mdAndUp ? 0 : -10"
+						:inline=mdAndUp
+						:floating=!mdAndUp
 					/>
 				</template>
 			</HeaderButton>
 
 			<HeaderButton
-				stacked
-				class="account d-none d-sm-block pa-1"
+				:stacked="true"
+				class="d-none d-sm-flex pa-1"
+				href="/login"
 			>
 				<template #icon>mdi-account-circle-outline</template>
-				<template #label>Đăng nhập</template>
+				<template #label>{{ userStore.full_name ? userStore.full_name : "Đăng nhập" }}</template>
 			</HeaderButton>
 		</v-container>
 	</v-app-bar>
 
-	<v-dialog
+	<!-- <v-dialog
 		transition="dialog-bottom-transition"
 		width="300px"
 		activator=".account"
@@ -121,7 +132,7 @@ const { lgAndUp } = useDisplay();
 				></v-btn>
 			</v-card>
 		</template>
-	</v-dialog>
+	</v-dialog> -->
 </template>
 
 <style></style>

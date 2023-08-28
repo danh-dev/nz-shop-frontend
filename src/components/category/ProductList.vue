@@ -1,5 +1,5 @@
 <script setup>
-import ProductCard from "../chung/ProductCard.vue";
+import ProductCard from "@/components/globals/ProductCard.vue";
 
 defineProps({
   productsLength: Number,

@@ -1,56 +1,37 @@
 <script setup>
-import { useDisplay } from "vuetify";
-
 import { RouterView } from "vue-router";
+import { useRecaptchaProvider } from "vue-recaptcha";
 
-import TheHeader from "./components/layouts/TheHeader.vue";
-import TheFooter from "./components/layouts/TheFooter.vue";
-import FullscreenModal from "./components/modals/FullscreenModal.vue";
-import MenuModal from "./components/modals/MenuModal.vue";
+import ScrollToTop from "@/components/globals/ScrollToTop.vue";
+import GlobalLoader from "@/components/globals/GlobalLoader.vue";
+import useLoadingStore from "@/stores/loading";
 
-const { lgAndUp } = useDisplay();
+const loadingStore = useLoadingStore();
+
+useRecaptchaProvider();
+
+
 </script>
 
 <template>
-	<v-layout>
-		<TheHeader />
-
-		<v-main
-			style="position: relative"
-			id="modal-container"
-		>
-			<v-container :fluid="!lgAndUp">
-				<RouterView />
-			</v-container>
-		</v-main>
-
-		<TheFooter />
-
-		<FullscreenModal
-			location-strategy="static"
-			scroll-strategy="close"
-			:scrim="false"
-			transition="dialog-bottom-transition"
-			activator="#category"
-			absolute
-			content-class="position-fixed"
-			attach="#modal-container"
-			width="100%"
-			height="calc(100vh - 56px)"
-		/>
-
-		<MenuModal
-			style="top: 64px"
-			location-strategy="static"
-			scroll-strategy="none"
-			activator="#categories"
-			attach="#modal-container"
-			transition="fade-transition"
-			width="100%"
-			absolute
-			content-class="position-fixed"
-		/>
-	</v-layout>
+	<RouterView />
+	<ScrollToTop />
+	<GlobalLoader :loading="loadingStore.loading" />
 </template>
 
-<style scoped></style>
+<style>
+.m-pointer {
+	cursor: pointer;
+}
+
+.m-card {
+	border-radius: 0.5rem !important;
+	box-shadow: 0 2px 9px -2px rgba(50, 71, 92, 0.06), 0 4px 9px 1px rgba(50, 71, 92, 0.04), 0 2px 6px 4px rgba(50, 71, 92, 0.02) !important;
+}
+
+@media (min-width: 1920px) {
+	.v-container {
+		max-width: 1200px !important;
+	}
+}
+</style>

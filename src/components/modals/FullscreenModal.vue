@@ -1,19 +1,17 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watch } from "vue";
 import useCategoryStore from "../../stores/category";
-import { storeToRefs } from "pinia";
 
-import HomeMainMobileItem from "../HomeMainMobileItem.vue";
-import MenuTree from "../MenuTree.vue";
+import HomeMainMobileItem from "../home/HomeMainMobileItem.vue";
+import MenuTree from "../home/MenuTree.vue";
 
 const categoryStore = useCategoryStore();
-const { parentCategories } = storeToRefs(categoryStore);
 
 const colors = ["red", "blue", "teal", "green", "orange", "cyan-accent", "lime", "yellow", "amber"];
-const selected = ref(null);
+const selected = ref({});
 
-onMounted(() => {
-  selected.value = parentCategories.value[0];
+watch(() => categoryStore.parentCategories, () => {
+  selected.value = categoryStore.parentCategories[0];
 });
 </script>
 
@@ -28,7 +26,7 @@ onMounted(() => {
         width="5.5rem"
       >
         <HomeMainMobileItem
-          v-for="(category, index) in parentCategories"
+          v-for="(category, index) in categoryStore.parentCategories"
           :key="category.id"
           :category="category"
           :color="colors[index % colors.length]"

@@ -3,8 +3,8 @@ import { useDisplay } from "vuetify";
 
 import { storeToRefs } from "pinia";
 
-import HomeMainTopMenuItem from "../HomeMainTopMenuItem.vue";
-import HomeMainTopMenuList from "../HomeMainTopMenuList.vue";
+import HomeMainTopMenuItem from "../home/HomeMainTopMenuItem.vue";
+import HomeMainTopMenuList from "../home/HomeMainTopMenuList.vue";
 import useCategoryStore from "../../stores/category";
 import getSlugByName from "../../utils/getSlugByName";
 

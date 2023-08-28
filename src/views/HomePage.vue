@@ -1,5 +1,5 @@
 <script setup>
-import HomeMain from "../components/HomeMain.vue";
+import HomeMain from "@/components/home/HomeMain.vue";
 
 </script>
 

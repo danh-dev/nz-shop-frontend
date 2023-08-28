@@ -1,20 +1,49 @@
 <script setup>
-import { onMounted, ref, computed, watch } from "vue";
+import axios from "axios";
+import { ref, computed, watch } from "vue";
+import { mapKeys, camelCase } from "lodash";
 import { useRoute } from "vue-router";
 import { useDisplay } from "vuetify";
-import useCategoryStore from "../stores/category";
+import useCategoryStore from "@/stores/category";
+import useLoadingStore from "@/stores/loading";
 
-import BreadCrumbs from "../components/category/BreadCrumbs.vue";
-import FilterChip from "../components/category/FilterChip.vue";
-import RangeSlider from "../components/category/RangeSlider.vue";
-import FilterCard from "../components/category/FilterCard.vue";
-import ProductsPagination from "../components/category/ProductsPagination.vue";
-import ProductList from "../components/category/ProductList.vue";
-import getSlugByName from "../utils/getSlugByName";
+import BreadCrumbs from "@/components/category/BreadCrumbs.vue";
+import FilterChip from "@/components/category/FilterChip.vue";
+import RangeSlider from "@/components/category/RangeSlider.vue";
+import FilterCard from "@/components/category/FilterCard.vue";
+import ProductList from "@/components/category/ProductList.vue";
+import GlobalPagination from "@/components/globals/GlobalPagination.vue";
 
-const { findCategoryBySlug, findRecursiveCategorySlug } = useCategoryStore();
-
+const url = "http://127.0.0.1:8000/";
+const categoryStore = useCategoryStore();
+const loadingStore = useLoadingStore();
+const route = useRoute();
+const { findCategoryBySlug, findRecursiveCategorySlug } = categoryStore;
 const { name } = useDisplay();
+
+const page = ref(1);
+const category = ref(null);
+const products = ref([]);
+const newProducts = ref([]);
+const filterArray = ref([]);
+const switchCard = ref([]);
+const chips = ref([]);
+const breadCrumbsItems = ref([{
+  title: "Trang chủ",
+  href: "/",
+  disable: false,
+}]);
+
+const selected = ref([]);
+
+const bottomSelected = ref(undefined);
+const sort = ref(undefined);
+
+const max = 30000000;
+const priceRange = ref([0, max]);
+const step = 1000;
+
+
 const productsLength = computed(() => {
   switch (name.value) {
     case "xs":
@@ -31,23 +60,19 @@ const productsLength = computed(() => {
       return 5;
   }
 });
-const category = ref(null);
-//getAPI products by category
-const products = ref([]);
-const newProducts = ref([]);
-const filterArray = ref([]);
-const switchCard = ref([]);
-const chips = ref([]);
-const breadCrumbsItems = ref([{
-  title: "Trang chủ",
-  href: "/",
-  disable: false,
-}]);
-const route = useRoute();
 
-onMounted(() => {
+const productsPerPages = computed(() => {
+  return productsLength.value * 3;
+});
+
+const numberOfPages = computed(() => {
+  return Math.ceil(products.value.length / productsPerPages.value);
+});
+
+watch(() => categoryStore.categories, async () => {
   const { params: { slugs } } = route;
   category.value = findCategoryBySlug(slugs[slugs.length - 1]);
+
   slugs.forEach((slug, index, self) => {
     if (index !== self.length - 1) {
       const category = findCategoryBySlug(slug);
@@ -67,117 +92,14 @@ onMounted(() => {
     active: true
   });
 
-  products.value = [
-    {
-      id: 1,
-      name: "iPhone 14 Pro Max 128GB | Chính hãng VN/A",
-      image: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
-      price: 26390000,
-      prePrice: 29900000,
-      properties: "cpu-Snapdragon, screen-Trên 6 inch, Rom-32GB, Ram-4GB",
-      categoryId: 1,
-    },
-    {
-      id: 2,
-      name: "iPhone 14 Pro Max 128GB | Chính hãng VN/A",
-      image: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
-      price: 26390000,
-      prePrice: 29900000,
-      properties: "cpu-Apple A, screen-Trên 6 inch, Rom-64GB, Ram-6GB",
-      categoryId: 1,
-    },
-    {
-      id: 3,
-      name: "iPhone 14 Pro Max 128GB | Chính hãng VN/A",
-      image: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
-      price: 26390000,
-      prePrice: 29900000,
-      properties: "cpu-Mediatek Dimensity, screen-Dưới 6 inch, Rom-128GB, Ram-8GB",
-      categoryId: 1,
-    },
-    {
-      id: 4,
-      name: "iPhone 14 Pro Max 128GB | Chính hãng VN/A",
-      image: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
-      price: 26390000,
-      prePrice: 29900000,
-      properties: "cpu-Mediatek Helio, screen-Trên 6 inch, Rom-512GB, Ram-12GB",
-      categoryId: 1,
-    },
-    {
-      id: 5,
-      name: "iPhone 14 Pro Max 128GB | Chính hãng VN/A",
-      image: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
-      price: 26390000,
-      prePrice: 29900000,
-      properties: "cpu-Exynos, screen-Trên 6 inch, Rom-32GB, Ram-4GB",
-      categoryId: 1,
-    },
-    {
-      id: 6,
-      name: "iPhone 14 Pro Max 128GB | Chính hãng VN/A",
-      image: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
-      price: 26390000,
-      prePrice: 26390000,
-      properties: "cpu-Snapdragon, screen-Trên 6 inch, Rom-32GB, Ram-4GB",
-      categoryId: 1,
-    },
-    {
-      id: 7,
-      name: "iPhone 14 Pro Max 128GB | Chính hãng VN/A",
-      image: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
-      price: 26390000,
-      prePrice: 26390000,
-      properties: "cpu-Snapdragon, screen-Trên 6 inch, Rom-32GB, Ram-4GB",
-      categoryId: 1,
-    },
-    {
-      id: 8,
-      name: "iPhone 14 Pro Max 128GB | Chính hãng VN/A",
-      image: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
-      price: 26390005,
-      prePrice: 26390000,
-      properties: "cpu-Snapdragon, screen-Trên 6 inch, Rom-32GB, Ram-4GB",
-      categoryId: 1,
-    },
-    {
-      id: 9,
-      name: "iPhone 14 Pro Max 128GB | Chính hãng VN/A",
-      image: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
-      price: 26390004,
-      prePrice: 26390000,
-      properties: "cpu-Snapdragon, screen-Trên 6 inch, Rom-32GB, Ram-4GB",
-      categoryId: 1,
-    },
-    {
-      id: 10,
-      name: "iPhone 14 Pro Max 128GB | Chính hãng VN/A",
-      image: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
-      price: 26390003,
-      prePrice: 29900000,
-      properties: "cpu-Snapdragon, screen-Trên 6 inch, Rom-32GB, Ram-4GB",
-      categoryId: 1,
-    },
-    {
-      id: 11,
-      name: "iPhone 14 Pro Max 128GB | Chính hãng VN/A",
-      image: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
-      price: 26390002,
-      prePrice: 29900000,
-      properties: "cpu-Snapdragon, screen-Trên 6 inch, Rom-32GB, Ram-4GB",
-      categoryId: 1,
-    },
-    {
-      id: 12,
-      name: "iPhone 14 Pro Max 128GB | Chính hãng VN/A",
-      image: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
-      price: 26390001,
-      prePrice: 29900000,
-      properties: "cpu-Snapdragon, screen-Trên 6 inch, Rom-32GB, Ram-4GB",
-      categoryId: 1,
-    },
-  ];
+  loadingStore.loading = true;
+  products.value = await fetchRecursiveCategoryProducts(category.value.id);
+  for (const product of products.value) {
+    product.variant = await fetchLowPriceVariant(product.id);
+  }
   newProducts.value = products.value;
+  loadingStore.loading = false;
+
   const propertiesDuplicateArr = products.value.reduce((pre, cur) => {
     if (pre === "") {
       return pre + cur.properties;
@@ -233,16 +155,6 @@ onMounted(() => {
   switchCard.value = [false, ...filterArr.map(() => false), false];
   chips.value = switchCard.value.map(() => null);
 });
-
-const selected = ref([]);
-
-const bottomSelected = ref(undefined);
-const sort = ref(undefined);
-
-const max = 30000000;
-const priceRange = ref([0, max]);
-const step = 1000;
-
 
 const changePrice = up => {
   if (up) {
@@ -316,8 +228,6 @@ const updateSelected = event => {
   }
 };
 
-
-
 const handleSearchClick = () => {
   // lastFiltered.value = filterArray.value.reduce((obj, item) => {
   //   if (item.choices.length > 0) {
@@ -331,7 +241,7 @@ const handleSearchClick = () => {
   // }
   newProducts.value = products.value;
   if (priceRange.value[0] !== 0 || priceRange.value[1] !== max) {
-    newProducts.value = products.value.filter(item => item.price >= priceRange.value[0] && item.price <= priceRange.value[1]);
+    newProducts.value = products.value.filter(item => ((item.variant.discountPrice || item.variant.sellPrice) >= priceRange.value[0]) && ((item.variant.discountPrice || item.variant.sellPrice) <= priceRange.value[1]));
   }
   const filterArray2 = filterArray.value.map(item => item.choices.map(choice => item.enName + "-" + item.items[choice])).filter(item => item.length !== 0);
   newProducts.value = newProducts.value.filter(product => {
@@ -354,19 +264,10 @@ const handleSearchClick = () => {
   // });
 };
 
-const page = ref(1);
-
 const updatePage = (event) => {
   page.value = event;
 };
 
-const productsPerPages = computed(() => {
-  return productsLength.value * 3;
-});
-
-const numberOfPages = computed(() => {
-  return Math.ceil(products.value.length / productsPerPages.value);
-});
 const clickChips = index => {
   chips.value[index].$el.click();
 };
@@ -399,10 +300,38 @@ watch(newProducts, () => {
     }
   }
 });
+
+const fetchRecursiveCategoryProducts = async (id, numbers) => {
+  let result = [];
+  try {
+    const res = await axios.get(`${url}api/recursive-categories/${id}/products/${numbers ?? ""}`);
+    if (res.status === 200) {
+      result = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
+    }
+  }
+  catch (e) {
+    //push
+  }
+  return result;
+};
+
+const fetchLowPriceVariant = async id => {
+  let variant;
+  try {
+    const res = await axios.get(`${url}api/products/${id}/variant`);
+    if (res.status === 200) {
+      variant = mapKeys(res.data.data, (value, key) => camelCase(key));
+    }
+  }
+  catch (e) {
+    //push
+  }
+  return variant;
+};
 </script>
 
 <template>
-  <BreadCrumbs :breadCrumbsItems="breadCrumbsItems"></BreadCrumbs>
+  <BreadCrumbs :breadCrumbsItems="breadCrumbsItems" />
 
   <v-sheet class="my-5">
     <v-sheet class="d-flex align-center">
@@ -548,12 +477,12 @@ watch(newProducts, () => {
     :productsPerPages="productsPerPages"
     :page="page"
   ></ProductList>
-  <ProductsPagination
+  <GlobalPagination
     v-if="numberOfPages > 1"
     :page="page"
     :numberOfPages="numberOfPages"
     @update:page="updatePage"
-  ></ProductsPagination>
+  />
 </template>
 
 <style></style>

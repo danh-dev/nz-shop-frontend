@@ -5,7 +5,8 @@ defineProps({
 	size: {
 		type: String,
 		default: "x-large"
-	}
+	},
+	stacked: Boolean,
 });
 
 const { lgAndUp, mdAndUp } = useDisplay();
@@ -14,10 +15,11 @@ const { lgAndUp, mdAndUp } = useDisplay();
 <template>
 	<v-btn
 		variant="text"
-		class="text-none text-grey-lighten-5"
+		class="text-none text-grey-lighten-5 pa-2"
 		:height="lgAndUp ? 'auto' : '4rem'"
 		min-height="2.5rem"
 		:rounded="mdAndUp ? 'lg' : '0'"
+		:stacked="stacked"
 	>
 		<v-icon :size=size>
 			<slot name="icon"></slot>
@@ -26,6 +28,7 @@ const { lgAndUp, mdAndUp } = useDisplay();
 			class="d-none d-md-block bg-transparent text-body-2 text-wrap text-center"
 			max-width="4.5rem"
 			width="auto"
+			:class="stacked ? 'mt-1' : 'ms-2'"
 		>
 			<slot name="label"></slot>
 		</v-sheet>
