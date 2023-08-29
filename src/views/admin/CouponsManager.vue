@@ -533,7 +533,7 @@ import {useRoute} from "vue-router";
 import {useSeoMeta} from "@unhead/vue";
 import {computed, onMounted, ref, watch, watchEffect} from "vue";
 import {rule_name_utf8, rule_coupon, ruleTypeCoupon} from "@/validators";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import {siteData} from "@/stores/globals";
 
 

@@ -1,16 +1,16 @@
 <script setup>
 // Post API
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import axios from "../axiosComfig";
 // import useNewsStore from "../stores/useNewsStore.js";
 // import { storeToRefs } from "pinia";
 import getSlugByName from "../utils/getSlugByName.js";
-const url = "http://127.0.0.1:8000/";
+const url = import.meta.env.VITE_PUBLIC_URL;
 const pages = ref([]);
 // get posts []
 const fetchPost = async () => {
   try {
-    const response = await axios.get(`${url}api/pages`);
+    const response = await axios.get(`pages`);
     // loading.value = false;
     if (response.data.status === 200) {
       pages.value = response.data.data.reverse();

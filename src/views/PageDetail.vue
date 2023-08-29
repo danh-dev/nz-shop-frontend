@@ -1,11 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import axios from "../axiosComfig";
 import { useRoute } from "vue-router";
 import getSlugByName from "../utils/getSlugByName";
 
 // Page API
-const url = "http://127.0.0.1:8000/";
+const url = import.meta.env.VITE_PUBLIC_URL;
 const route = useRoute();
 const pages = ref([]);
 const page = ref({
@@ -15,7 +15,7 @@ const page = ref({
 });
 
 const fetchPage = async () => {
-  const response = await axios.get(`${url}api/pages`);
+  const response = await axios.get(`pages`);
   if (response.data.status === 200) {
     pages.value = response.data.data;
     page.value = pages.value.find((page) => {

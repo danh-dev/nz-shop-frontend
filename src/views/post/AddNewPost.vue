@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import { useRouter } from "vue-router";
 import ContentEditor from "../../components/globals/ContentEditor.vue";
 // import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -48,7 +48,7 @@ async function createPost() {
     }
   });
   try {
-    const response = await axios.post("http://127.0.0.1:8000/api/posts", formData);
+    const response = await axios.post("posts", formData);
     if (response.data.status === 201) {
       router.push("/admincp/post");
     }
@@ -81,7 +81,7 @@ function editContent(event) {
       </v-row>
       <v-row>
         <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="newPost.author" 
+          <v-text-field variant="underlined" v-model="newPost.author"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20" label="Tác giả:">
           </v-text-field>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import { useRoute } from "vue-router";
 // import GlobalLoader from "../components/globals/GlobalLoader.vue";
 import useNewsStore from "../../stores/useNewsStore.js";
@@ -10,7 +10,7 @@ import NewsSideBar from "../../components/news/NewsSideBar.vue";
 
 const { relatedArticles } = storeToRefs(useNewsStore());
 // Post API
-const url = "http://127.0.0.1:8000/";
+const url = import.meta.env.VITE_PUBLIC_URL;
 const route = useRoute();
 // const loading = ref(false);
 const posts = ref([]);
@@ -24,7 +24,7 @@ const post = ref({
 
 const fetchPost = async () => {
   try {
-    const response = await axios.get(`${url}api/posts`);
+    const response = await axios.get(`posts`);
     // loading.value = false;
     if (response.data.status === 200) {
       posts.value = response.data.data;

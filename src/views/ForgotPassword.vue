@@ -24,7 +24,7 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import axios from "axios";
+import axios from "../axiosComfig";
 import { Checkbox } from 'vue-recaptcha';
 import {rule_email} from "@/validators";
 import {siteData} from "@/stores/globals";

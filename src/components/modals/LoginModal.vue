@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-// import axios from "axios";
+// import axios from "axiosComfig";
 import product from "../../product";
 const modal = ref(null);
 const review = ref(null);

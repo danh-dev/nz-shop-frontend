@@ -1,7 +1,7 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import axios from "../../../axiosComfig";
 import { mapKeys, camelCase } from "lodash";
 
 import ContentEditor from "@/components/globals/ContentEditor.vue";
@@ -9,7 +9,7 @@ import ContentEditor from "@/components/globals/ContentEditor.vue";
 const route = useRoute();
 const router = useRouter();
 
-const url = "http://127.0.0.1:8000/";
+const url = import.meta.env.VITE_PUBLIC_URL;
 const loading = ref(false);
 
 const categories = ref([]);
@@ -59,7 +59,7 @@ const submit = async () => {
 
   try {
     loading.value = true;
-    const res = await axios.post(`${url}api/products/update/${route.params.id}`, formData);
+    const res = await axios.post(`products/update/${route.params.id}`, formData);
     loading.value = false;
     if (res.status === 200) {
       // status.value = true;
@@ -84,7 +84,7 @@ const fetchData = async () => {
   // status.value = null;
 
   try {
-    const res = await axios.get(`${url}api/categories`);
+    const res = await axios.get(`categories`);
     if (res.status === 200) {
       categories.value = res.data.data.map(category => mapKeys(category, (value, key) => camelCase(key)));
     }
@@ -94,7 +94,7 @@ const fetchData = async () => {
   }
 
   try {
-    const res = await axios.get(`${url}api/products`);
+    const res = await axios.get(`products`);
     if (res.status === 200) {
       products.value = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
       const product = products.value.find(item => item.id === +route.params.id);

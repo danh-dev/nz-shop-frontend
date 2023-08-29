@@ -123,7 +123,7 @@
 <script setup>
 import {useSeoMeta} from "@unhead/vue";
 import {onMounted, ref} from "vue";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import {useRoute} from "vue-router";
 import {siteData} from "@/stores/globals";
 

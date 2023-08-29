@@ -1,6 +1,4 @@
-import ProductDetailPage from "../views/ProductDetailPage.vue";
 import NewsPage from "../views/NewsPage.vue";
-import NewsDetailPage from "../views/NewsDetailPage.vue";
 import ProductPage from "../views/ProductPage.vue";
 import NewsList from "../views/NewsList.vue";
 import PageList from "../views/PageList.vue";
@@ -44,20 +42,6 @@ const routes = [
 	{
 		path: ":pathMatch(.*)*",
 		component: () => import("../views/404.vue"),
-	},
-	// Product router
-	{
-		path: "/home/:productName",
-		component: ProductDetailPage,
-	},
-	// News router
-	{
-		path: "/news",
-		component: NewsPage,
-	},
-	{
-		path: "/news/:newsName",
-		component: NewsDetailPage,
 	},
 	{
 		name: "user",
@@ -104,7 +88,7 @@ const routes = [
 			},
 			// Product router
 			{
-				path: "/:productName",
+				path: "/:name",
 				component: ProductPage,
 			},
 			// News router

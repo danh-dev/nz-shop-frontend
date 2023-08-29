@@ -312,7 +312,7 @@
 import {useSeoMeta} from "@unhead/vue";
 import {useRoute, useRouter} from "vue-router";
 import {computed, onMounted, ref, watchEffect} from "vue";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import {rule_email, rule_fullname, rule_phone} from "@/validators";
 import {siteData} from "@/stores/globals";
 

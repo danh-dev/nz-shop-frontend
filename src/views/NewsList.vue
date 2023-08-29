@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import axios from "axios";
+import axios from "../axiosComfig";
 // import useNewsStore from "../stores/useNewsStore.js";
 // import { storeToRefs } from "pinia";
 import getSlugByName from "../utils/getSlugByName.js";
@@ -12,12 +12,11 @@ import { useDisplay } from "vuetify/lib/framework.mjs";
 const { xs } = useDisplay();
 const loading = ref(false);
 // Post API
-const url = "http://127.0.0.1:8000/";
 const posts = ref([]);
 // get posts []
 const fetchPost = async () => {
   try {
-    const response = await axios.get(`${url}api/posts`);
+    const response = await axios.get(`posts`);
     loading.value = false;
     if (response.data.status === 200) {
       posts.value = response.data.data.reverse();

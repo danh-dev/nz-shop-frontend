@@ -1,11 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import axios from "../../../axiosComfig";
 import { mapKeys, camelCase, lowerFirst } from "lodash";
 
 import ContentEditor from "@/components/globals/ContentEditor.vue";
 
-const url = "http://127.0.0.1:8000/";
+const url = import.meta.env.VITE_PUBLIC_URL;
 const loading = ref(false);
 
 const categories = ref([]);
@@ -71,7 +71,7 @@ const submit = async () => {
   if (more.length > 0) {
     try {
       loading.value = true;
-      const res = await axios.post(`${url}api/products`, formData);
+      const res = await axios.post(`products`, formData);
       loading.value = false;
       if (res.status === 201) {
         // status.value = true;
@@ -268,7 +268,7 @@ const created = ref(false);
 
 onMounted(async () => {
   try {
-    const res = await axios.get(`${url}api/categories`);
+    const res = await axios.get(`categories`);
     if (res.status === 200) {
       categories.value = res.data.data;
     }

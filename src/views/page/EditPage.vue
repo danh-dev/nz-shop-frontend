@@ -1,11 +1,11 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import { useRouter, useRoute } from "vue-router";
 import ContentEditor from "../../components/globals/ContentEditor.vue";
 
 // Post API
-const url = "http://127.0.0.1:8000/";
+const url = import.meta.env.VITE_PUBLIC_URL;
 
 const router = useRouter();
 const route = useRoute();
@@ -20,7 +20,7 @@ const page = ref({
 
 const fetchPage = async () => {
   try {
-    const response = await axios.get(`${url}api/pages`);
+    const response = await axios.get(`pages`);
     if (response.data.status === 200) {
       pages.value = response.data.data;
       page.value = pages.value.find(item => {
@@ -49,7 +49,7 @@ async function updatePage() {
   formData.append("_method", "PUT");
 
   try {
-    const response = await axios.post(`${url}api/pages/edit/${page.value.id}`, formData);
+    const response = await axios.post(`pages/edit/${page.value.id}`, formData);
     if (response.data.status === 200) {
       router.push("/admincp/page");
     }

@@ -1,8 +1,6 @@
 <script setup>
 import { RouterView } from "vue-router";
-import { useRecaptchaProvider } from "vue-recaptcha";
 
-import ScrollToTop from "@/components/globals/ScrollToTop.vue";
 import GlobalLoader from "@/components/globals/GlobalLoader.vue";
 import useLoadingStore from "@/stores/loading";
 

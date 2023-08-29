@@ -10,19 +10,19 @@ defineProps({
 
 defineEmits(["editContent"]);
 
-const url = "http://127.0.0.1:8000/";
+const url = "http://127.0.0.1:4545/api/";
 
 const onReady = editor => {
   editor.ui.getEditableElement().parentElement.insertBefore(
-    editor.ui.view.toolbar.element,
-    editor.ui.getEditableElement()
+      editor.ui.view.toolbar.element,
+      editor.ui.getEditableElement()
   );
 };
 
 const editorConfig = ref({
   simpleUpload: {
     // The URL that the images are uploaded to.
-    uploadUrl: `${url}api/description`,
+    uploadUrl: `${url}description`,
 
     // Enable the XMLHttpRequest.withCredentials property.
     // withCredentials: true,
@@ -30,6 +30,7 @@ const editorConfig = ref({
     // Headers sent along with the XMLHttpRequest to the upload server.
     headers: {
       "X-CSRF-TOKEN": "CSRF-Token",
+      "X-Vue-Api-Key":"298967b545b59db60ae6cd9ccceb4479",
       Authorization: "Bearer <JSON Web Token>"
     }
   },
@@ -45,7 +46,12 @@ const editorConfig = ref({
 
 <template>
   <v-sheet>
-    <CKEditor @ready="onReady" :editor="Editor" :model-value="editorContent"
-      @update:model-value="$emit('editContent', $event)" :config="editorConfig" />
+    <CKEditor
+        @ready="onReady"
+        :editor="Editor"
+        :model-value="editorContent"
+        @update:model-value="$emit('editContent', $event)"
+        :config="editorConfig"
+    />
   </v-sheet>
 </template>

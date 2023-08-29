@@ -1,13 +1,13 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import axios from "../../../axiosComfig";
 import GlobalLoader from "../../../components/globals/GlobalLoader.vue";
 
 const route = useRoute();
 const router = useRouter();
 
-const url = "http://127.0.0.1:8000/";
+const url = import.meta.env.VITE_PUBLIC_URL;
 
 const loading = ref(false);
 const status = ref(false);
@@ -71,7 +71,7 @@ const submit = async () => {
 
   try {
     loading.value = true;
-    const res = await axios.post(`${url}api/categories/update/${route.params.id}`, formData);
+    const res = await axios.post(`categories/update/${route.params.id}`, formData);
     loading.value = false;
     if (res.status === 200) {
       status.value = true;
@@ -91,7 +91,7 @@ const submit = async () => {
 };
 
 onMounted(async () => {
-  const res = await axios.get(`${url}api/categories`);
+  const res = await axios.get(`categories`);
   if (res.status === 200) {
     categories.value = res.data.data;
 

@@ -9,7 +9,7 @@
 <script setup>
 
 import {onMounted, ref} from "vue";
-import axios from "axios";
+import axios from "../axiosComfig";
 import {useRoute} from "vue-router";
 
 const route = useRoute();

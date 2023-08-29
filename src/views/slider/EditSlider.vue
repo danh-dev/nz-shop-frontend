@@ -1,10 +1,9 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import { useRouter, useRoute } from "vue-router";
 
 // Slider API
-const url = "http://127.0.0.1:8000/";
 
 const router = useRouter();
 const route = useRoute();
@@ -27,7 +26,7 @@ watch(sliders, () => {
 
 const fetchSlider = async () => {
   try {
-    const response = await axios.get(`${url}api/sliders`);
+    const response = await axios.get(`sliders`);
     if (response.data.status === 200) {
       sliders.value = response.data.data;
     } else if (response.data.status === 404) {
@@ -53,7 +52,7 @@ async function updateSlider() {
   formData.append("_method", "PUT");
 
   try {
-    const response = await axios.post(`${url}api/sliders/edit/${slider.value.id}`, formData);
+    const response = await axios.post(`sliders/edit/${slider.value.id}`, formData);
     if (response.data.status === 200) {
       router.push("/admincp/slider");
     }

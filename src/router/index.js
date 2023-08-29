@@ -1,7 +1,7 @@
 import {createRouter, createWebHistory} from "vue-router";
 import visitorRoutes from "./visitorRoutes";
 import adminRoutes from "./adminRoutes";
-import axios from "axios";
+import axios from "../axiosComfig";
 import {userData} from "@/stores/userData";
 
 const isLogIn = async () => {

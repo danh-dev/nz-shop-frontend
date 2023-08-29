@@ -1,11 +1,10 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import { useRouter } from "vue-router";
 // import getSlugByName from "../../utils/getSlugByName.js";
 import GlobalPagination from "../../components/globals/GlobalPagination.vue";
 // Post API
-const url = "http://127.0.0.1:8000/";
 const posts = ref([]);
 const router = useRouter();
 const filteredPosts = ref([]);
@@ -22,7 +21,7 @@ watch(selected, () => {
 const fetchPost = async () => {
   selected.value = null;
   try {
-    const response = await axios.get(`${url}api/posts`);
+    const response = await axios.get(`posts`);
     if (response.data.status === 200) {
       posts.value = response.data.data.reverse();
       filteredPosts.value = posts.value;

@@ -1,11 +1,10 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import { useRouter, useRoute } from "vue-router";
 import ContentEditor from "../../components/globals/ContentEditor.vue";
 
 // Post API
-const url = "http://127.0.0.1:8000/";
 
 const router = useRouter();
 const route = useRoute();
@@ -24,7 +23,7 @@ const newImage = ref([]);
 
 const fetchPost = async () => {
   try {
-    const response = await axios.get(`${url}api/posts`);
+    const response = await axios.get(`posts`);
     if (response.data.status === 200) {
       posts.value = response.data.data;
       post.value = posts.value.find(item => {
@@ -53,7 +52,7 @@ async function updatePost() {
   formData.append("_method", "PUT");
 
   try {
-    const response = await axios.post(`${url}api/posts/edit/${post.value.id}`, formData);
+    const response = await axios.post(`posts/edit/${post.value.id}`, formData);
     if (response.data.status === 200) {
       router.push("/admincp/post");
     }

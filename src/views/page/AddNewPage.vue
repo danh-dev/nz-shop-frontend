@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import { useRouter } from "vue-router";
 import ContentEditor from "../../components/globals/ContentEditor.vue";
 
@@ -22,7 +22,7 @@ async function createPage() {
     }
   });
   try {
-    const response = await axios.post("http://127.0.0.1:8000/api/pages", formData);
+    const response = await axios.post("pages", formData);
     if (response.data.status === 201) {
       router.push("/admincp/page");
     }

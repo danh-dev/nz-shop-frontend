@@ -7,17 +7,20 @@ const menus = ref([
   { icon: 'mdi-ticket-percent-outline', text: 'Coupons', route: 'coupons' },
   { icon: 'mdi-account-outline', text: 'User Manager', route: 'users' },
   { icon: 'mdi-shield-star-outline', text: 'Roles Manager', route: 'roles' },
-  { icon: 'mdi-comment-outline', text: 'Comment-Post', route: 'admin-post-comment' },
-  { icon: 'mdi-comment-outline', text: 'Comment-Product', route: 'admin-product-comment' },
-  { icon: 'mdi-star-outline', text: 'Review', route: 'admin-review' },
-  { icon: 'mdi-list-box-outline', text: 'Category Product', route: 'admin-category' },
-  { icon: 'mdi-package-variant-closed', text: 'Product', route: 'admin-product' },
+  { icon: 'mdi-comment-outline', text: 'Comments Post', route: 'post-comment' },
+  { icon: 'mdi-comment-outline', text: 'Comments Product', route: 'product-comment' },
+  { icon: 'mdi-star-outline', text: 'Reviews', route: 'review' },
+  { icon: 'mdi-list-box-outline', text: 'Category Product', route: 'category' },
+  { icon: 'mdi-package-variant-closed', text: 'Product', route: 'product' },
+  { icon: 'mdi-newspaper-variant-multiple', text: 'Posts', route: 'post' },
+  { icon: 'mdi-image-multiple-outline', text: 'Sliders', route: 'slider' },
+  { icon: 'mdi-book-open-page-variant-outline', text: 'Pages', route: 'page' },
 ]);
 </script>
 
 <template>
   <v-list density="compact" nav>
-    <v-list-item v-for="item in menus" :prepend-icon="item.icon" :to="item.route" color="red-darken-2">
+    <v-list-item v-for="item in menus" :prepend-icon="item.icon" :to="`/admincp/${item.route}`" color="red-darken-2">
       <v-list-item-title class="text-menu">{{ item.text }}</v-list-item-title>
     </v-list-item>
   </v-list>

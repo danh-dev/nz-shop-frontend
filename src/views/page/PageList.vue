@@ -1,11 +1,11 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import { useRouter } from "vue-router";
 // import getSlugByName from "../../utils/getSlugByName.js";
 import GlobalPagination from "../../components/globals/GlobalPagination.vue";
 // Page API
-const url = "http://127.0.0.1:8000/";
+const url = import.meta.env.VITE_PUBLIC_URL;
 const pages = ref([]);
 const router = useRouter();
 const filteredPages = ref([]);
@@ -21,7 +21,7 @@ watch(selected, () => {
 
 const fetchPage = async () => {
   try {
-    const response = await axios.get(`${url}api/pages`);
+    const response = await axios.get(`pages`);
     if (response.data.status === 200) {
       pages.value = response.data.data.reverse();
       filteredPages.value = pages.value;

@@ -1,9 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import axios from "../../../axiosComfig";
 import GlobalLoader from "../../../components/globals/GlobalLoader.vue";
-
-const url = "http://127.0.0.1:8000/";
 
 const loading = ref(false);
 const status = ref(false);
@@ -63,7 +61,7 @@ const submit = async () => {
 
   try {
     loading.value = true;
-    const res = await axios.post(`${url}api/categories`, formData);
+    const res = await axios.post(`categories`, formData);
     loading.value = false;
     if (res.status === 201) {
       status.value = true;
@@ -89,7 +87,7 @@ const submit = async () => {
 };
 
 onMounted(async () => {
-  const res = await axios.get(`${url}api/categories`);
+  const res = await axios.get(`categories`);
   if (res.status === 200) {
     categories.value = res.data.data;
   }
