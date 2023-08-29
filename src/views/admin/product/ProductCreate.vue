@@ -1,16 +1,179 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watch } from "vue";
 import axios from "axios";
-import { mapKeys, camelCase, lowerFirst } from "lodash";
+import { mapKeys, camelCase } from "lodash";
+import useCategoryStore from "@/stores/category";
+import useLoadingStore from "@/stores/loading";
 
 import ContentEditor from "@/components/globals/ContentEditor.vue";
+import SuccessAlert from "@/components/globals/SuccessAlert.vue";
 
 const url = "http://127.0.0.1:8000/";
-const loading = ref(false);
 
-const categories = ref([]);
+const more = {
+  sku: {
+    value: "",
+    errorMessages: "",
+  },
+  quantity: {
+    value: "",
+    errorMessages: "",
+  },
+  originPrice: {
+    value: "",
+    errorMessages: "",
+  },
+  sellPrice: {
+    value: "",
+    errorMessages: "",
+  },
+  discountPrice: {
+    value: "",
+    errorMessages: "",
+  },
+};
 
-const requiredMessage = "Không được để trống!";
+const categoryStore = useCategoryStore();
+const loadingStore = useLoadingStore();
+const status = ref(false);
+const created = ref(false);
+const singleVariantTextField = ref(JSON.parse(JSON.stringify(more)));
+const multipleVariantTextField = ref([]);
+const multipleVariant = ref([]);
+
+
+const mainForm = ref({
+  category: {
+    value: null,
+  },
+  name: {
+    value: "",
+    errorMessages: "",
+  },
+  image: {
+    value: [],
+    errorMessages: "",
+  },
+  gallery: {
+    value: [],
+    errorMessages: "",
+  },
+  description: {
+    value: "",
+    errorMessages: "",
+  },
+  radio: {
+    value: 0,
+    errorMessages: "",
+  },
+});
+
+const variants = ref([]);
+
+// const pushVariant = () => {
+//   variants.value.push(
+//     {
+//       key: {
+//         label: "Tên biến thể",
+//         value: "",
+//         errorMessages: "",
+//       },
+//       values: {
+//         label: "Các giá trị",
+//         value: "",
+//         placeholder: "Mỗi giá trị cách nhau bằng dấu |",
+//         errorMessages: "",
+//       }
+//     }
+//   );
+// };
+
+watch(created, () => {
+  mainForm.value.radio.errorMessages = "";
+});
+
+const pushVariant = () => {
+  variants.value.push(
+    [
+      {
+        label: "Tên biến thể",
+        value: "",
+        errorMessages: "",
+      },
+      {
+        label: "Các giá trị",
+        value: "",
+        placeholder: "Mỗi giá trị cách nhau bằng dấu |",
+        errorMessages: "",
+      }
+    ]
+  );
+};
+
+const createVariant = () => {
+  // const result = cartesianProduct(
+  //   ...variants.value.map((obj) => obj.values.value.split("|"))
+  // ).map((arr) =>
+  //   Object.fromEntries(
+  //     arr.map((val, i) => [variants.value[i].key.value, val])
+  //   )
+  // );
+  const data = getCombinations(variants.value);
+  multipleVariant.value = data;
+
+  created.value = variants.value.every(item => {
+    return !item[0].errorMessages && !item[1].errorMessages;
+  });
+
+  multipleVariantTextField.value = multipleVariant.value.map(() => (JSON.parse(JSON.stringify(more))));
+};
+
+function cartesianProduct(...arrays) {
+  return [...arrays].reduce(
+    (a, b) => a.flatMap((x) => b.map((y) => [...x, y])),
+    [[]]
+  );
+}
+
+function getCombinations(nestedArray, list = []) {
+  // initialize an empty array to store the final result
+  let result = [];
+  // check if there are any subarrays left
+  if (nestedArray.length > 0) {
+    // get the first subarray, which contains the key
+    const key = nestedArray[0][0].value;
+    if (key === "") {
+      nestedArray[0][0].errorMessages = "Không được để trống!";
+    }
+    // get the second subarray, which contains the values
+    const values = nestedArray[0][1].value.split("|");
+    if (nestedArray[0][1].value === "") {
+      nestedArray[0][1].errorMessages = "Không được để trống!";
+    }
+    // loop over the values
+    for (const value of values) {
+      // create an object with the key and value pair
+      const obj = {};
+      obj[key] = value;
+      // copy the list and add the object to it
+      const newList = list.slice();
+      newList.push(obj);
+      // call the function recursively with the remaining subarrays and the new list
+      result = result.concat(getCombinations(nestedArray.slice(1), newList));
+    }
+  } else {
+    // no more subarrays left, merge the objects in the list into one object
+    let obj = {};
+    for (const item of list) {
+      obj = Object.assign(obj, item);
+      // or use spread operator: obj = {...obj, ...item};
+    }
+    // append the merged object to the result
+    result.push(obj);
+  }
+  // return the final result
+  return result;
+}
 
 const submit = async () => {
   const formData = new FormData();
@@ -61,7 +224,7 @@ const submit = async () => {
       quantity: singleVariantTextField.value.quantity.value,
       "origin_price": singleVariantTextField.value.originPrice.value,
       "sell_price": singleVariantTextField.value.sellPrice.value,
-      "discount_price": singleVariantTextField.value.discountPrice.value,
+      "discount_price": singleVariantTextField.value.discountPrice.value || undefined,
     };
     more.push(singleValue);
     formData.append("type", 0);
@@ -70,16 +233,31 @@ const submit = async () => {
 
   if (more.length > 0) {
     try {
-      loading.value = true;
+      loadingStore.loading = true;
       const res = await axios.post(`${url}api/products`, formData);
-      loading.value = false;
+      loadingStore.loading = false;
       if (res.status === 201) {
-        // status.value = true;
+        status.value = true;
+        mainForm.value.name.value = "";
+        mainForm.value.image.value = [];
+        mainForm.value.gallery.value = [];
+        mainForm.value.description.value = "";
+        mainForm.value.radio.value = 0;
+        mainForm.value.category.value = null;
+
+        singleVariantTextField.value.sku.value = "";
+        singleVariantTextField.value.quantity.value = "";
+        singleVariantTextField.value.originPrice.value = "";
+        singleVariantTextField.value.sellPrice.value = "";
+        singleVariantTextField.value.discountPrice.value = "";
+
+        multipleVariantTextField.value = [];
+        variants.value = [];
+        multipleVariant.value = [];
       }
     }
     catch ({ response: { status, data } }) {
-
-      loading.value = false;
+      loadingStore.loading = false;
       if (status === 400) {
         if (data.message === "Failed in product creation!") {
           for (const [key, value] of Object.entries(mapKeys(data.errors, (value, key) => camelCase(key)))) {
@@ -89,13 +267,13 @@ const submit = async () => {
         }
         else if (mainForm.value.radio.value) {
           for (const index in data.errors) {
-            for (const [key, value] of Object.entries(data.errors[index])) {
+            for (const [key, value] of Object.entries(mapKeys(data.errors[index], (value, key) => camelCase(key)))) {
               multipleVariantTextField.value[index][key].errorMessages = value;
             }
           }
         }
         else {
-          for (const [key, value] of Object.entries(data.errors[0])) {
+          for (const [key, value] of Object.entries(mapKeys(data.errors[0], (value, key) => camelCase(key)))) {
             singleVariantTextField.value[key].errorMessages = value;
           }
         }
@@ -108,175 +286,15 @@ const submit = async () => {
   }
 };
 
-const mainForm = ref({
-  category: {
-    value: null,
-  },
-  name: {
-    value: "",
-    errorMessages: "",
-  },
-  image: {
-    value: [],
-    errorMessages: "",
-  },
-  gallery: {
-    value: [],
-    errorMessages: "",
-  },
-  description: {
-    value: "",
-    errorMessages: "",
-  },
-  radio: {
-    value: 0,
-    errorMessages: "",
-  },
-});
-
-const more = {
-  sku: {
-    value: "",
-    errorMessages: "",
-  },
-  quantity: {
-    value: "",
-    errorMessages: "",
-  },
-  originPrice: {
-    value: "",
-    errorMessages: "",
-  },
-  sellPrice: {
-    value: "",
-    errorMessages: "",
-  },
-  discountPrice: {
-    value: "",
-    errorMessages: "",
-  },
+const handleInput = input => {
+  input.errorMessages = "";
+  status.value = false;
 };
 
-const variants = ref([]);
-
-// const pushVariant = () => {
-//   variants.value.push(
-//     {
-//       key: {
-//         label: "Tên biến thể",
-//         value: "",
-//         errorMessages: "",
-//       },
-//       values: {
-//         label: "Các giá trị",
-//         value: "",
-//         placeholder: "Mỗi giá trị cách nhau bằng dấu |",
-//         errorMessages: "",
-//       }
-//     }
-//   );
-// };
-
-const pushVariant = () => {
-  variants.value.push(
-    [
-      {
-        label: "Tên biến thể",
-        value: "",
-        errorMessages: "",
-      },
-      {
-        label: "Các giá trị",
-        value: "",
-        placeholder: "Mỗi giá trị cách nhau bằng dấu |",
-        errorMessages: "",
-      }
-    ]
-  );
+const editContent = (event) => {
+  mainForm.value.description.value = event;
+  // handleInput(mainForm.value.description);
 };
-
-const singleVariantTextField = ref(JSON.parse(JSON.stringify(more)));
-const multipleVariantTextField = ref([]);
-const multipleVariant = ref([]);
-
-const createVariant = () => {
-  // const result = cartesianProduct(
-  //   ...variants.value.map((obj) => obj.values.value.split("|"))
-  // ).map((arr) =>
-  //   Object.fromEntries(
-  //     arr.map((val, i) => [variants.value[i].key.value, val])
-  //   )
-  // );
-  const data = getCombinations(variants.value);
-  multipleVariant.value = data;
-
-  created.value = variants.value.every(item => {
-    return !item[0].errorMessages && !item[1].errorMessages;
-  });
-
-  multipleVariantTextField.value = multipleVariant.value.map(() => (JSON.parse(JSON.stringify(more))));
-};
-
-function cartesianProduct(...arrays) {
-  return [...arrays].reduce(
-    (a, b) => a.flatMap((x) => b.map((y) => [...x, y])),
-    [[]]
-  );
-}
-
-function getCombinations(nestedArray, list = []) {
-  // initialize an empty array to store the final result
-  let result = [];
-  // check if there are any subarrays left
-  if (nestedArray.length > 0) {
-    // get the first subarray, which contains the key
-    const key = nestedArray[0][0].value;
-    if (key === "") {
-      nestedArray[0][0].errorMessages = requiredMessage;
-    }
-    // get the second subarray, which contains the values
-    const values = nestedArray[0][1].value.split("|");
-    if (nestedArray[0][1].value === "") {
-      nestedArray[0][1].errorMessages = requiredMessage;
-    }
-    // loop over the values
-    for (const value of values) {
-      // create an object with the key and value pair
-      const obj = {};
-      obj[key] = value;
-      // copy the list and add the object to it
-      const newList = list.slice();
-      newList.push(obj);
-      // call the function recursively with the remaining subarrays and the new list
-      result = result.concat(getCombinations(nestedArray.slice(1), newList));
-    }
-  } else {
-    // no more subarrays left, merge the objects in the list into one object
-    let obj = {};
-    for (const item of list) {
-      obj = Object.assign(obj, item);
-      // or use spread operator: obj = {...obj, ...item};
-    }
-    // append the merged object to the result
-    result.push(obj);
-  }
-  // return the final result
-  return result;
-}
-
-const created = ref(false);
-
-onMounted(async () => {
-  try {
-    const res = await axios.get(`${url}api/categories`);
-    if (res.status === 200) {
-      categories.value = res.data.data;
-    }
-  }
-  catch (e) {
-    console.log(e);
-  }
-});
 
 </script>
 
@@ -292,12 +310,25 @@ onMounted(async () => {
         </v-col>
       </v-row>
 
+      <v-row v-if="status">
+        <v-col cols="12">
+          <SuccessAlert
+            :show="status"
+            title="Thêm sản phẩm thành công!"
+            :to="{
+              name: 'admin-product'
+            }"
+          >
+          </SuccessAlert>
+        </v-col>
+      </v-row>
+
       <v-row>
         <v-col cols="12">
           <v-autocomplete
             placeholder="Nhập để tìm kiếm"
             v-model="mainForm.category.value"
-            :items="categories"
+            :items="categoryStore.categories"
             item-title="name"
             item-value="id"
             label="Danh mục"
@@ -318,7 +349,7 @@ onMounted(async () => {
             label="Tên sản phẩm"
             :error-messages="mainForm.name.errorMessages"
             variant="outlined"
-            @update:model-value="mainForm.name.errorMessages = ''"
+            @update:model-value="() => handleInput(mainForm.name)"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -333,7 +364,7 @@ onMounted(async () => {
             prepend-inner-icon="mdi-image-outline"
             variant="outlined"
             show-size
-            @update:model-value="mainForm.image.errorMessages = ''"
+            @update:model-value="() => handleInput(mainForm.image)"
           >
 
           </v-file-input>
@@ -353,7 +384,7 @@ onMounted(async () => {
             chips
             multiple
             counter
-            @update:model-value="mainForm.gallery.errorMessages = ''"
+            @update:model-value="() => handleInput(mainForm.gallery)"
           >
             <template v-slot:selection="{ fileNames }">
               <template
@@ -384,25 +415,16 @@ onMounted(async () => {
 
       <v-row>
         <v-col cols="12">
-          <v-text-field
-            v-model="mainForm.description.value"
-            label="Mô tả"
-            :error-messages="mainForm.description.errorMessages"
-            variant="outlined"
-            @update:model-value="mainForm.description.errorMessages = ''"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="12">
           <v-label>Mô tả</v-label>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="12">
-          <ContentEditor></ContentEditor>
+          <ContentEditor
+            :editorContent="mainForm.description.value"
+            @editContent="editContent"
+          ></ContentEditor>
         </v-col>
       </v-row>
 
@@ -413,7 +435,7 @@ onMounted(async () => {
             label="Loại sản phẩm"
             v-model="mainForm.radio.value"
             :error-messages="mainForm.radio.errorMessages"
-            @update:model-value="mainForm.radio.errorMessages = ''"
+            @update:model-value="() => handleInput(mainForm.radio)"
           >
             <v-radio
               label="Đơn biến thể"
@@ -443,7 +465,7 @@ onMounted(async () => {
                 v-model="variant[0].value"
                 :error-messages="variant[0].errorMessages"
                 variant="outlined"
-                @update:model-value="variant[0].errorMessages = ''"
+                @update:model-value="() => handleInput(variant[0])"
               ></v-text-field>
             </v-col>
             <v-col cols="9">
@@ -455,7 +477,7 @@ onMounted(async () => {
                 append-icon="mdi-close"
                 variant="outlined"
                 @click:append="variants = variants.filter(item => item !== variant)"
-                @update:model-value="variant[1].errorMessages = ''"
+                @update:model-value="() => handleInput(variant[1])"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -504,7 +526,7 @@ onMounted(async () => {
                   :error-messages="multipleVariantTextField[index].sku.errorMessages"
                   class="mr-2"
                   variant="outlined"
-                  @update:model-value="multipleVariantTextField[index].sku.errorMessages = ''"
+                  @update:model-value="() => handleInput(multipleVariantTextField[index].sku)"
                 ></v-text-field>
               </v-col>
               <v-col cols="6">
@@ -514,7 +536,7 @@ onMounted(async () => {
                   :error-messages="multipleVariantTextField[index].quantity.errorMessages"
                   class="mr-2"
                   variant="outlined"
-                  @update:model-value="multipleVariantTextField[index].quantity.errorMessages = ''"
+                  @update:model-value="() => handleInput(multipleVariantTextField[index].quantity)"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -526,7 +548,7 @@ onMounted(async () => {
                   :error-messages="multipleVariantTextField[index].originPrice.errorMessages"
                   class="mr-2"
                   variant="outlined"
-                  @update:model-value="multipleVariantTextField[index].originPrice.errorMessages = ''"
+                  @update:model-value="() => handleInput(multipleVariantTextField[index].originPrice)"
                 ></v-text-field>
               </v-col>
               <v-col cols="4">
@@ -536,7 +558,7 @@ onMounted(async () => {
                   :error-messages="multipleVariantTextField[index].sellPrice.errorMessages"
                   class="mr-2"
                   variant="outlined"
-                  @update:model-value="multipleVariantTextField[index].sellPrice.errorMessages = ''"
+                  @update:model-value="() => handleInput(multipleVariantTextField[index].sellPrice)"
                 ></v-text-field>
               </v-col>
               <v-col cols="4">
@@ -546,7 +568,7 @@ onMounted(async () => {
                   :error-messages="multipleVariantTextField[index].discountPrice.errorMessages"
                   class="mr-2"
                   variant="outlined"
-                  @update:model-value="multipleVariantTextField[index].discountPrice.errorMessages = ''"
+                  @update:model-value="() => handleInput(multipleVariantTextField[index].discountPrice)"
                   hint="Không bắt buộc"
                 ></v-text-field>
               </v-col>
@@ -563,7 +585,7 @@ onMounted(async () => {
               :error-messages="singleVariantTextField.sku.errorMessages"
               class="mr-2"
               variant="outlined"
-              @update:model-value="singleVariantTextField.sku.errorMessages = ''"
+              @update:model-value="() => handleInput(singleVariantTextField.sku)"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
@@ -573,7 +595,7 @@ onMounted(async () => {
               :error-messages="singleVariantTextField.quantity.errorMessages"
               class="mr-2"
               variant="outlined"
-              @update:model-value="singleVariantTextField.quantity.errorMessages = ''"
+              @update:model-value="() => handleInput(singleVariantTextField.quantity)"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -586,7 +608,7 @@ onMounted(async () => {
               class="mr-2"
               variant="outlined"
               persistent-hint
-              @update:model-value="singleVariantTextField.originPrice.errorMessages = ''"
+              @update:model-value="() => handleInput(singleVariantTextField.originPrice)"
             ></v-text-field>
           </v-col>
           <v-col cols="4">
@@ -597,7 +619,7 @@ onMounted(async () => {
               class="mr-2"
               variant="outlined"
               persistent-hint
-              @update:model-value="singleVariantTextField.sellPrice.errorMessages = ''"
+              @update:model-value="() => handleInput(singleVariantTextField.sellPrice)"
             ></v-text-field>
           </v-col>
           <v-col cols="4">
@@ -608,7 +630,7 @@ onMounted(async () => {
               class="mr-2"
               variant="outlined"
               persistent-hint
-              @update:model-value="singleVariantTextField.discountPrice.errorMessages = ''"
+              @update:model-value="() => handleInput(singleVariantTextField.discountPrice)"
               hint="Không bắt buộc"
             ></v-text-field>
           </v-col>
