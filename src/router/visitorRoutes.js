@@ -9,8 +9,13 @@ import PageDetail from "../views/PageDetail.vue";
 const routes = [
 	{
 		path: "",
-		name: "index-page",
-		component: () => import("../views/Index.vue"),
+		name: "home",
+		component: () => import("../views/HomePage.vue"),
+	},
+	{
+		name: "categories",
+		path: "/categories/:slugs+",
+		component: () => import("../views/CategoryPage.vue"),
 	},
 	{
 		path: "login",

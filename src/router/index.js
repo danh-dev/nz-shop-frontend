@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+
 import visitorRoutes from "./visitorRoutes";
 import adminRoutes from "./adminRoutes";
 

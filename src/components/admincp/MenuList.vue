@@ -20,97 +20,59 @@ const cruds = ref([
 
 <template>
   <v-list v-model:opened="open">
-    <v-list-item
-      prepend-icon="mdi-home"
-      title="Home"
-    ></v-list-item>
+    <v-list-item prepend-icon="mdi-home" title="Home"></v-list-item>
 
-    <v-list-group
-      v-model="open"
-      value="Users"
-    >
+    <v-list-group v-model="open" value="Users">
       <template v-slot:activator="{ props }">
-        <v-list-item
-          v-bind="props"
-          prepend-icon="mdi-account-circle"
-          title="Users"
-        ></v-list-item>
+        <v-list-item v-bind="props" prepend-icon="mdi-account-circle" title="Users"></v-list-item>
       </template>
 
-      <v-list-group
-        v-model="open"
-        value="Admin"
-      >
+      <v-list-group v-model="open" value="Admin">
         <template v-slot:activator="{ props }">
-          <v-list-item
-            v-bind="props"
-            title="Admin"
-          ></v-list-item>
+          <v-list-item v-bind="props" title="Admin"></v-list-item>
         </template>
 
-        <v-list-item
-          v-for="([title, icon], i) in admins"
-          :key="i"
-          :title="title"
-          :prepend-icon="icon"
-          :value="title"
-        ></v-list-item>
+        <v-list-item v-for="([title, icon], i) in admins" :key="i" :title="title" :prepend-icon="icon"
+          :value="title"></v-list-item>
       </v-list-group>
 
-      <v-list-group
-        v-model="open"
-        value="Actions"
-      >
+      <v-list-group v-model="open" value="Actions">
         <template v-slot:activator="{ props }">
-          <v-list-item
-            v-bind="props"
-            title="Actions"
-          ></v-list-item>
+          <v-list-item v-bind="props" title="Actions"></v-list-item>
         </template>
 
-        <v-list-item
-          v-for="([title, icon], i) in cruds"
-          :key="i"
-          :value="title"
-          :title="title"
-          :prepend-icon="icon"
-        ></v-list-item>
+        <v-list-item v-for="([title, icon], i) in cruds" :key="i" :value="title" :title="title"
+          :prepend-icon="icon"></v-list-item>
       </v-list-group>
+
+
     </v-list-group>
 
-    <v-list-group
-      v-model="open"
-      value="Comments"
-    >
+    <v-list-group v-model="open" value="Comments">
       <template v-slot:activator="{ props }">
-        <v-list-item
-          v-bind="props"
-          prepend-icon="mdi-comment-outline"
-          title="Comments"
-        ></v-list-item>
+        <v-list-item v-bind="props" prepend-icon="mdi-comment-outline" title="Comments"></v-list-item>
       </template>
-      <v-list-item
-        title="Comment-Post"
-        :to="{
-          name: 'admin-post-comment'
-        }"
-      ></v-list-item>
-      <v-list-item
-        title="Comment-Product"
-        :to="{
-          name: 'admin-product-comment'
-        }"
-      ></v-list-item>
+      <v-list-item title="Comment-Post" :to="{
+        name: 'admin-post-comment'
+      }"></v-list-item>
+      <v-list-item title="Comment-Product" :to="{
+        name: 'admin-product-comment'
+      }"></v-list-item>
     </v-list-group>
 
 
-    <v-list-item
-      prepend-icon="mdi-star-outline"
-      title="Review"
-      :to="{
-        name: 'admin-review'
-      }"
-    ></v-list-item>
+    <v-list-item prepend-icon="mdi-star-outline" title="Review" :to="{
+      name: 'admin-review'
+    }"></v-list-item>
+    <!-- Admin Category -->
+    <v-list-item prepend-icon="mdi-list-box-outline" :to="{
+      name: 'admin-category'
+    }">Category</v-list-item>
+    <!-- Admin Product -->
+    <v-list-item prepend-icon="mdi-package-variant-closed" :to="{
+      name: 'admin-product'
+    }">Product</v-list-item>
+
   </v-list>
 </template>
 

@@ -3,12 +3,9 @@ import "@mdi/font/css/materialdesignicons.css"; // Ensure you are using css-load
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import CKEditor from "@ckeditor/ckeditor5-vue";
 import { VueRecaptchaPlugin } from "vue-recaptcha";
 import { createHead } from "@unhead/vue";
-// Axios
-import axios from "axios";
-window.axios = axios;
-// Vuetify
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
 
@@ -36,8 +33,8 @@ app.use(head);
 app.use(VueRecaptchaPlugin, {
 	v2SiteKey: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
 });
+app.use(CKEditor);
 
-// chuyển đổi tiền tệ
 app.config.globalProperties.formatPrice = value => {
 	return parseFloat(value).toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 };
