@@ -2,78 +2,37 @@
 
 import { ref } from "vue";
 
-const open = ref(["Users", "Comment"]);
-
-
-const admins = ref([
-  ["Management", "mdi-account-multiple-outline"],
-  ["Settings", "mdi-cog-outline"],
-]);
-
-const cruds = ref([
-  ["Create", "mdi-plus-outline"],
-  ["Read", "mdi-file-outline"],
-  ["Update", "mdi-update"],
-  ["Delete", "mdi-delete"],
+const menus = ref([
+  { icon: 'mdi-home-outline', text: 'Dashboard', route: 'dashboard' },
+  { icon: 'mdi-ticket-percent-outline', text: 'Coupons', route: 'coupons' },
+  { icon: 'mdi-account-outline', text: 'User Manager', route: 'users' },
+  { icon: 'mdi-shield-star-outline', text: 'Roles Manager', route: 'roles' },
+  { icon: 'mdi-comment-outline', text: 'Comment-Post', route: 'admin-post-comment' },
+  { icon: 'mdi-comment-outline', text: 'Comment-Product', route: 'admin-product-comment' },
+  { icon: 'mdi-star-outline', text: 'Review', route: 'admin-review' },
+  { icon: 'mdi-list-box-outline', text: 'Category Product', route: 'admin-category' },
+  { icon: 'mdi-package-variant-closed', text: 'Product', route: 'admin-product' },
 ]);
 </script>
 
 <template>
-  <v-list v-model:opened="open">
-    <v-list-item prepend-icon="mdi-home" title="Home"></v-list-item>
-
-    <v-list-group v-model="open" value="Users">
-      <template v-slot:activator="{ props }">
-        <v-list-item v-bind="props" prepend-icon="mdi-account-circle" title="Users"></v-list-item>
-      </template>
-
-      <v-list-group v-model="open" value="Admin">
-        <template v-slot:activator="{ props }">
-          <v-list-item v-bind="props" title="Admin"></v-list-item>
-        </template>
-
-        <v-list-item v-for="([title, icon], i) in admins" :key="i" :title="title" :prepend-icon="icon"
-          :value="title"></v-list-item>
-      </v-list-group>
-
-      <v-list-group v-model="open" value="Actions">
-        <template v-slot:activator="{ props }">
-          <v-list-item v-bind="props" title="Actions"></v-list-item>
-        </template>
-
-        <v-list-item v-for="([title, icon], i) in cruds" :key="i" :value="title" :title="title"
-          :prepend-icon="icon"></v-list-item>
-      </v-list-group>
-
-
-    </v-list-group>
-
-    <v-list-group v-model="open" value="Comments">
-      <template v-slot:activator="{ props }">
-        <v-list-item v-bind="props" prepend-icon="mdi-comment-outline" title="Comments"></v-list-item>
-      </template>
-      <v-list-item title="Comment-Post" :to="{
-        name: 'admin-post-comment'
-      }"></v-list-item>
-      <v-list-item title="Comment-Product" :to="{
-        name: 'admin-product-comment'
-      }"></v-list-item>
-    </v-list-group>
-
-
-    <v-list-item prepend-icon="mdi-star-outline" title="Review" :to="{
-      name: 'admin-review'
-    }"></v-list-item>
-    <!-- Admin Category -->
-    <v-list-item prepend-icon="mdi-list-box-outline" :to="{
-      name: 'admin-category'
-    }">Category</v-list-item>
-    <!-- Admin Product -->
-    <v-list-item prepend-icon="mdi-package-variant-closed" :to="{
-      name: 'admin-product'
-    }">Product</v-list-item>
-
+  <v-list density="compact" nav>
+    <v-list-item v-for="item in menus" :prepend-icon="item.icon" :to="item.route" color="red-darken-2">
+      <v-list-item-title class="text-menu">{{ item.text }}</v-list-item-title>
+    </v-list-item>
   </v-list>
 </template>
 
-<style scoped></style>
+<style>
+.v-list-item__prepend {
+  max-width: 35px !important;
+}
+
+.text-menu {
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  line-height: 1.2rem;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+}
+</style>

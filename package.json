@@ -10,6 +10,7 @@
 		"format": "prettier --write src/"
 	},
 	"dependencies": {
+		"@unhead/vue": "^1.2.2",
 		"@ckeditor/ckeditor5-vue": "^5.1.0",
 		"@unhead/vue": "^1.2.2",
 		"axios": "^1.4.0",

@@ -8,12 +8,18 @@ import { VueRecaptchaPlugin } from "vue-recaptcha";
 import { createHead } from "@unhead/vue";
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
-
+import * as components from 'vuetify/components'
+import * as labsComponents from 'vuetify/labs/components'
+import router from "./router/index.js";
 import App from "./App.vue";
 import router from "./router/index";
 
 // Vuetify
 const vuetify = createVuetify({
+	components: {
+		...components,
+		...labsComponents,
+	},
 	icons: {
 		defaultSet: "mdi",
 	},

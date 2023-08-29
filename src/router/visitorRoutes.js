@@ -127,6 +127,27 @@ const routes = [
 			},
 		],
 	},
+    {
+        path: "verify-email",
+        name: "verify-email-page",
+        component: () => import("../views/Verify.vue"),
+    },
+    {
+        path: "forgot-password",
+        name: "forgot-password-page",
+        meta: { auth: "true" },
+        component: () => import("../views/ForgotPassword.vue"),
+    },
+    {
+        path: "reset-password",
+        name: "reset-password-page",
+        meta: { auth: "true" },
+        component: () => import("../views/ResetPassword.vue"),
+    },
+    {
+        path: ':pathMatch(.*)*',
+        component: () => import('../views/404.vue'),
+    }
 ];
 
 export default routes;
