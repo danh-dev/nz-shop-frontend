@@ -1,12 +1,10 @@
 import { defineStore } from "pinia";
-import axios from "axios";
+import axios from "../axiosComfig";
 import { mapKeys, camelCase, lowerFirst } from "lodash";
 import { ref, computed, getCurrentInstance, onMounted } from "vue";
 
 import getSlugByName from "../utils/getSlugByName.js";
 import findOneBySlug from "../utils/findOneBySlug.js";
-
-const url = "http://127.0.0.1:8000/";
 
 const useCategoryStore = defineStore("category", () => {
   const categories = ref([]);
@@ -34,7 +32,7 @@ const useCategoryStore = defineStore("category", () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get(`${url}api/categories`);
+      const res = await axios.get("categories");
       if (res.status === 200) {
         categories.value = res.data.data.map(category => mapKeys(category, (value, key) => camelCase(key)));
       }

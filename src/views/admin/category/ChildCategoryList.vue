@@ -1,14 +1,14 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted, watch, computed } from "vue";
-import axios from "axios";
+import axios from "../../../axiosComfig";
 import { mapKeys, camelCase, lowerFirst } from "lodash";
 import GlobalPagination from "../../../components/globals/GlobalPagination.vue";
 import GlobalLoader from "../../../components/globals/GlobalLoader.vue";
 
 const route = useRoute();
 const router = useRouter();
-const url = "http://127.0.0.1:8000/";
+const url = import.meta.env.VITE_PUBLIC_URL;
 
 const status = ref(null);
 
@@ -70,7 +70,7 @@ const fetchData = async () => {
   loading.value = true;
   status.value = null;
   try {
-    const res = await axios.get(`${url}api/categories/${route.params.id}`);
+    const res = await axios.get(`categories/${route.params.id}`);
     if (res.status === 200) {
       categories.value = res.data.data.map(category => mapKeys(category, (value, key) => camelCase(key)));
     }
@@ -98,7 +98,7 @@ const confirmFirstAlert = async () => {
   alert.value[0].show = false;
   try {
     const action = status.value ? "recover" : "delete";
-    const res = await axios.put(`${url}api/categories/${action}/${tempId.value}`);
+    const res = await axios.put(`categories/${action}/${tempId.value}`);
 
     if (res.status === 200) {
       await fetchData();
@@ -121,7 +121,7 @@ const confirmSecondAlert = async () => {
   alert.value[1].show = false;
   try {
     const action = status.value ? "recover" : "delete";
-    const res = await axios.put(`${url}api/categories/${action}-recursively/${tempId.value}`);
+    const res = await axios.put(`categories/${action}-recursively/${tempId.value}`);
 
     if (res.status === 200) {
       await fetchData();

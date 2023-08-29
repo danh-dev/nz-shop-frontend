@@ -1,5 +1,5 @@
 <script setup>
-import axios from "axios";
+import axios from "../axiosComfig";
 import { ref, computed, watch } from "vue";
 import { mapKeys, camelCase } from "lodash";
 import { useRoute } from "vue-router";
@@ -13,8 +13,6 @@ import RangeSlider from "@/components/category/RangeSlider.vue";
 import FilterCard from "@/components/category/FilterCard.vue";
 import ProductList from "@/components/category/ProductList.vue";
 import GlobalPagination from "@/components/globals/GlobalPagination.vue";
-
-const url = "http://127.0.0.1:8000/";
 const categoryStore = useCategoryStore();
 const loadingStore = useLoadingStore();
 const route = useRoute();
@@ -304,7 +302,7 @@ watch(newProducts, () => {
 const fetchRecursiveCategoryProducts = async (id, numbers) => {
   let result = [];
   try {
-    const res = await axios.get(`${url}api/recursive-categories/${id}/products/${numbers ?? ""}`);
+    const res = await axios.get(`recursive-categories/${id}/products/${numbers ?? ""}`);
     if (res.status === 200) {
       result = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
     }
@@ -318,7 +316,7 @@ const fetchRecursiveCategoryProducts = async (id, numbers) => {
 const fetchLowPriceVariant = async id => {
   let variant;
   try {
-    const res = await axios.get(`${url}api/products/${id}/variant`);
+    const res = await axios.get(`products/${id}/variant`);
     if (res.status === 200) {
       variant = mapKeys(res.data.data, (value, key) => camelCase(key));
     }

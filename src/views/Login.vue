@@ -26,13 +26,13 @@
 
         <div class="text-medium-emphasis d-flex align-center flex-row-reverse align-content-end">
 
-          <a class="text-caption text-decoration-none text-red-accent-4" href="#" tabindex="-1">
-            Quên Password?</a>
+          <router-link to="/forgot-password" class="text-caption text-decoration-none text-red-accent-4" href="#" tabindex="-1">
+            Quên mật khẩu?</router-link>
         </div>
 
         <v-text-field v-model="password" :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-          :type="visible ? 'text' : 'password'" :rules="[() => !!password || 'Vui lòng nhập password']" autocomplete="off"
-          density="compact" label="Password" prepend-inner-icon="mdi-lock-outline" variant="outlined"
+          :type="visible ? 'text' : 'password'" :rules="[() => !!password || 'Vui lòng nhập mật khẩu']" autocomplete="off"
+          density="compact" label="Mật khẩu" prepend-inner-icon="mdi-lock-outline" variant="outlined"
           @click:append-inner="visible = !visible"></v-text-field>
         <div class="v-messages__message text-red-accent-4">{{ errors_captcha }}</div>
         <v-card elevation="0" class="d-flex justify-center ma-3">
@@ -50,7 +50,7 @@
         <hr class="w-25">
       </div>
       <v-card-text class="text-center">Chưa có tài khoản?
-        <router-link to="register" class="text-blue text-decoration-none m-pointer">
+        <router-link to="/register" class="text-blue text-decoration-none m-pointer">
           Đăng ký ngay
         </router-link>
       </v-card-text>
@@ -61,7 +61,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { userData } from "@/stores/userData";
-import axios from "axios";
+import axios from "../axiosComfig";
 import { Checkbox } from 'vue-recaptcha';
 import { useRoute, useRouter } from "vue-router";
 
@@ -115,6 +115,7 @@ const onSubmit = () => {
       if (isValid)
         login()
     })
+    v2_captcha.value = false;
   }
 }
 </script>

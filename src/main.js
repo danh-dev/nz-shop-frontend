@@ -8,15 +8,21 @@ import { VueRecaptchaPlugin } from "vue-recaptcha";
 import { createHead } from "@unhead/vue";
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
-import router from "./router/index.js";
+import * as components from 'vuetify/components'
+import * as labsComponents from 'vuetify/labs/components'
 import App from "./App.vue";
+import router from "./router/index";
 
 // Vuetify
 const vuetify = createVuetify({
+	components: {
+		...components,
+		...labsComponents,
+	},
 	icons: {
 		defaultSet: "mdi",
 	},
-	defaults: {}
+	defaults: {},
 });
 
 const pinia = createPinia();
@@ -30,12 +36,12 @@ app.use(router);
 app.use(vuetify);
 app.use(head);
 app.use(VueRecaptchaPlugin, {
-	v2SiteKey: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+	v2SiteKey: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
 });
 app.use(CKEditor);
 
-app.config.globalProperties.formatPrice = (value) => {
-	return parseFloat(value).toLocaleString("vi-VN", { "style": "currency", "currency": "VND" });
+app.config.globalProperties.formatPrice = value => {
+	return parseFloat(value).toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 };
 
 app.mount("#app");

@@ -22,28 +22,6 @@ const productList = [
         thumbnail: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/f/r/frame_1_3_13.png",
         url: "#"
     },
-];
+]
 
-const userList = [
-    {   id: "1",
-        name: "Danh",
-        email: "danh@gmail.com",
-        password: "123"
-    },
-    {   id: "2",
-        name: "Long",
-        email: "long@gmail.com",
-        password: "123"
-    },
-    {   id: "3",
-        name: "Sang",
-        email: "sang@gmail.com",
-        password: "123"
-    },
-    {   id: "4",
-        name: "Tam",
-        email: "tam@gmail.com",
-        password: "123"
-    },
-];
-export { productList , userList};
+export { productList };

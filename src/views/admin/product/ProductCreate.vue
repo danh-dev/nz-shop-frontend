@@ -8,7 +8,8 @@ import useLoadingStore from "@/stores/loading";
 import ContentEditor from "@/components/globals/ContentEditor.vue";
 import SuccessAlert from "@/components/globals/SuccessAlert.vue";
 
-const url = "http://127.0.0.1:8000/";
+const url = import.meta.env.VITE_PUBLIC_URL;
+const loading = ref(false);
 
 const more = {
   sku: {

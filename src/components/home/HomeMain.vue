@@ -3,7 +3,7 @@ import { ref, computed, watch } from "vue";
 import { useDisplay } from "vuetify";
 
 import { mapKeys, camelCase } from "lodash";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import useCategoryStore from "@/stores/category";
 import useLoadingStore from "@/stores/loading";
 
@@ -15,7 +15,6 @@ import ProductCard from "@/components/globals/ProductCard.vue";
 import NewsCard from "./NewsCard.vue";
 import LogoButton from "./LogoButton.vue";
 
-const url = "http://127.0.0.1:8000/";
 const categoryStore = useCategoryStore();
 const loadingStore = useLoadingStore();
 
@@ -191,7 +190,7 @@ watch(() => categoryStore.categories, async () => {
 const fetchRecursiveCategoryProducts = async (id, numbers) => {
 	let result = [];
 	try {
-		const res = await axios.get(`${url}api/recursive-categories/${id}/products/${numbers ?? ""}`);
+		const res = await axios.get(`recursive-categories/${id}/products/${numbers ?? ""}`);
 		if (res.status === 200) {
 			result = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
 		}
@@ -205,7 +204,7 @@ const fetchRecursiveCategoryProducts = async (id, numbers) => {
 const fetchLowPriceVariant = async id => {
 	let variant;
 	try {
-		const res = await axios.get(`${url}api/products/${id}/variant`);
+		const res = await axios.get(`products/${id}/variant`);
 		if (res.status === 200) {
 			variant = mapKeys(res.data.data, (value, key) => camelCase(key));
 		}

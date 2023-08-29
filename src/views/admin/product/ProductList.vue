@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
-import axios from "axios";
+import axios from "../../../axiosComfig";
 import { mapKeys, camelCase, lowerFirst } from "lodash";
 import useCategoryStore from "@/stores/category";
 import GlobalPagination from "../../../components/globals/GlobalPagination.vue";
 import GlobalLoader from "../../../components/globals/GlobalLoader.vue";
 
-const url = "http://127.0.0.1:8000/";
+const url = import.meta.env.VITE_PUBLIC_URL;
 const categoryStore = useCategoryStore();
 
 const loading = ref(false);
@@ -87,7 +87,7 @@ const confirmFirstAlert = async () => {
   alert.value[0].show = false;
   try {
     const action = status.value ? "recover" : "delete";
-    const res = await axios.put(`${url}api/products/${action}/${tempId.value}`);
+    const res = await axios.put(`products/${action}/${tempId.value}`);
 
     if (res.status === 200) {
       await fetchData();
@@ -107,7 +107,7 @@ const fetchData = async () => {
   status.value = null;
 
   try {
-    const res = await axios.get(`${url}api/products`);
+    const res = await axios.get(`products`);
     if (res.status === 200) {
       products.value = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
     }

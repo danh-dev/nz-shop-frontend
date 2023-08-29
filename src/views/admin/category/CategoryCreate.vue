@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import axios from "axios";
 import useLoadingStore from "@/stores/loading";
+import useCategoryStore from "@/stores/category";
 
 import ContentEditor from "@/components/globals/ContentEditor.vue";
 import SuccessAlert from "@/components/globals/SuccessAlert.vue";
@@ -9,6 +10,7 @@ import SuccessAlert from "@/components/globals/SuccessAlert.vue";
 const url = "http://127.0.0.1:8000/";
 
 const loadingStore = useLoadingStore();
+const categoryStore = useCategoryStore();
 const status = ref(false);
 
 const categories = ref([]);
@@ -82,13 +84,6 @@ const submit = async () => {
     }
   }
 };
-
-onMounted(async () => {
-  const res = await axios.get(`${url}api/categories`);
-  if (res.status === 200) {
-    categories.value = res.data.data;
-  }
-});
 
 const handleInput = input => {
   input.errorMessages = "";
@@ -165,7 +160,7 @@ const editContent = event => {
         <v-col cols="6">
           <v-autocomplete
             v-model="mainForm.parentCategoryId.value"
-            :items="categories"
+            :items="categoryStore.parentCategories"
             item-title="name"
             item-value="id"
             label="Danh mục cha"

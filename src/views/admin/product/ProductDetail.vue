@@ -1,14 +1,13 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import axios from "axios";
+import axios from "../../../axiosComfig";
 import { mapKeys, camelCase, lowerFirst } from "lodash";
 import GlobalPagination from "../../../components/globals/GlobalPagination.vue";
 import GlobalLoader from "../../../components/globals/GlobalLoader.vue";
 
 const route = useRoute();
 const router = useRouter();
-const url = "http://127.0.0.1:8000/";
 
 const status = ref(null);
 
@@ -74,7 +73,7 @@ const fetchData = async () => {
   loading.value = true;
   status.value = null;
   try {
-    const res = await axios.get(`${url}api/categories`);
+    const res = await axios.get(`categories`);
     if (res.status === 200) {
       categories.value = res.data.data;
     }
@@ -85,7 +84,7 @@ const fetchData = async () => {
   }
 
   try {
-    const res = await axios.get(`${url}api/products`);
+    const res = await axios.get(`products`);
     if (res.status === 200) {
       products.value = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
       product.value = products.value.find(item => item.id === +route.params.id);
@@ -98,7 +97,7 @@ const fetchData = async () => {
   }
 
   try {
-    const res = await axios.get(`${url}api/products/${route.params.id}/variants`);
+    const res = await axios.get(`products/${route.params.id}/variants`);
     if (res.status === 200) {
       variants.value = res.data.data.variants.map(variant => mapKeys(variant, (value, key) => camelCase(key)));
     }
@@ -127,7 +126,7 @@ const confirmFirstAlert = async () => {
   alert.value[0].show = false;
   try {
     const action = status.value ? "recover" : "delete";
-    const res = await axios.put(`${url}api/variants/${action}/${tempId.value}`);
+    const res = await axios.put(`variants/${action}/${tempId.value}`);
 
     if (res.status === 200) {
       await fetchData();
@@ -149,7 +148,7 @@ const confirmFirstAlert = async () => {
 const confirmSecondAlert = async () => {
   alert.value[1].show = false;
   try {
-    const res = await axios.put(`${url}api/variants/force-recover/${tempId.value}`);
+    const res = await axios.put(`variants/force-recover/${tempId.value}`);
 
     if (res.status === 200) {
       await fetchData();
@@ -167,7 +166,7 @@ const confirmSecondAlert = async () => {
 const handleUpdateCategory = async () => {
   try {
     const res = await axios.put(
-      `${url}api/products/${route.params.id}/category`,
+      `products/${route.params.id}/category`,
       {
         categoryId: categoryId.value,
       }
