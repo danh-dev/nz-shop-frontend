@@ -1,5 +1,6 @@
-import HomePage from "../views/HomePage.vue";
-import CategoryPage from "../views/CategoryPage.vue";
+import HomePage from "@/views/HomePage.vue";
+import CategoryPage from "@/views/CategoryPage.vue";
+import TrackingPage from "@/views/TrackingPage.vue";
 
 const routes = [
     {
@@ -11,6 +12,11 @@ const routes = [
         name: "categories",
         path: "/categories/:slugs+",
         component: CategoryPage,
+    },
+    {
+        name: "tracking",
+        path: "/tracking",
+        component: TrackingPage,
     },
     {
         path: "",
