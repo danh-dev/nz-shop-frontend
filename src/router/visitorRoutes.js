@@ -88,7 +88,7 @@ const routes = [
 			},
 			// Product router
 			{
-				path: "/:name",
+				path: "/san-pham/:name",
 				component: ProductPage,
 			},
 			// News router
@@ -129,8 +129,8 @@ const routes = [
         component: () => import("../views/ResetPassword.vue"),
     },
     {
-        path: ':pathMatch(.*)*',
-        component: () => import('../views/404.vue'),
+        path: ":pathMatch(.*)*",
+        component: () => import("../views/404.vue"),
     }
 ];
 

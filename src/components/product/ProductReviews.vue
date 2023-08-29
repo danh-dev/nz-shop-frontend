@@ -1,35 +1,71 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import LoginModal from "../modals/LoginModal.vue";
-import product from "../../product.js";
-import reviews from "../../review.js";
+
+const props = defineProps({
+	reviews: Array,
+});
+
+const averageRating = computed(() => {
+	let totalRating = 0;
+	for (const { rating } of props.reviews) {
+		totalRating += rating;
+	}
+	return totalRating / props.reviews.length;
+});
 
 const more = ref(false);
 </script>
 
 <template>
 	<v-sheet>
-		<v-sheet class="my-4 d-flex flex-column py-3 v-rating" elevation="3" width="100%" rounded="lg">
+		<v-sheet
+			class="my-4 d-flex flex-column py-3 v-rating"
+			elevation="3"
+			width="100%"
+			rounded="lg"
+		>
 
 			<div class="d-flex align-center flex-column">
 				<h4 class="d-flex justify-center">Đánh giá & nhận xét</h4>
 				<div class="text-h2 mt-3">
-					{{ product.rating }}
+					{{ averageRating }}
 					<span class="text-h6 ml-n3">/5</span>
 				</div>
 
-				<v-rating :model-value="product.rating" color="yellow-darken-3" size="large" readonly
-					density="compact"></v-rating>
-				<div class="px-3">{{ product.review }}</div>
+				<v-rating
+					:model-value="averageRating"
+					color="yellow-darken-3"
+					size="large"
+					readonly
+					density="compact"
+				></v-rating>
+				<div class="px-3">{{ reviews.length }}</div>
 			</div>
 
-			<v-list bg-color="transparent" class="d-flex flex-column-reverse" density="compact">
-				<v-list-item v-for="(rating, i) in 5" :key="i">
-					<v-progress-linear :model-value="rating * 15" class="mx-n5" color="red-accent-4" height="8"
-						rounded></v-progress-linear>
+			<v-list
+				bg-color="transparent"
+				class="d-flex flex-column-reverse"
+				density="compact"
+			>
+				<v-list-item
+					v-for="(rating, i) in 5"
+					:key="i"
+				>
+					<v-progress-linear
+						:model-value="rating * 15"
+						class="mx-n5"
+						color="red-accent-4"
+						height="8"
+						rounded
+					></v-progress-linear>
 					<template v-slot:prepend>
 						<span>{{ rating }}</span>
-						<v-icon icon="mdi-star" color="yellow-darken-3" class="mx-2"></v-icon>
+						<v-icon
+							icon="mdi-star"
+							color="yellow-darken-3"
+							class="mx-2"
+						></v-icon>
 					</template>
 
 					<template v-slot:append>
@@ -45,30 +81,51 @@ const more = ref(false);
 				<LoginModal />
 			</v-sheet>
 
-			<v-container v-for="review in (more ? reviews : reviews.slice(0, 3))" :key="review.id">
+			<v-container
+				v-for="review in (more ? reviews : reviews.slice(0, 3))"
+				:key="review.id"
+			>
 				<v-sheet class="d-flex justify-space-between py-2">
 					<v-sheet class="d-flex align-center">
-						<p class="bg-secondary rounded pa-2">{{ review.avatar }}</p>
-						<h5 class="px-2">{{ review.username }}</h5>
+						<p class="bg-secondary rounded pa-2">{{ review.user.slice(0, 1) }}</p>
+						<h5 class="px-2">{{ review.user }}</h5>
 					</v-sheet>
-					<p class="text-caption">{{ review.createAt }}</p>
+					<p class="text-caption">{{ review.created_at.slice(0, 10) }}</p>
 				</v-sheet>
 
-				<v-sheet class="pa-2 text-caption d-flex justify-center flex-column rounded"
-					style="background-color: rgb(247, 243, 243); margin-left: 5%">
+				<v-sheet
+					class="pa-2 text-caption d-flex justify-center flex-column rounded"
+					style="background-color: rgb(247, 243, 243); margin-left: 5%"
+				>
 					<p class="d-flex align-center">
 						<b>Đánh giá:</b>
-						<v-rating half-increments :model-value="review.point" color="yellow-darken-3" readonly density="compact"
-							size="small" class="mx-2">
+						<v-rating
+							half-increments
+							:model-value="review.point"
+							color="yellow-darken-3"
+							readonly
+							density="compact"
+							size="small"
+							class="mx-2"
+						>
 						</v-rating>
 					</p>
-					<p class="more"><b>Nhận xét:</b> {{ review.reviewContent }}</p>
+					<p class="more"><b>Nhận xét:</b> {{ review.comment }}</p>
 				</v-sheet>
 			</v-container>
 
-			<v-sheet class="mt-4" v-if="!more">
-				<v-btn @click="more = true" href="" location="center" color="red-accent-4" class="text-white"
-					append-icon="mdi-chevron-down">
+			<v-sheet
+				class="mt-4"
+				v-if="!more"
+			>
+				<v-btn
+					@click="more = true"
+					href=""
+					location="center"
+					color="red-accent-4"
+					class="text-white"
+					append-icon="mdi-chevron-down"
+				>
 					Xem tất cả đánh giá
 				</v-btn>
 			</v-sheet>
