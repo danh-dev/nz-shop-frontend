@@ -73,7 +73,7 @@ const fetchData = async () => {
   loading.value = true;
   status.value = null;
   try {
-    const res = await axios.get(`categories`);
+    const res = await axios.get("categories");
     if (res.status === 200) {
       categories.value = res.data.data;
     }
@@ -84,7 +84,7 @@ const fetchData = async () => {
   }
 
   try {
-    const res = await axios.get(`products`);
+    const res = await axios.get("products");
     if (res.status === 200) {
       products.value = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
       product.value = products.value.find(item => item.id === +route.params.id);
@@ -331,7 +331,8 @@ onMounted(fetchData);
               v-for="chip in item.value.split('|')"
               :key="chip"
             >
-              {{ chip }}</v-chip>
+              {{ chip }}
+            </v-chip>
           </td>
           <td>
             <div class="more">{{ item.quantity }}</div>
@@ -356,7 +357,7 @@ onMounted(fetchData);
               >
               </v-btn>
 
-              <v-btn
+              <!-- <v-btn
                 size="small"
                 variant="tonal"
                 icon="mdi-information-variant"
@@ -368,14 +369,14 @@ onMounted(fetchData);
                   },
                 }"
               >
-              </v-btn>
+              </v-btn> -->
               <v-btn
                 size="small"
                 variant="tonal"
                 icon="mdi-pencil"
                 color="primary"
                 :to="{
-                  name: 'admin-product-detail-variant',
+                  name: 'admin-product-variant',
                   params: {
                     id: item.id,
                   },

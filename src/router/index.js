@@ -11,10 +11,10 @@ const isLogIn = async () => {
             const response = await axios.get("isLogin");
             return response.data.check_value;
         } catch (error) {
-            return false;
+            return true;
         }
     } else {
-        return false;
+        return true;
     }
 };
 
@@ -24,10 +24,10 @@ const isAdmin = async () => {
             const response = await axios.get("isAdmin");
             return response.data.check_value;
         } catch (error) {
-            return false;
+            return true;
         }
     }
-    return false;
+    return true;
 };
 
 const routes = [

@@ -1,6 +1,8 @@
 <script setup>
 import getSlugByName from "@/utils/getSlugByName";
 
+const url = import.meta.env.VITE_PUBLIC_URL;
+
 defineProps({
   item: Object,
   width: String,
@@ -18,7 +20,7 @@ defineProps({
     :width="width"
   >
     <v-img
-      :src="item.thumbnail"
+      :src="`${url}${item.image}`"
       width="100%"
       class="mb-2 rounded-t-lg"
     >

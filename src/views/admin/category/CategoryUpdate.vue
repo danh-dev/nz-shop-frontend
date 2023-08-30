@@ -91,17 +91,22 @@ const submit = async () => {
 };
 
 onMounted(async () => {
-  const res = await axios.get(`categories`);
-  if (res.status === 200) {
-    categories.value = res.data.data;
+  try {
+    const res = await axios.get("categories");
+    if (res.status === 200) {
+      categories.value = res.data.data;
 
-    const category = categories.value.find(item => item.id === +route.params.id);
-    mainForm.value.name.value = category.name;
-    mainForm.value.description.value = category.description;
-    mainForm.value.parentCategoryId.value = category.parentCategoryId;
-    mainForm.value.isBrand.value = !!category.isBrand;
-    imagePath.value = category.image;
-    iconPath.value = category.icon;
+      const category = categories.value.find(item => item.id === +route.params.id);
+      mainForm.value.name.value = category.name;
+      mainForm.value.description.value = category.description;
+      mainForm.value.parentCategoryId.value = category.parentCategoryId;
+      mainForm.value.isBrand.value = !!category.isBrand;
+      imagePath.value = category.image;
+      iconPath.value = category.icon;
+    }
+  }
+  catch (e) {
+    console.log(e);
   }
 });
 

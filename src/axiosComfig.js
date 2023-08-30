@@ -5,7 +5,7 @@ axios.defaults.baseURL = import.meta.env.API_URL || "http://127.0.0.1:8000/api/"
 // axios.defaults.headers.common["X-Vue-Api-Key"] = import.meta.env.API_KEY || "298967b545b59db60ae6cd9ccceb4479";
 
 // if (accessToken) {
-//     axios.defaults.headers.common["Authorization"] = "Bearer " + accessToken;
+//   axios.defaults.headers.common["Authorization"] = "Bearer " + accessToken;
 // }
 
 export default axios;

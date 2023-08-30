@@ -203,7 +203,7 @@ const submit = async () => {
           quantity: multipleVariantTextField.value[index].quantity.value,
           "origin_price": multipleVariantTextField.value[index].originPrice.value,
           "sell_price": multipleVariantTextField.value[index].sellPrice.value,
-          "discount_price": multipleVariantTextField.value[index].discountPrice.value || undefined,
+          "discount_price": multipleVariantTextField.value[index].discountPrice.value || null,
         };
         singleValue.value = Object.entries(item).reduce((pre, [key, value], index, self) => {
           if (index !== self.length - 1) {
@@ -225,7 +225,7 @@ const submit = async () => {
       quantity: singleVariantTextField.value.quantity.value,
       "origin_price": singleVariantTextField.value.originPrice.value,
       "sell_price": singleVariantTextField.value.sellPrice.value,
-      "discount_price": singleVariantTextField.value.discountPrice.value || undefined,
+      "discount_price": singleVariantTextField.value.discountPrice.value || null,
     };
     more.push(singleValue);
     formData.append("type", 0);

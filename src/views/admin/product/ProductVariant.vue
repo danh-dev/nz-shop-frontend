@@ -1,5 +1,11 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { mapKeys, camelCase, lowerFirst } from "lodash";
+import axios from "@/axiosComfig.js";
+
+const route = useRoute();
+
 const variant = ref(
   {
     sku: {
@@ -24,11 +30,72 @@ const variant = ref(
     },
   }
 );
+
+const variantValue = ref("");
+
+const fetchVariant = async () => {
+  try {
+    const res = await axios.get(`variants/${+route.params.id}`);
+
+    if (res.status === 200) {
+      const data = mapKeys(res.data.data, (value, key) => camelCase(key));
+      variant.value.sku.value = data.sku;
+      variant.value.quantity.value = data.quantity;
+      variant.value.originPrice.value = data.originPrice;
+      variant.value.sellPrice.value = data.sellPrice;
+      variant.value.discountPrice.value = data.discountPrice;
+      variantValue.value = data.value;
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+};
+
+const submit = async () => {
+
+  try {
+    const data = {
+      sku: variant.value.sku.value,
+      quantity: variant.value.quantity.value,
+      originPrice: variant.value.originPrice.value,
+      sellPrice: variant.value.sellPrice.value,
+      discountPrice: variant.value.discountPrice.value || null,
+    };
+    console.log(data);
+    const res = await axios.put(`variants/update/${route.params.id}`, data);
+  }
+  catch ({ response: { status, data } }) {
+    if (status === 400) {
+      for (const [key, value] of Object.entries(mapKeys(data.errors, (value, key) => camelCase(key)))) {
+        variant.value[key].errorMessages = value;
+
+      }
+    }
+    else {
+      console.log(data);
+    }
+  }
+};
+
+
+onMounted(fetchVariant);
 </script>
 
 <template>
   <v-container class="m-card my-3">
-    <v-form>
+    <v-form @submit.prevent="submit">
+      <v-row>
+        <v-col cols="12">
+          <v-chip
+            v-for="variantType in variantValue.split('|')"
+            :key="variantType"
+          >
+            {{ variantType }}
+          </v-chip>
+        </v-col>
+
+      </v-row>
       <v-row>
         <v-col cols="6">
           <v-text-field
@@ -89,7 +156,10 @@ const variant = ref(
       </v-row>
       <v-row>
         <v-col cols="12">
-          <v-btn text="Xác nhận"></v-btn>
+          <v-btn
+            text="Xác nhận"
+            type="submit"
+          ></v-btn>
         </v-col>
       </v-row>
     </v-form>
