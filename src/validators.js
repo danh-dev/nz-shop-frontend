@@ -10,6 +10,7 @@ function removeAscent(str) {
     str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
     str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
     str = str.replace(/đ/g, "d");
+    str = str.replace("-", str);
     return str;
 }
 
@@ -17,26 +18,34 @@ const rule_required = value => !!String(value).trim().length || "Mục này khô
 const rule_email = value => {
     if (!String(value).length) {
         return "Email không được để trống";
+        return "Email không được để trống";
     } else {
         const emailPattern = /^\w+([\w+\-]+\.)*[\w+\-]+@([\w+\-]+\.)+[\w-]{2,30}$/;
         return emailPattern.test(String(value)) || "Email không đúng định dạng";
+        return emailPattern.test(String(value)) || "Email không đúng định dạng";
     }
+};
 };
 const rule_phone = value => {
     if (!String(value).length) {
         return "Số điện thoại không được để trống";
+        return "Số điện thoại không được để trống";
     } else {
         const phonePattern = /^[0-9]{10}$/;
+        return phonePattern.test(String(value)) || "Số điện thoại không đúng định dạng";
         return phonePattern.test(String(value)) || "Số điện thoại không đúng định dạng";
     }
 };
 const rule_password = value => {
     if (!String(value).length) {
         return "Password không được để trống";
+        return "Password không được để trống";
     } else {
         const bestPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()]).{8,20}$/;
         return bestPassword.test(String(value)) || "Password phải từ 8 -20 ký tự. Ít nhất 1 chữ thường, 1 chữ in hoa và 1 ký tự đặc biệt";
+        return bestPassword.test(String(value)) || "Password phải từ 8 -20 ký tự. Ít nhất 1 chữ thường, 1 chữ in hoa và 1 ký tự đặc biệt";
     }
+};
 };
 const rule_fullname = value => {
     if (!String(value).trim().length) {

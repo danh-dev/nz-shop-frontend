@@ -91,6 +91,7 @@ main {
 .bar-sticky {
   position: sticky;
   top: 0;
+  z-index: 3;
   inset-block-start: 1rem;
   z-index: 10;
 }

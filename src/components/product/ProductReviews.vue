@@ -3,18 +3,33 @@ import { ref, computed } from "vue";
 import LoginModal from "../modals/LoginModal.vue";
 
 const props = defineProps({
-	reviews: Array,
+	reviews: {
+		type: Array,
+		default() {
+			return [];
+		},
+	},
 });
+
+const form = ref({
+	rating: null,
+	comment: "",
+});
+
+const more = ref(false);
 
 const averageRating = computed(() => {
 	let totalRating = 0;
 	for (const { rating } of props.reviews) {
 		totalRating += rating;
 	}
-	return totalRating / props.reviews.length;
+	return totalRating / props.reviews.length || 0;
 });
 
-const more = ref(false);
+const percentReviews = rating => {
+	return props.reviews.filter(review => review.rating === rating).length;
+};
+
 </script>
 
 <template>
@@ -53,7 +68,7 @@ const more = ref(false);
 					:key="i"
 				>
 					<v-progress-linear
-						:model-value="rating * 15"
+						:model-value="percentReviews(rating) / reviews.length * 100"
 						class="mx-n5"
 						color="red-accent-4"
 						height="8"
@@ -70,7 +85,7 @@ const more = ref(false);
 
 					<template v-slot:append>
 						<div class="rating-values">
-							<span class="d-flex justify-end text-body-2"> {{ rating * product.value }} đánh giá </span>
+							<span class="d-flex justify-end text-body-2"> {{ reviews.length }} đánh giá </span>
 						</div>
 					</template>
 				</v-list-item>
@@ -100,8 +115,7 @@ const more = ref(false);
 					<p class="d-flex align-center">
 						<b>Đánh giá:</b>
 						<v-rating
-							half-increments
-							:model-value="review.point"
+							:model-value="form.rating"
 							color="yellow-darken-3"
 							readonly
 							density="compact"
@@ -110,7 +124,7 @@ const more = ref(false);
 						>
 						</v-rating>
 					</p>
-					<p class="more"><b>Nhận xét:</b> {{ review.comment }}</p>
+					<p class="more"><b>Nhận xét:</b> {{ form.comment }}</p>
 				</v-sheet>
 			</v-container>
 

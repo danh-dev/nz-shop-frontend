@@ -9,7 +9,7 @@ const routes = [
 	},
 	{
 		path: "dashboard",
-		name: "dashboard-admin",
+		name: "admin-dashboard",
 		component: () => import("../views/admin/Dashboard.vue"),
 	},
 	{

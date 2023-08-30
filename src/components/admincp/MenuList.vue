@@ -3,24 +3,33 @@
 import { ref } from "vue";
 
 const menus = ref([
-  { icon: 'mdi-home-outline', text: 'Dashboard', route: 'dashboard' },
-  { icon: 'mdi-ticket-percent-outline', text: 'Coupons', route: 'coupons' },
-  { icon: 'mdi-account-outline', text: 'User Manager', route: 'users' },
-  { icon: 'mdi-shield-star-outline', text: 'Roles Manager', route: 'roles' },
-  { icon: 'mdi-comment-outline', text: 'Comments Post', route: 'post-comment' },
-  { icon: 'mdi-comment-outline', text: 'Comments Product', route: 'product-comment' },
-  { icon: 'mdi-star-outline', text: 'Reviews', route: 'review' },
-  { icon: 'mdi-list-box-outline', text: 'Category Product', route: 'category' },
-  { icon: 'mdi-package-variant-closed', text: 'Product', route: 'product' },
-  { icon: 'mdi-newspaper-variant-multiple', text: 'Posts', route: 'post' },
-  { icon: 'mdi-image-multiple-outline', text: 'Sliders', route: 'slider' },
-  { icon: 'mdi-book-open-page-variant-outline', text: 'Pages', route: 'page' },
+  { icon: "mdi-home-outline", text: "Dashboard", route: "dashboard" },
+  { icon: "mdi-ticket-percent-outline", text: "Coupons", route: "coupons" },
+  { icon: "mdi-account-outline", text: "User Manager", route: "users" },
+  { icon: "mdi-shield-star-outline", text: "Roles Manager", route: "roles" },
+  { icon: "mdi-comment-outline", text: "Comments Post", route: "post-comment" },
+  { icon: "mdi-comment-outline", text: "Comments Product", route: "product-comment" },
+  { icon: "mdi-star-outline", text: "Reviews", route: "review" },
+  { icon: "mdi-list-box-outline", text: "Category Product", route: "category" },
+  { icon: "mdi-package-variant-closed", text: "Product", route: "product" },
+  { icon: "mdi-newspaper-variant-multiple", text: "Posts", route: "post" },
+  { icon: "mdi-image-multiple-outline", text: "Sliders", route: "slider" },
+  { icon: "mdi-book-open-page-variant-outline", text: "Pages", route: "page" },
 ]);
 </script>
 
 <template>
-  <v-list density="compact" nav>
-    <v-list-item v-for="item in menus" :prepend-icon="item.icon" :to="`/admincp/${item.route}`" color="red-darken-2">
+  <v-list
+    density="compact"
+    nav
+  >
+    <v-list-item
+      v-for="item in menus"
+      :key="item.text"
+      :prepend-icon="item.icon"
+      :to="`/admincp/${item.route}`"
+      color="red-darken-2"
+    >
       <v-list-item-title class="text-menu">{{ item.text }}</v-list-item-title>
     </v-list-item>
   </v-list>
@@ -37,5 +46,4 @@ const menus = ref([
   line-height: 1.2rem;
   letter-spacing: 0.02em !important;
   text-transform: none !important;
-}
-</style>
+}</style>
