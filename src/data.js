@@ -22,6 +22,13 @@ const productList = [
         thumbnail: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/f/r/frame_1_3_13.png",
         url: "#"
     },
+    {   id: "4",
+        name: "Củ sạc nhanh Hyper GaN2 Dual USB-C PD 35W",
+        priceRegular: 690000,
+        variations: [],
+        thumbnail: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/f/r/frame_1_3_13.png",
+        url: "#"
+    },
 ]
 
 export { productList };

@@ -26,10 +26,10 @@
               </span>
             </div>
             <div class="quantityUpdate d-flex">
-              <span class="minus d-flex justify-center align-center m-pointer"
+              <span class="m-minus d-flex justify-center align-center m-pointer"
                     @click="cartStore.remove(product.id)">-</span>
               <input class="text-center" type="text" :value="product.quantity" readonly>
-              <span class="plus d-flex justify-center align-center m-pointer"
+              <span class="m-plus d-flex justify-center align-center m-pointer"
                     @click="()=>{product.quantity>=10?cartError('max'):cartStore.add(product.id)}">+</span>
               <span class="delete d-flex justify-center align-center m-pointer"
                     @click="deleteProductInCart(product.id)"><i
@@ -117,7 +117,7 @@ const deleteProductInCart = (id) => {
   border-bottom: 0 !important;
 }
 
-.quantityUpdate .minus {
+.quantityUpdate .m-minus {
   background: #f7f7f7;
   border-radius: 15px 0 0 15px;
   border-right: 0;
@@ -137,7 +137,7 @@ const deleteProductInCart = (id) => {
   width: 30px;
 }
 
-.quantityUpdate .plus {
+.quantityUpdate .m-plus {
   background: #f7f7f7;
   border-left: 0;
   border-radius: 0 15px 15px 0;
