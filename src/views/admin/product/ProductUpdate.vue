@@ -114,6 +114,10 @@ const fetchData = async () => {
   }
 };
 
+function editContent(event) {
+  post.value.content = event;
+};
+
 onMounted(fetchData);
 </script>
 
@@ -270,11 +274,17 @@ onMounted(fetchData);
 
       <v-row>
         <v-col cols="12">
-          <v-btn type="submit">Xác nhận</v-btn>
+          <v-btn
+            type="submit"
+            class="me-2"
+          >Xác nhận</v-btn>
+          <v-btn
+            :to="`/admincp/product`"
+            type="reset"
+          >Hủy bỏ</v-btn>
         </v-col>
       </v-row>
-    </v-form>
-  </v-container>
-</template>
+  </v-form>
+</v-container></template>
 
 <style></style>

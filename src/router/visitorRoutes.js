@@ -1,8 +1,9 @@
-import NewsPage from "../views/NewsPage.vue";
+// import { createRouter, createWebHistory } from "vue-router";
 import ProductPage from "../views/ProductPage.vue";
-import NewsList from "../views/NewsList.vue";
+import NewsList from "../views/post/NewsList.vue";
+import NewsPage from "../views/post/NewsPage.vue";
+import PageDetail from "../views/page/PageDetail.vue";
 import PageList from "../views/PageList.vue";
-import PageDetail from "../views/PageDetail.vue";
 
 const routes = [
 	{
@@ -86,30 +87,30 @@ const routes = [
 				path: "/user/feedback",
 				component: () => import("@/views/user/UserFeedback.vue"),
 			},
-			// Product router
-			{
-				path: "/:name",
-				component: ProductPage,
-			},
-			// News router
-			{
-				path: "/news",
-				component: NewsList,
-			},
-			{
-				path: "/news/:title",
-				component: NewsPage,
-			},
-			// page router
-			{
-				path: "/page",
-				component: PageList,
-			},
-			{
-				path: "/page/:name",
-				component: PageDetail,
-			},
 		],
+	},
+	// Product router
+	{
+		path: "/san-pham/:name",
+		component: ProductPage,
+	},
+	// News router
+	{
+		path: "/news",
+		component: NewsList,
+	},
+	{
+		path: "/news/:title",
+		component: NewsPage,
+	},
+	// page router
+	{
+		path: "/page",
+		component: PageList,
+	},
+	{
+		path: "/page/:name",
+		component: PageDetail,
 	},
 	{
 		path: "verify-email",
@@ -129,9 +130,13 @@ const routes = [
 		component: () => import("../views/ResetPassword.vue"),
 	},
 	{
-		path: ':pathMatch(.*)*',
-		component: () => import('../views/404.vue'),
-	}
+		path: ":pathMatch(.*)*",
+		component: () => import("../views/404.vue"),
+	},
+	{
+		path: "/page/:name",
+		component: PageDetail,
+	},
 ];
 
 export default routes;

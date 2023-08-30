@@ -3,9 +3,10 @@ import { RouterView } from "vue-router";
 
 import GlobalLoader from "@/components/globals/GlobalLoader.vue";
 import useLoadingStore from "@/stores/loading";
+import ScrollToTop from "@/components/globals/ScrollToTop.vue";
+// import Footer from "./components/copy/Footer.vue";
 
 const loadingStore = useLoadingStore();
-import ScrollToTop from "@/components/globals/ScrollToTop.vue";
 import { useRecaptchaProvider } from "vue-recaptcha";
 useRecaptchaProvider();
 
@@ -21,6 +22,26 @@ useRecaptchaProvider();
 <style>
 .m-pointer {
   cursor: pointer;
+}
+
+.more {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+a {
+  color: #333;
+  text-decoration: none;
+}
+
+.text-danger {
+  color: #c50000;
+}
+
+.font-bold {
+  font-weight: bold;
 }
 
 .m-card {

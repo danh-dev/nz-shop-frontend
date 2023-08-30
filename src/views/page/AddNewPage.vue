@@ -42,39 +42,81 @@ function editContent(event) {
   <v-form @submit.prevent="createPage">
     <v-container class="m-card my-3">
       <v-row>
-        <v-col cols="12" md="12">
+        <v-col
+          cols="12"
+          md="12"
+        >
           <h2>Chi tiết trang mới:</h2>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="newPage.name" :rules="[v => !!v || 'Vui lòng không để trống.']"
-            :counter="20" label="Tên trang:">
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <v-text-field
+            variant="underlined"
+            v-model="newPage.name"
+            :rules="[v => !!v || 'Vui lòng không để trống.']"
+            :counter="20"
+            label="Tên trang:"
+          >
           </v-text-field>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12" md="12">
-          <v-text-field variant="underlined" v-model="newPage.author" :rules="[v => !!v || 'Vui lòng không để trống.']"
-            :counter="20" label="Tác giả:">
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <v-text-field
+            variant="underlined"
+            v-model="newPage.author"
+            :rules="[v => !!v || 'Vui lòng không để trống.']"
+            :counter="20"
+            label="Tác giả:"
+          >
           </v-text-field>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12" md="12">
-          <v-textarea name="editor" variant="underlined" v-model="newPage.content"
-            :rules="[v => !!v || 'Vui lòng không để trống & không vượt quá 10000 ký tự..']" :counter="10000"
-            label="Nội dung trang:">
-          </v-textarea>
-          <ContentEditor :editorContent="newPage.content" @editContent="editContent" />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12" md="12">
-          <v-btn class="me-2" type="submit" color="info" variant="tonal">Đăng bài</v-btn>
-          <v-btn :to="`/admincp/page`" type="reset" color="text-darken-3" variant="tonal">Hủy bỏ</v-btn>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-form>
-</template>
+      <v-col
+        cols="12"
+        md="12"
+      >
+        <v-textarea
+          name="editor"
+          variant="underlined"
+          v-model="newPage.content"
+          :rules="[v => !!v || 'Vui lòng không để trống & không vượt quá 10000 ký tự..']"
+          :counter="10000"
+          label="Nội dung trang:"
+        >
+        </v-textarea>
+        <ContentEditor
+          :editorContent="newPage.content"
+          @editContent="editContent"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col
+        cols="12"
+        md="12"
+      >
+        <v-btn
+          class="me-2"
+          type="submit"
+          color="info"
+          variant="tonal"
+        >Đăng bài</v-btn>
+        <v-btn
+          :to="`/admincp/page`"
+          type="reset"
+          color="text-darken-3"
+          variant="tonal"
+        >Hủy bỏ</v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
+</v-form></template>

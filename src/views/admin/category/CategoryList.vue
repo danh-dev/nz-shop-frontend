@@ -272,16 +272,20 @@ onMounted(fetchData);
           <td>
             <div class="d-flex">
               <v-btn
-                size="small"
+                size="x-small"
                 variant="tonal"
-                :icon="status ? 'mdi-restore' : 'mdi-trash-can-outline'"
-                :color="status ? 'success' : 'red-accent-4'"
-                @click="() => handleDeleteRecoverButton(item.id, item.name)"
+                icon="mdi-pencil"
+                color="success"
+                :to="{
+                  name: 'admin-category-update',
+                  params: {
+                    id: item.id,
+                  },
+                }"
               >
               </v-btn>
-
               <v-btn
-                size="small"
+                size="x-small"
                 variant="tonal"
                 icon="mdi-information-variant"
                 color="info"
@@ -294,16 +298,11 @@ onMounted(fetchData);
               >
               </v-btn>
               <v-btn
-                size="small"
+                size="x-small"
                 variant="tonal"
-                icon="mdi-pencil"
-                color="primary"
-                :to="{
-                  name: 'admin-category-update',
-                  params: {
-                    id: item.id,
-                  },
-                }"
+                :icon="status ? 'mdi-restore' : 'mdi-trash-can-outline'"
+                :color="status ? 'success' : 'red-accent-4'"
+                @click="() => handleDeleteRecoverButton(item.id, item.name)"
               >
               </v-btn>
             </div>
