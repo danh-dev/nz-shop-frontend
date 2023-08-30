@@ -84,7 +84,7 @@ const fetchData = async () => {
   // status.value = null;
 
   try {
-    const res = await axios.get(`categories`);
+    const res = await axios.get("categories");
     if (res.status === 200) {
       categories.value = res.data.data.map(category => mapKeys(category, (value, key) => camelCase(key)));
     }
@@ -94,7 +94,7 @@ const fetchData = async () => {
   }
 
   try {
-    const res = await axios.get(`products`);
+    const res = await axios.get("products");
     if (res.status === 200) {
       products.value = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
       const product = products.value.find(item => item.id === +route.params.id);
@@ -115,7 +115,7 @@ const fetchData = async () => {
 };
 
 function editContent(event) {
-  post.value.content = event;
+  mainForm.value.description.value = event;
 };
 
 onMounted(fetchData);
@@ -250,25 +250,16 @@ onMounted(fetchData);
 
       <v-row>
         <v-col cols="12">
-          <v-text-field
-            v-model="mainForm.description.value"
-            label="Mô tả"
-            :error-messages="mainForm.description.errorMessages"
-            variant="outlined"
-            @update:model-value="mainForm.description.errorMessages = ''"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="12">
           <v-label>Mô tả</v-label>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="12">
-          <ContentEditor></ContentEditor>
+          <ContentEditor
+            :editorContent="mainForm.description.value"
+            @editContent="editContent"
+          ></ContentEditor>
         </v-col>
       </v-row>
 
@@ -284,7 +275,8 @@ onMounted(fetchData);
           >Hủy bỏ</v-btn>
         </v-col>
       </v-row>
-  </v-form>
-</v-container></template>
+    </v-form>
+  </v-container>
+</template>
 
 <style></style>

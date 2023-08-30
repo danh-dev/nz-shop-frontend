@@ -3,6 +3,7 @@ import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import axios from "../../../axiosComfig";
 import GlobalLoader from "../../../components/globals/GlobalLoader.vue";
+import ContentEditor from "@/components/globals/ContentEditor.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -114,6 +115,10 @@ const handleInput = (input) => {
   input.errorMessages = "";
   status.value = false;
 };
+
+const editContent = event => {
+  mainForm.value.description.value = event;
+};
 </script>
 
 <template>
@@ -193,13 +198,10 @@ const handleInput = (input) => {
 
       <v-row>
         <v-col cols="12">
-          <v-text-field
-            v-model="mainForm.description.value"
-            :label="mainForm.description.label"
-            :error-messages="mainForm.description.errorMessages"
-            variant="outlined"
-            @update:model-value="() => handleInput(mainForm.description)"
-          ></v-text-field>
+          <ContentEditor
+            :editorContent="mainForm.description.value"
+            @editContent="editContent"
+          ></ContentEditor>
         </v-col>
       </v-row>
 
