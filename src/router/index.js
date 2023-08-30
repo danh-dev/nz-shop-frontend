@@ -44,6 +44,11 @@ const routes = [
         component: () => import("../views/adminLayout.vue"),
         meta: {viewOf: "admin"},
         children: [...adminRoutes],
+    },
+    {
+        name: "test",
+        path: "/test",
+        component: () => import("../views/test.vue")
     }
 ];
 const router = createRouter({

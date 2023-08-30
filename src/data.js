@@ -3,7 +3,7 @@ const productList = [
         name: "Laptop ASUS X515MA-BR481W",
         priceRegular: 7600000,
         priceSale: 6690000,
-        variations: ["Bạc", "Ram 32Gb"],
+        variations: 3,
         thumbnail: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/e/text_ng_n_5__1_2.png",
         url: "#"
     },

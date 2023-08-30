@@ -107,6 +107,6 @@ export const useCartStore = defineStore("cart", () => {
     };
 }, {
     persist: {
-        paths: ['cartList','coupon','shipping'],
+        paths: ['cartList','coupon'],
     },
 });

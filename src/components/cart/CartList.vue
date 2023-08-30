@@ -54,7 +54,7 @@
         <v-btn
             color="primary"
             variant="text"
-            @click="cartError = !cartError"
+            @click="showError = !showError"
         >
           Close
         </v-btn>
@@ -118,7 +118,7 @@ const deleteProductInCart = (id) => {
 }
 
 .quantityUpdate .m-minus {
-  background: #f7f7f7;
+  background: #E1E1E1;
   border-radius: 15px 0 0 15px;
   border-right: 0;
   height: 25px;
@@ -127,7 +127,7 @@ const deleteProductInCart = (id) => {
 }
 
 .quantityUpdate input {
-  background: #f7f7f7;
+  background: #E1E1E1;
   border: none;
   border-radius: 0;
   border-right: 0;
@@ -138,7 +138,7 @@ const deleteProductInCart = (id) => {
 }
 
 .quantityUpdate .m-plus {
-  background: #f7f7f7;
+  background: #E1E1E1;
   border-left: 0;
   border-radius: 0 15px 15px 0;
   height: 25px;
