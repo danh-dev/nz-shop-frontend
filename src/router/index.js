@@ -9,7 +9,7 @@ const isLogIn = async () => {
     if (token) {
         try {
             const response = await axios.get("isLogin");
-            return response.data.check_value;
+            return response.data.isLogin;
         } catch (error) {
             return false;
         }
@@ -22,7 +22,7 @@ const isAdmin = async () => {
     if (await isLogIn()) {
         try {
             const response = await axios.get("isAdmin");
-            return response.data.check_value;
+            return response.data.isAdmin;
         } catch (error) {
             return false;
         }
