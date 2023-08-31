@@ -15,6 +15,7 @@ const menus = ref([
   { icon: 'mdi-newspaper-variant-multiple', text: 'Posts', route: 'post' },
   { icon: 'mdi-image-multiple-outline', text: 'Sliders', route: 'slider' },
   { icon: 'mdi-book-open-page-variant-outline', text: 'Pages', route: 'page' },
+  { icon: 'mdi-cogs', text: 'Pages', route: 'page' },
 ]);
 </script>
 

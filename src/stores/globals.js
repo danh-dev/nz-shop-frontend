@@ -4,8 +4,13 @@ import {ref} from "vue";
 export const siteData = defineStore("siteData", () => {
     const isLoading = ref(false);
     const apiMessages = ref([]);
-    const isLogin = ref(true);
+    const isLogin = ref();
+    const isAdmin = ref();
     const useGuest = ref(false);
+    const siteSetings = ref({
+        linkAdmin:"admincp"
+    });
+
 
     const hasLoading = () => {
         isLoading.value = true;
@@ -47,10 +52,17 @@ export const siteData = defineStore("siteData", () => {
         apiMessages,
         useGuest,
         configGuest,
-        isLogin
+        isLogin,
+        isAdmin,
+        siteSetings
     };
 }, {
     persist: {
-        paths: ['useGuest','isLogin'],
+        paths: ['useGuest','isLogin','isAdmin'],
+        storage: localStorage,
+        serializer: {
+            serialize: (value) => btoa(JSON.stringify(value)),
+            deserialize: (value) => JSON.parse(atob(value)),
+        },
     },
 });

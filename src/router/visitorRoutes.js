@@ -11,6 +11,11 @@ const routes = [
 		component: () => import("../views/HomePage.vue"),
 	},
 	{
+		name: "page-404",
+		path: "/404.html",
+		component: () => import("../views/404.vue")
+	},
+	{
 		name: "categories",
 		path: "/categories/:slugs+",
 		component: () => import("../views/CategoryPage.vue"),
@@ -41,6 +46,9 @@ const routes = [
 	},
 	{
 		path: ":pathMatch(.*)*",
+		redirect: () => {
+			return { name: "page-404" };
+		},
 		component: () => import("../views/404.vue"),
 	},
 	{
@@ -88,7 +96,7 @@ const routes = [
 			},
 			// Product router
 			{
-				path: "/:name",
+				path: "/san-pham/:name",
 				component: ProductPage,
 			},
 			// News router
