@@ -18,7 +18,10 @@ defineProps({
       :class="index % productsLength === productsLength - 1 ? `me-0` : `me-3`"
       class="mb-3"
     >
-      <ProductCard :product="product"></ProductCard>
+      <ProductCard
+        :product="product"
+        :href="`/san-pham/${product.slug}`"
+      ></ProductCard>
     </v-sheet>
   </v-sheet>
 </template>

@@ -403,7 +403,7 @@ onMounted(fetchData);
       @update:page="updatePage"
     ></GlobalPagination>
 
-    <v-autocomplete
+    <!-- <v-autocomplete
       prepend-inner-icon="mdi-list-box-outline"
       density="compact"
       label="Danh mục"
@@ -416,7 +416,7 @@ onMounted(fetchData);
       hide-details
       style="max-width: 500px;"
       clearable
-    ></v-autocomplete>
+    ></v-autocomplete> -->
     <v-btn
       text="Cập nhật"
       @click="handleUpdateCategory"

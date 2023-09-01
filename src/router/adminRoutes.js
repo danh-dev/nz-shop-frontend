@@ -49,11 +49,6 @@ const routes = [
 		component: () => import("../views/admin/product/ProductList.vue"),
 	},
 	{
-		name: "admin-product-detail",
-		path: "product/:code",
-		component: () => import("../views/admin/product/ProductDetail.vue"),
-	},
-	{
 		name: "admin-product-create",
 		path: "product/create",
 		component: () => import("../views/admin/product/ProductCreate.vue"),

@@ -4,8 +4,11 @@ import { useRoute } from "vue-router";
 import { mapKeys, camelCase, lowerFirst } from "lodash";
 import axios from "@/axiosComfig.js";
 
+import SuccessAlert from "@/components/globals/SuccessAlert.vue";
+
 const route = useRoute();
 
+const status = ref(false);
 const variant = ref(
   {
     sku: {
@@ -53,29 +56,35 @@ const fetchVariant = async () => {
 };
 
 const submit = async () => {
-
+  const data = {
+    sku: variant.value.sku.value,
+    quantity: variant.value.quantity.value,
+    originPrice: variant.value.originPrice.value,
+    sellPrice: variant.value.sellPrice.value,
+    discountPrice: variant.value.discountPrice.value || null,
+  };
   try {
-    const data = {
-      sku: variant.value.sku.value,
-      quantity: variant.value.quantity.value,
-      originPrice: variant.value.originPrice.value,
-      sellPrice: variant.value.sellPrice.value,
-      discountPrice: variant.value.discountPrice.value || null,
-    };
-    console.log(data);
     const res = await axios.put(`variants/update/${route.params.id}`, data);
+
+    if (res.status === 200) {
+      status.value = true;
+    }
   }
   catch ({ response: { status, data } }) {
     if (status === 400) {
       for (const [key, value] of Object.entries(mapKeys(data.errors, (value, key) => camelCase(key)))) {
         variant.value[key].errorMessages = value;
-
       }
     }
     else {
       console.log(data);
     }
   }
+};
+
+const handleInput = (input) => {
+  input.errorMessages = "";
+  status.value = false;
 };
 
 
@@ -94,8 +103,22 @@ onMounted(fetchVariant);
             {{ variantType }}
           </v-chip>
         </v-col>
-
       </v-row>
+
+      <v-row v-if="status">
+        <v-col cols="12">
+          <SuccessAlert
+            :show="status"
+            title="Cập nhật biến thể thành công!"
+            :to="{
+              name: 'admin-product-detail',
+              params: { ...route.params },
+            }"
+          >
+          </SuccessAlert>
+        </v-col>
+      </v-row>
+
       <v-row>
         <v-col cols="6">
           <v-text-field
@@ -104,7 +127,7 @@ onMounted(fetchVariant);
             :error-messages="variant.sku.errorMessages"
             class="mr-2"
             variant="outlined"
-            @update:model-value="variant.sku.errorMessages = ''"
+            @update:model-value="() => handleInput(variant.sku)"
           ></v-text-field>
         </v-col>
         <v-col cols="6">
@@ -114,7 +137,7 @@ onMounted(fetchVariant);
             :error-messages="variant.quantity.errorMessages"
             class="mr-2"
             variant="outlined"
-            @update:model-value="variant.quantity.errorMessages = ''"
+            @update:model-value="() => handleInput(variant.quantity)"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -127,7 +150,7 @@ onMounted(fetchVariant);
             class="mr-2"
             variant="outlined"
             persistent-hint
-            @update:model-value="variant.originPrice.errorMessages = ''"
+            @update:model-value="() => handleInput(variant.originPrice)"
           ></v-text-field>
         </v-col>
         <v-col cols="4">
@@ -138,7 +161,7 @@ onMounted(fetchVariant);
             class="mr-2"
             variant="outlined"
             persistent-hint
-            @update:model-value="variant.sellPrice.errorMessages = ''"
+            @update:model-value="() => handleInput(variant.sellPrice)"
           ></v-text-field>
         </v-col>
         <v-col cols="4">
@@ -149,7 +172,7 @@ onMounted(fetchVariant);
             class="mr-2"
             variant="outlined"
             persistent-hint
-            @update:model-value="variant.discountPrice.errorMessages = ''"
+            @update:model-value="() => handleInput(variant.discountPrice)"
             hint="Không bắt buộc"
           ></v-text-field>
         </v-col>

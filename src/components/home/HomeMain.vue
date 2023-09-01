@@ -5,7 +5,6 @@ import { useDisplay } from "vuetify";
 import { mapKeys, camelCase } from "lodash";
 import axios from "../../axiosComfig";
 import useCategoryStore from "@/stores/category";
-import useLoadingStore from "@/stores/loading";
 
 import HomeMainTop from "./HomeMainTop.vue";
 import ProductSlider from "@/components/globals/ProductSlider.vue";
@@ -16,7 +15,6 @@ import NewsCard from "./NewsCard.vue";
 import LogoButton from "./LogoButton.vue";
 
 const categoryStore = useCategoryStore();
-const loadingStore = useLoadingStore();
 
 const { findBrandsOfParentCategory, findRecursiveCategorySlug } = categoryStore;
 
@@ -153,16 +151,9 @@ const postsNumber = computed(() => {
 });
 
 watch(() => categoryStore.categories, async () => {
-	loadingStore.loading = true;
 	for (const category of categoryStore.parentCategories) {
 		products.value[category.id] = await fetchRecursiveCategoryProducts(category.id, 8);
 	}
-	for (const value of Object.values(products.value)) {
-		for (const product of value) {
-			product.variant = await fetchLowPriceVariant(product.id);
-		}
-	}
-	loadingStore.loading = false;
 });
 
 const fetchRecursiveCategoryProducts = async (id, numbers) => {
@@ -175,22 +166,9 @@ const fetchRecursiveCategoryProducts = async (id, numbers) => {
 	}
 	catch (e) {
 		//push
+		console.log(e);
 	}
 	return result;
-};
-
-const fetchLowPriceVariant = async id => {
-	let variant;
-	try {
-		const res = await axios.get(`products/${id}/variant`);
-		if (res.status === 200) {
-			variant = mapKeys(res.data.data, (value, key) => camelCase(key));
-		}
-	}
-	catch (e) {
-		//push
-	}
-	return variant;
 };
 
 const fetchGallery = async () => {
@@ -257,6 +235,7 @@ onMounted(() => {
 							:width="`calc((100% - ${8 * (productsShow - 1)}px) / ${productsShow})`"
 							:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }"
 							:product="props.product"
+							:href="`/san-pham/${props.product.slug}`"
 						/>
 					</template>
 				</ProductSlider>

@@ -2,8 +2,10 @@
 import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import axios from "../../../axiosComfig";
+
 import GlobalLoader from "../../../components/globals/GlobalLoader.vue";
 import ContentEditor from "@/components/globals/ContentEditor.vue";
+import SuccessAlert from "@/components/globals/SuccessAlert.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -76,6 +78,9 @@ const submit = async () => {
     loading.value = false;
     if (res.status === 200) {
       status.value = true;
+      // router.push({
+      //   name: "admin-category"
+      // });
     }
   }
   catch ({ response: { status, data } }) {
@@ -135,24 +140,12 @@ const editContent = event => {
 
       <v-row v-if="status">
         <v-col cols="12">
-          <v-alert
-            density="compact"
-            text="Sửa danh mục thành công!"
-            type="success"
-            variant="tonal"
-            closable
-            prominent
-            v-model="status"
+          <SuccessAlert
+            title="Sửa danh mục thành công!"
+            :show="status"
+            :to="{ name: 'admin-category' }"
           >
-            <template #append>
-              <v-btn
-                color="success"
-                variant="outlined"
-                :to="{ name: 'admin-category' }"
-              >Xem danh sách
-              </v-btn>
-            </template>
-          </v-alert>
+          </SuccessAlert>
         </v-col>
       </v-row>
       <v-row>
