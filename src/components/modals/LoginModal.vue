@@ -111,10 +111,11 @@ const data = ref([
 					class="mx-1 text-white"
 					color="red-accent-4"
 					prepend-icon="mdi mdi-login"
+					:to="`login`"
 				>
-					Đăngnhập</v-btn>
+					Đăng nhập</v-btn>
 				<v-btn
-					href="#"
+					:to="`register`"
 					class="mx-1"
 					prepend-icon="mdi-registered-trademark"
 				>Đăng ký</v-btn>
@@ -196,7 +197,6 @@ const data = ref([
 				src="https://cdn2.cellphones.com.vn/213x213,webp,q100/media/wysiwyg/Shipper_CPS.jpg"
 				class="w-25 h-25"
 			>
-			<p class="text-danger">Đánh giá {{ product.name }}</p>
 			<p class="text-body-2">Bạn thấy sản phẩm này như thế nào ?</p>
 		</v-sheet>
 

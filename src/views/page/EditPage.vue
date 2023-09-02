@@ -87,7 +87,6 @@ onBeforeMount(fetchPage);
             variant="underlined"
             v-model="page.name"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
-            :counter="20"
             label="Tên trang:"
           ></v-text-field>
         </v-col>
@@ -101,50 +100,39 @@ onBeforeMount(fetchPage);
             variant="underlined"
             v-model="page.author"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
-            :counter="20"
             label="Tác giả:"
           ></v-text-field>
         </v-col>
       </v-row>
-    <v-row>
-      <v-col
-        cols="12"
-        md="12"
-      >
-        <v-textarea
-          name="editor"
-          variant="underlined"
-          v-model="page.content"
-          :rules="[v => !!v || 'Vui lòng không để trống & không vượt quá 10000 ký tự..']"
-          :counter="10000"
-          label="Nội dung trang:"
+      <v-row>
+        <v-col
+          cols="12"
+          md="12"
         >
-        </v-textarea>
-        <ContentEditor
-          :editorContent="page.content"
-          @editContent="editContent"
-        />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col
-        cols="12"
-        md="12"
-      >
-        <v-btn
-          class="me-2"
-          type="submit"
-          color="info"
-          variant="tonal"
-        >Chỉnh sửa</v-btn>
-        <v-btn
-          :to="`/admincp/page`"
-          href=""
-          type="reset"
-          color="text-darken-3"
-          variant="tonal"
-        >Hủy bỏ</v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
-</v-form></template>
+        <v-label class="text-caption">Nội dung trang:</v-label>
+          <ContentEditor
+            :rules="[v => !!v || 'Vui lòng không để trống.']"
+            :editorContent="page.content"
+            @editContent="editContent"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <v-btn
+            class="me-2"
+            type="submit"
+          >Hoàn tất</v-btn>
+          <v-btn
+            :to="`/admincp/page`"
+            href=""
+            type="reset"
+          >Hủy bỏ</v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-form>
+</template>

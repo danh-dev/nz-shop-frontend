@@ -74,7 +74,7 @@ const fetchComments = async id => {
 		console.log(e);
 	}
 };
-
+// fetch revies
 const fetchReviews = async id => {
 	try {
 		const res = await axios.get(`products/${id}/reviews`);
@@ -86,7 +86,7 @@ const fetchReviews = async id => {
 		console.log(e);
 	}
 };
-
+// fetch random posts
 const fetchRandomPosts = async () => {
 	try {
 		const response = await axios.get("randomPosts");

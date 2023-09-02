@@ -24,7 +24,7 @@ const post = ref({
 
 const fetchPost = async () => {
   try {
-    const response = await axios.get(`posts`);
+    const response = await axios.get("posts");
     // loading.value = false;
     if (response.data.status === 200) {
       posts.value = response.data.data;
@@ -44,15 +44,6 @@ onMounted(fetchPost);
 
 <template>
   <v-sheet>
-    <v-row class="container-fluid">
-      <v-col
-        :cols="12"
-        class=""
-      >
-        <NewsSideBar />
-      </v-col>
-    </v-row>
-
     <v-row>
       <v-col :cols="12">
         <div>
@@ -103,25 +94,27 @@ onMounted(fetchPost);
               class="d-flex align-center w-50 my-3"
               v-for="relatedArticle in relatedArticles"
               :key="relatedArticle.id"
-          >
-            <img
-              :src="relatedArticle.image"
-              class="w-25 rounded"
-            />
-            <a
-              :href="`/news/${getSlugByName(relatedArticle.title)}`"
-              class="text-caption px-1"
-            >{{
-              relatedArticle.title }}</a>
-          </div>
+            >
+              <img
+                :src="relatedArticle.image"
+                class="w-25 rounded"
+              />
+              <a
+                :href="`/news/${getSlugByName(relatedArticle.title)}`"
+                class="text-caption px-1"
+              >{{
+                relatedArticle.title }}</a>
+            </div>
+          </v-sheet>
         </v-sheet>
-      </v-sheet>
-    </v-col>
-  </v-row>
-  <!-- <GlobalLoader :loading="loading" /> -->
-</v-sheet></template>
+      </v-col>
+    </v-row>
+    <!-- <GlobalLoader :loading="loading" /> -->
+  </v-sheet>
+</template>
 
-<style>a {
+<style>
+a {
   text-decoration: none;
   cursor: pointer;
 }

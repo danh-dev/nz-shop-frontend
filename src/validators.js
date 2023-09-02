@@ -25,7 +25,6 @@ const rule_email = value => {
         return emailPattern.test(String(value)) || "Email không đúng định dạng";
     }
 };
-};
 const rule_phone = value => {
     if (!String(value).length) {
         return "Số điện thoại không được để trống";

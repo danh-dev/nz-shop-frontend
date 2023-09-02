@@ -45,6 +45,11 @@ const routes = [
 		meta: { viewOf: "admin" },
 		children: [...adminRoutes],
 	},
+	{
+		name: "test",
+		path: "/test",
+		component: () => import("../views/test2.vue"),
+	},
 ];
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
