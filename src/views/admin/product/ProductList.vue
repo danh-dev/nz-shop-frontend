@@ -109,7 +109,7 @@ const fetchData = async () => {
   try {
     const res = await axios.get(`products`);
     if (res.status === 200) {
-      products.value = res.data.data.reverse().map(product => mapKeys(product, (value, key) => camelCase(key)));
+      products.value = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
     }
 
     filteredProducts.value = products.value;
@@ -207,13 +207,12 @@ onMounted(fetchData);
     <v-table
       hover
       v-if="products.length > 0"
-      class="text-body-2 text-justify m-card my-3"
     >
       <thead>
         <tr>
           <th
             class="text-left font-weight-bold"
-            style="width: 25%;"
+            style="width: 15%;"
           >
             Tên sản phẩm
           </th>
@@ -225,13 +224,7 @@ onMounted(fetchData);
           </th>
           <th
             class="text-left font-weight-bold"
-            style="width: 40%"
-          >
-            Mô tả
-          </th>
-          <th
-            class="text-left font-weight-bold"
-            style="width: 15%"
+            style="width: 10%"
           >
             Danh mục
           </th>
@@ -258,28 +251,12 @@ onMounted(fetchData);
             ></v-img>
           </td>
           <td>
-            <div class="more">{{ item.description }}</div>
-          </td>
-          <td>
             <div class="more">{{ getCategoryNameById(item.categoryId) }}</div>
           </td>
           <td>
             <div class="d-flex">
               <v-btn
-                  size="x-small"
-                  variant="tonal"
-                  icon="mdi-pencil"
-                  color="success"
-                  :to="{
-                    name: 'admin-product-update',
-                    params: {
-                      id: item.id,
-                    },
-                  }"
-                >
-                </v-btn>
-              <v-btn
-                size="x-small"
+                size="small"
                 variant="tonal"
                 :icon="status ? 'mdi-restore' : 'mdi-trash-can-outline'"
                 :color="status ? 'success' : 'red-accent-4'"
@@ -288,12 +265,25 @@ onMounted(fetchData);
               </v-btn>
 
               <v-btn
-                size="x-small"
-                variant="text"
-                icon="mdi-dots-vertical"
-                color=""
+                size="small"
+                variant="tonal"
+                icon="mdi-information-variant"
+                color="info"
                 :to="{
                   name: 'admin-product-detail',
+                  params: {
+                    id: item.id,
+                  },
+                }"
+              >
+              </v-btn>
+              <v-btn
+                size="small"
+                variant="tonal"
+                icon="mdi-pencil"
+                color="primary"
+                :to="{
+                  name: 'admin-product-update',
                   params: {
                     id: item.id,
                   },

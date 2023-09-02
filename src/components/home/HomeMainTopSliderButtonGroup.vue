@@ -39,13 +39,13 @@ const translateBackToFirstItem = (maxModel, buttonGroupLength) => {
       >
         <v-sheet>
           <v-sheet
-            class="text-uppercase text-body-2"
+            class="text-uppercase text-caption"
             :class="setFontWeight(index, model)"
-          >{{ item.title }}</v-sheet>
+          >{{ item.name }}</v-sheet>
           <v-sheet
             class="text-caption"
             :class="setFontWeight(index, model)"
-          > {{ item.subtitle }}</v-sheet>
+          > {{ item.title }}</v-sheet>
         </v-sheet>
       </HomeMainTopSliderButtonItem>
     </v-slide-x-transition>

@@ -9,7 +9,7 @@ const routes = [
 	},
 	{
 		path: "dashboard",
-		name: "admin-dashboard",
+		name: "dashboard-admin",
 		component: () => import("../views/admin/Dashboard.vue"),
 	},
 	{
@@ -49,11 +49,6 @@ const routes = [
 		component: () => import("../views/admin/product/ProductList.vue"),
 	},
 	{
-		name: "admin-product-detail",
-		path: "product/:code",
-		component: () => import("../views/admin/product/ProductDetail.vue"),
-	},
-	{
 		name: "admin-product-create",
 		path: "product/create",
 		component: () => import("../views/admin/product/ProductCreate.vue"),
@@ -64,8 +59,8 @@ const routes = [
 		component: () => import("../views/admin/product/ProductDetail.vue"),
 	},
 	{
-		name: "admin-product-detail-variant",
-		path: "product/:id/variant",
+		name: "admin-product-variant",
+		path: "variants/:id",
 		component: () => import("../views/admin/product/ProductVariant.vue"),
 	},
 	{
@@ -93,7 +88,7 @@ const routes = [
 		path: "category/update/:id",
 		component: () => import("../views/admin/category/CategoryUpdate.vue"),
 	},
-// 	Sang
+	// 	Sang
 	{
 		path: "post",
 		name: "admin-post",

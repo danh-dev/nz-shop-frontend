@@ -6,8 +6,6 @@ import { ref, computed, getCurrentInstance, onMounted } from "vue";
 import getSlugByName from "../utils/getSlugByName.js";
 import findOneBySlug from "../utils/findOneBySlug.js";
 
-const url = import.meta.env.VITE_PUBLIC_URL;
-
 const useCategoryStore = defineStore("category", () => {
   const categories = ref([]);
 
@@ -34,7 +32,7 @@ const useCategoryStore = defineStore("category", () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get(`categories`);
+      const res = await axios.get("categories");
       if (res.status === 200) {
         categories.value = res.data.data.map(category => mapKeys(category, (value, key) => camelCase(key)));
       }

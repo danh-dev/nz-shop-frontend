@@ -1,11 +1,10 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useDisplay } from "vuetify";
 
 import { mapKeys, camelCase } from "lodash";
 import axios from "../../axiosComfig";
 import useCategoryStore from "@/stores/category";
-import useLoadingStore from "@/stores/loading";
 
 import HomeMainTop from "./HomeMainTop.vue";
 import ProductSlider from "@/components/globals/ProductSlider.vue";
@@ -16,10 +15,12 @@ import NewsCard from "./NewsCard.vue";
 import LogoButton from "./LogoButton.vue";
 
 const categoryStore = useCategoryStore();
-const loadingStore = useLoadingStore();
 
 const { findBrandsOfParentCategory, findRecursiveCategorySlug } = categoryStore;
 
+const gallery = ref([]);
+const posts = ref([]);
+const products = ref({});
 
 const { name } = useDisplay();
 
@@ -132,7 +133,7 @@ const accessories = ref([
 	}
 ]);
 
-const newsNumber = computed(() => {
+const postsNumber = computed(() => {
 	switch (name.value) {
 		case "xs":
 			return 2;
@@ -149,42 +150,10 @@ const newsNumber = computed(() => {
 	}
 });
 
-const news = ref([
-	{
-		id: 1,
-		thumbnail: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/08/OPPO-Reno10-10.jpeg",
-		title: "10 lý do giúp OPPO Reno10 5G trở thành smartphone 10 điểm trong phân khúc tầm trung",
-	},
-	{
-		id: 2,
-		thumbnail: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/08/OPPO-Reno10-10.jpeg",
-		title: "10 lý do giúp OPPO Reno10 5G trở thành smartphone 10 điểm trong phân khúc tầm trung",
-	},
-	{
-		id: 3,
-		thumbnail: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/08/OPPO-Reno10-10.jpeg",
-		title: "10 lý do giúp OPPO Reno10 5G trở thành smartphone 10 điểm trong phân khúc tầm trung",
-	},
-	{
-		id: 4,
-		thumbnail: "https://cellphones.com.vn/sforum/wp-content/uploads/2023/08/OPPO-Reno10-10.jpeg",
-		title: "10 lý do giúp OPPO Reno10 5G trở thành smartphone 10 điểm trong phân khúc tầm trung",
-	},
-]);
-
-const products = ref({});
-
 watch(() => categoryStore.categories, async () => {
-	loadingStore.loading = true;
 	for (const category of categoryStore.parentCategories) {
 		products.value[category.id] = await fetchRecursiveCategoryProducts(category.id, 8);
 	}
-	for (const value of Object.values(products.value)) {
-		for (const product of value) {
-			product.variant = await fetchLowPriceVariant(product.id);
-		}
-	}
-	loadingStore.loading = false;
 });
 
 const fetchRecursiveCategoryProducts = async (id, numbers) => {
@@ -197,27 +166,44 @@ const fetchRecursiveCategoryProducts = async (id, numbers) => {
 	}
 	catch (e) {
 		//push
+		console.log(e);
 	}
 	return result;
 };
 
-const fetchLowPriceVariant = async id => {
-	let variant;
+const fetchGallery = async () => {
 	try {
-		const res = await axios.get(`products/${id}/variant`);
+		const res = await axios.get("sliders");
 		if (res.status === 200) {
-			variant = mapKeys(res.data.data, (value, key) => camelCase(key));
+			gallery.value = res.data.data.map(item => mapKeys(item, (value, key) => camelCase(key)));
 		}
 	}
 	catch (e) {
 		//push
 	}
-	return variant;
 };
+
+const fetchPosts = async () => {
+	try {
+		const res = await axios.get("randomPosts");
+		if (res.status === 200) {
+			posts.value = res.data.data.map(post => mapKeys(post, (value, key) => camelCase(key)));
+		}
+	}
+	catch (e) {
+		//push
+		console.log(e);
+	}
+};
+
+onMounted(() => {
+	fetchGallery();
+	fetchPosts();
+});
 </script>
 
 <template>
-	<HomeMainTop />
+	<HomeMainTop :gallery="gallery" />
 
 	<template
 		v-for="category in categoryStore.parentCategories"
@@ -249,6 +235,7 @@ const fetchLowPriceVariant = async id => {
 							:width="`calc((100% - ${8 * (productsShow - 1)}px) / ${productsShow})`"
 							:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }"
 							:product="props.product"
+							:href="`/san-pham/${props.product.slug}`"
 						/>
 					</template>
 				</ProductSlider>
@@ -286,10 +273,10 @@ const fetchLowPriceVariant = async id => {
 		<template #content>
 			<v-sheet class="d-flex justify-space-between">
 				<NewsCard
-					v-for="item in news"
+					v-for="item in posts.slice(0, postsNumber)"
 					:key="item.id"
 					:item="item"
-					:width="`calc((100% - 10px * ${news.length}) / ${news.length})`"
+					:width="`calc((100% - 10px * ${postsNumber}) / ${postsNumber})`"
 				/>
 			</v-sheet>
 		</template>

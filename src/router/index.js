@@ -34,7 +34,7 @@ const routes = [
 	{
 		name: "Index",
 		path: "/",
-		component: () => import("../views/VisitorLayout.vue"),
+		component: () => import("../views/visitorLayout.vue"),
 		meta: { viewOf: "visitor" },
 		children: [...visitorRoutes],
 	},
@@ -72,6 +72,7 @@ router.beforeEach(async (to, from, next) => {
 		//Request login
 		next({ path: "login", query: { to: to.path !== "/" ? to.fullPath : undefined } });
 	} else {
+
 		next();
 	}
 });

@@ -7,8 +7,8 @@ import { VueRecaptchaPlugin } from "vue-recaptcha";
 import { createHead } from "@unhead/vue";
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
-import * as components from 'vuetify/components'
-import * as labsComponents from 'vuetify/labs/components'
+import * as components from "vuetify/components";
+import * as labsComponents from "vuetify/labs/components";
 import App from "./App.vue";
 import router from "./router/index";
 

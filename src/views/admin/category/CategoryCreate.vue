@@ -1,42 +1,41 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import axios from "../../../axiosComfig";
-import GlobalLoader from "../../../components/globals/GlobalLoader.vue";
+import { ref } from "vue";
+import axios from "axios";
+import useLoadingStore from "@/stores/loading";
+import useCategoryStore from "@/stores/category";
 
-const loading = ref(false);
+import ContentEditor from "@/components/globals/ContentEditor.vue";
+import SuccessAlert from "@/components/globals/SuccessAlert.vue";
+
+const url = "http://127.0.0.1:8000/";
+
+const loadingStore = useLoadingStore();
+const categoryStore = useCategoryStore();
 const status = ref(false);
 
 const categories = ref([]);
 
 const mainForm = ref({
   name: {
-    label: "Tên danh mục",
     value: "",
     errorMessages: "",
   },
   image: {
-    label: "Hình ảnh",
     value: [],
-    icon: "mdi-image-outline",
     errorMessages: "",
   },
   description: {
-    label: "Mô tả",
     value: "",
     errorMessages: "",
   },
   parentCategoryId: {
-    label: "Danh mục cha",
     value: null,
   },
   icon: {
-    label: "Icon",
     value: [],
-    icon: "mdi-image-outline",
     errorMessages: "",
   },
   isBrand: {
-    label: "Thương hiệu",
     value: false,
   },
 });
@@ -60,9 +59,9 @@ const submit = async () => {
   }
 
   try {
-    loading.value = true;
-    const res = await axios.post(`categories`, formData);
-    loading.value = false;
+    loadingStore.loading = true;
+    const res = await axios.post(`${url}api/categories`, formData);
+    loadingStore.loading = false;
     if (res.status === 201) {
       status.value = true;
       mainForm.value.name.value = "";
@@ -74,7 +73,7 @@ const submit = async () => {
     }
   }
   catch ({ response: { status, data } }) {
-    loading.value = false;
+    loadingStore.loading = false;
     if (status === 400) {
       for (const [key, value] of Object.entries(data.errors)) {
         mainForm.value[key].errorMessages = value;
@@ -86,16 +85,13 @@ const submit = async () => {
   }
 };
 
-onMounted(async () => {
-  const res = await axios.get(`categories`);
-  if (res.status === 200) {
-    categories.value = res.data.data;
-  }
-});
-
-const handleInput = (input) => {
+const handleInput = input => {
   input.errorMessages = "";
   status.value = false;
+};
+
+const editContent = event => {
+  mainForm.value.description.value = event;
 };
 </script>
 
@@ -113,31 +109,21 @@ const handleInput = (input) => {
 
       <v-row v-if="status">
         <v-col cols="12">
-          <v-alert
-            density="compact"
-            text="Thêm danh mục thành công!"
-            type="success"
-            variant="tonal"
-            closable
-            prominent
-            v-model="status"
+          <SuccessAlert
+            :show="status"
+            title="Thêm danh mục thành công!"
+            :to="{
+              name: 'admin-category'
+            }"
           >
-            <template #append>
-              <v-btn
-                color="success"
-                variant="outlined"
-                :to="{ name: 'admin-category' }"
-              >Xem danh sách
-              </v-btn>
-            </template>
-          </v-alert>
+          </SuccessAlert>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12">
           <v-text-field
             v-model="mainForm.name.value"
-            :label="mainForm.name.label"
+            label="Tên danh mục"
             :error-messages="mainForm.name.errorMessages"
             variant="outlined"
             @update:model-value="() => handleInput(mainForm.name)"
@@ -149,10 +135,10 @@ const handleInput = (input) => {
         <v-col cols="12">
           <v-file-input
             v-model="mainForm.image.value"
-            :label="mainForm.image.label"
+            label="Hình ảnh"
             :error-messages="mainForm.image.errorMessages"
             prepend-icon=""
-            :prepend-inner-icon="mainForm.image.icon"
+            prepend-inner-icon="mdi-image-outline"
             variant="outlined"
             show-size
             @update:model-value="() => handleInput(mainForm.image)"
@@ -163,13 +149,10 @@ const handleInput = (input) => {
 
       <v-row>
         <v-col cols="12">
-          <v-text-field
-            v-model="mainForm.description.value"
-            :label="mainForm.description.label"
-            :error-messages="mainForm.description.errorMessages"
-            variant="outlined"
-            @update:model-value="() => handleInput(mainForm.description)"
-          ></v-text-field>
+          <ContentEditor
+            :editorContent="mainForm.description.value"
+            @editContent="editContent"
+          ></ContentEditor>
         </v-col>
       </v-row>
 
@@ -177,11 +160,10 @@ const handleInput = (input) => {
         <v-col cols="6">
           <v-autocomplete
             v-model="mainForm.parentCategoryId.value"
-            :items="categories"
+            :items="categoryStore.parentCategories"
             item-title="name"
             item-value="id"
-            :label="mainForm.parentCategoryId.label"
-            variant="outlined"
+            label="Danh mục cha"
             prepend-inner-icon="mdi-list-box-outline"
             hide-no-data
             hint="Không bắt buộc"
@@ -193,10 +175,10 @@ const handleInput = (input) => {
           <v-file-input
             v-if="!mainForm.parentCategoryId.value"
             v-model="mainForm.icon.value"
-            :label="mainForm.icon.label"
+            label="Icon"
             :error-messages="mainForm.icon.errorMessages"
             prepend-icon=""
-            :prepend-inner-icon="mainForm.icon.icon"
+            prepend-inner-icon="mdi-image-outline"
             variant="outlined"
             show-size
             @update:model-value="() => handleInput(mainForm.icon)"
@@ -205,7 +187,7 @@ const handleInput = (input) => {
           <v-checkbox
             v-else
             v-model="mainForm.isBrand.value"
-            :label="mainForm.isBrand.label"
+            label="Thương hiệu"
           ></v-checkbox>
         </v-col>
       </v-row>
@@ -223,7 +205,6 @@ const handleInput = (input) => {
     </v-form>
 
   </v-container>
-  <GlobalLoader :loading="loading"></GlobalLoader>
 </template>
 
 <style></style>

@@ -238,12 +238,6 @@ onMounted(fetchData);
           </th>
           <th
             class="text-left font-weight-bold"
-            style="width: 20%"
-          >
-            Mô tả
-          </th>
-          <th
-            class="text-left font-weight-bold"
             style="width: 10%"
           >
             Icon
@@ -270,7 +264,6 @@ onMounted(fetchData);
               width="60"
             ></v-img>
           </td>
-          <td>{{ item.description }}</td>
           <td>
             <v-icon>
               <v-img :src="`${url}${item.icon}`"></v-img>

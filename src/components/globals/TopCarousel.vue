@@ -1,9 +1,12 @@
 <script setup>
 import getSlugByName from "../../utils/getSlugByName";
 
+const url = import.meta.env.VITE_PUBLIC_URL;
+
 defineProps({
   gallery: Array,
 });
+
 </script>
 
 <template>
@@ -35,11 +38,11 @@ defineProps({
       <v-card
         width="100%"
         height="100%"
-        :href="`/${getSlugByName(item.title)}`"
+        :href="`/${getSlugByName(item.name)}`"
         v-ripple="false"
         class="d-flex align-center"
       >
-        <v-img :src="item.src" />
+        <v-img :src="`${url}${item.image}`" />
       </v-card>
     </v-carousel-item>
   </v-carousel>

@@ -133,25 +133,6 @@ const routes = [
 		path: ":pathMatch(.*)*",
 		component: () => import("../views/404.vue"),
 	},
-	// Product router
-	{
-		path: "/:name",
-		component: ProductPage,
-	},
-	// News router
-	{
-		path: "/news",
-		component: NewsList,
-	},
-	{
-		path: "/news/:title",
-		component: NewsPage,
-	},
-	// page router
-	// {
-	//     path: "/page",
-	//     component: PageList,
-	// },
 	{
 		path: "/page/:name",
 		component: PageDetail,
