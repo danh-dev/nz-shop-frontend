@@ -20,8 +20,17 @@ const menus = ref([
 </script>
 
 <template>
-  <v-list density="compact" nav>
-    <v-list-item v-for="item in menus" :prepend-icon="item.icon" :to="`/admincp/${item.route}`" color="red-darken-2">
+  <v-list
+    density="compact"
+    nav
+  >
+    <v-list-item
+      v-for="item in menus"
+      :key="item.text"
+      :prepend-icon="item.icon"
+      :to="`/admincp/${item.route}`"
+      color="red-darken-2"
+    >
       <v-list-item-title class="text-menu">{{ item.text }}</v-list-item-title>
     </v-list-item>
   </v-list>
@@ -38,5 +47,4 @@ const menus = ref([
   line-height: 1.2rem;
   letter-spacing: 0.02em !important;
   text-transform: none !important;
-}
-</style>
+}</style>

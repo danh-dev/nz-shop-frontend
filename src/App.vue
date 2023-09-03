@@ -2,7 +2,7 @@
 import {RouterView} from "vue-router";
 import ScrollToTop from "@/components/globals/ScrollToTop.vue";
 import {useRecaptchaProvider} from "vue-recaptcha";
-
+// import Footer from "./components/copy/Footer.vue";
 useRecaptchaProvider();
 
 
@@ -16,6 +16,26 @@ useRecaptchaProvider();
 <style>
 .m-pointer {
   cursor: pointer;
+}
+
+.more {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+a {
+  color: #333;
+  text-decoration: none;
+}
+
+.text-danger {
+  color: #c50000;
+}
+
+.font-bold {
+  font-weight: bold;
 }
 
 .m-card {
@@ -41,6 +61,26 @@ useRecaptchaProvider();
   position: absolute;
   width: 100%;
 }
+
+.ck-editor__editable {
+  height: 300px;
+  border: 1px solid rgb(211, 211, 211) !important;
+}
+
+/*
+.cke_chrome {
+  border-radius: 10px;
+  border: 1px solid #695656;
+  border-width: thin;
+}
+
+.cke_top {
+  border-radius: 10px 10px 0px 0px
+}
+
+.cke_bottom {
+  border-radius: 0px 0px 10px 10px
+} */
 
 @media (min-width: 1920px) {
   .v-container {

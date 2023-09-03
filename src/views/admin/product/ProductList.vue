@@ -224,12 +224,6 @@ onMounted(fetchData);
           </th>
           <th
             class="text-left font-weight-bold"
-            style="width: 25%"
-          >
-            Mô tả
-          </th>
-          <th
-            class="text-left font-weight-bold"
             style="width: 10%"
           >
             Danh mục
@@ -255,9 +249,6 @@ onMounted(fetchData);
               :src="`${url}${item.image}`"
               width="60"
             ></v-img>
-          </td>
-          <td>
-            <div class="more">{{ item.description }}</div>
           </td>
           <td>
             <div class="more">{{ getCategoryNameById(item.categoryId) }}</div>

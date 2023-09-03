@@ -10,7 +10,7 @@ defineProps({
 
 defineEmits(["editContent"]);
 
-const url = "http://127.0.0.1:4545/api/";
+const url = import.meta.env.VITE_API_URL;
 
 const onReady = editor => {
   editor.ui.getEditableElement().parentElement.insertBefore(

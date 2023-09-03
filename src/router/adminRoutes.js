@@ -68,11 +68,11 @@ const routes = [
         path: "product/:id",
         component: () => import("../views/admin/product/ProductDetail.vue"),
     },
-    {
-        name: "admin-product-detail-variant",
-        path: "product/:id/variant",
-        component: () => import("../views/admin/product/ProductVariant.vue"),
-    },
+	{
+		name: "admin-product-variant",
+		path: "variants/:id",
+		component: () => import("../views/admin/product/ProductVariant.vue"),
+	},
     {
         name: "admin-product-update",
         path: "product/update/:id",

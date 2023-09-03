@@ -10,6 +10,10 @@ import HomeMainTopSliderButtonGroup from "./HomeMainTopSliderButtonGroup.vue";
 import HomeMainTopMenuItem from "./HomeMainTopMenuItem.vue";
 import HomeMainTopMenuList from "./HomeMainTopMenuList.vue";
 
+defineProps({
+  gallery: Array,
+});
+
 const categoryStore = useCategoryStore();
 const { parentCategories } = storeToRefs(categoryStore);
 const { findBrandsOfParentCategory } = categoryStore;
@@ -33,69 +37,6 @@ const buttonGroupLength = computed(() => {
 });
 
 
-const gallery = ref([
-  {
-    id: 1,
-    title: "Iphone 14",
-    subtitle: "Đặt trước giá sốc",
-    src: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/sliding-zfold-moi-2023-dat-hang.png",
-  },
-  {
-    id: 2,
-    title: "Iphone 14",
-    subtitle: "Đặt trước giá sốc",
-    src: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/bts-apple-sliding.png",
-  },
-  {
-    id: 3,
-    title: "Iphone 14",
-    subtitle: "Đặt trước giá sốc",
-    src: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/oppo-reno-1-dathang-sliding-02.png",
-  },
-  {
-    id: 4,
-    title: "Iphone 14",
-    subtitle: "Đặt trước giá sốc",
-    src: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/sliding-tab-s9-dat-hang.png",
-  },
-  {
-    id: 5,
-    title: "Iphone 14",
-    subtitle: "Đặt trước giá sốc",
-    src: "https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/xiaomi-note12-series-sliding-th8.png",
-  },
-  {
-    id: 6,
-    title: "Iphone 14",
-    subtitle: "Đặt trước giá sốc",
-    src: "https://cdn.vuetifyjs.com/images/carousel/sky.jpg",
-  },
-  {
-    id: 7,
-    title: "Iphone 14",
-    subtitle: "Đặt trước giá sốc",
-    src: "https://cdn.vuetifyjs.com/images/carousel/bird.jpg",
-  },
-  {
-    id: 8,
-    title: "Iphone 14",
-    subtitle: "Đặt trước giá sốc",
-    src: "https://cdn.vuetifyjs.com/images/carousel/planet.jpg",
-  },
-  {
-    id: 9,
-    title: "Iphone 14",
-    subtitle: "Đặt trước giá sốc",
-    src: "https://cdn.vuetifyjs.com/images/carousel/planet.jpg",
-  },
-  {
-    id: 10,
-    title: "Iphone 14",
-    subtitle: "Đặt trước giá sốc",
-    src: "https://cdn.vuetifyjs.com/images/carousel/planet.jpg",
-  },
-]);
-
 const model = ref(0);
 const maxModel = ref(0);
 
@@ -109,21 +50,6 @@ watch(model, (cur, pre) => {
   }
 });
 
-const rightBanners = ref([
-  {
-    id: 1,
-    image: "RightBanner_PreOrder_WATCH6_Series_07.webp",
-  },
-  {
-    id: 2,
-    image: "RightBanner_PreOrder_WATCH6_Series_07.webp",
-  },
-  {
-    id: 3,
-    image: "RightBanner_PreOrder_WATCH6_Series_07.webp",
-  }
-]);
-
 </script>
 
 <template>
@@ -132,7 +58,7 @@ const rightBanners = ref([
     :height="mdAndUp ? '23rem' : '20rem'"
   >
     <v-sheet
-      width="13rem"
+      width="15rem"
       max-width="23%"
       class="d-none d-sm-block rounded-lg overflow-hidden elevation-3 mr-3 py-1"
     >
@@ -145,12 +71,12 @@ const rightBanners = ref([
       id="parent-item"
       class="d-flex flex-1-1"
       position="relative"
-      width="calc(100% - 13rem - 12px)"
+      width="calc(100% - 15rem - 12px)"
       min-width="calc(77% - 12px)"
     >
       <v-sheet
         class="d-flex flex-column rounded-lg overflow-hidden elevation-3"
-        :width="mdAndUp ? 'calc(100% - 15.5rem - 12px)' : '100%'"
+        :width="'100%'"
       >
         <v-sheet height="80%">
           <TopCarousel
@@ -172,7 +98,7 @@ const rightBanners = ref([
         </v-sheet>
       </v-sheet>
 
-      <v-sheet
+      <!-- <v-sheet
         width="15.5rem"
         class="d-none d-md-flex flex-column justify-space-between bg-transparent ms-3"
         height="100%"
@@ -186,7 +112,8 @@ const rightBanners = ref([
         >
           <v-img :src="`./src/assets/images/${banner.image}`" />
         </v-card>
-      </v-sheet>
+      </v-sheet> -->
+
     </v-sheet>
   </v-sheet>
 

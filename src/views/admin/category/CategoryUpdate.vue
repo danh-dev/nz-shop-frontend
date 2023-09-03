@@ -2,7 +2,10 @@
 import { useRoute, useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import axios from "../../../axiosComfig";
+
 import GlobalLoader from "../../../components/globals/GlobalLoader.vue";
+import ContentEditor from "@/components/globals/ContentEditor.vue";
+import SuccessAlert from "@/components/globals/SuccessAlert.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -75,6 +78,9 @@ const submit = async () => {
     loading.value = false;
     if (res.status === 200) {
       status.value = true;
+      // router.push({
+      //   name: "admin-category"
+      // });
     }
   }
   catch ({ response: { status, data } }) {
@@ -91,23 +97,32 @@ const submit = async () => {
 };
 
 onMounted(async () => {
-  const res = await axios.get(`categories`);
-  if (res.status === 200) {
-    categories.value = res.data.data;
+  try {
+    const res = await axios.get("categories");
+    if (res.status === 200) {
+      categories.value = res.data.data;
 
-    const category = categories.value.find(item => item.id === +route.params.id);
-    mainForm.value.name.value = category.name;
-    mainForm.value.description.value = category.description;
-    mainForm.value.parentCategoryId.value = category.parentCategoryId;
-    mainForm.value.isBrand.value = !!category.isBrand;
-    imagePath.value = category.image;
-    iconPath.value = category.icon;
+      const category = categories.value.find(item => item.id === +route.params.id);
+      mainForm.value.name.value = category.name;
+      mainForm.value.description.value = category.description;
+      mainForm.value.parentCategoryId.value = category.parentCategoryId;
+      mainForm.value.isBrand.value = !!category.isBrand;
+      imagePath.value = category.image;
+      iconPath.value = category.icon;
+    }
+  }
+  catch (e) {
+    console.log(e);
   }
 });
 
 const handleInput = (input) => {
   input.errorMessages = "";
   status.value = false;
+};
+
+const editContent = event => {
+  mainForm.value.description.value = event;
 };
 </script>
 
@@ -125,24 +140,12 @@ const handleInput = (input) => {
 
       <v-row v-if="status">
         <v-col cols="12">
-          <v-alert
-            density="compact"
-            text="Sửa danh mục thành công!"
-            type="success"
-            variant="tonal"
-            closable
-            prominent
-            v-model="status"
+          <SuccessAlert
+            title="Sửa danh mục thành công!"
+            :show="status"
+            :to="{ name: 'admin-category' }"
           >
-            <template #append>
-              <v-btn
-                color="success"
-                variant="outlined"
-                :to="{ name: 'admin-category' }"
-              >Xem danh sách
-              </v-btn>
-            </template>
-          </v-alert>
+          </SuccessAlert>
         </v-col>
       </v-row>
       <v-row>
@@ -188,13 +191,10 @@ const handleInput = (input) => {
 
       <v-row>
         <v-col cols="12">
-          <v-text-field
-            v-model="mainForm.description.value"
-            :label="mainForm.description.label"
-            :error-messages="mainForm.description.errorMessages"
-            variant="outlined"
-            @update:model-value="() => handleInput(mainForm.description)"
-          ></v-text-field>
+          <ContentEditor
+            :editorContent="mainForm.description.value"
+            @editContent="editContent"
+          ></ContentEditor>
         </v-col>
       </v-row>
 

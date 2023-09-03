@@ -4,8 +4,10 @@ const accessToken = window.localStorage.getItem(import.meta.env.VITE_NAME_KEY_TO
 axios.defaults.baseURL = import.meta.env.VITE_API_URL||'http://127.0.0.1:4545/api/';
 axios.defaults.headers.common[import.meta.env.VITE_API_NAME_KEY||'X-Vue-Api-Key'] = import.meta.env.VITE_API_KEY||'298967b545b59db60ae6cd9ccceb4479';
 
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || "http://127.0.0.1:4545/api/";
+
 if (accessToken) {
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken
+	axios.defaults.headers.common["Authorization"] = "Bearer " + accessToken;
 }
 
 export default axios;
