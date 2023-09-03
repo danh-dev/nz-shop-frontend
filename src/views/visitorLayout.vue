@@ -1,13 +1,20 @@
 <script setup>
 import { useDisplay } from "vuetify";
-import { RouterView } from "vue-router";
+import {RouterView, useRoute} from "vue-router";
+const route = useRoute()
 
 import TheHeader from "@/components/layouts/TheHeader.vue";
 import TheFooter from "@/components/layouts/TheFooter.vue";
 import FullscreenModal from "@/components/modals/FullscreenModal.vue";
 import MenuModal from "@/components/modals/MenuModal.vue";
-
+import {useSeoMeta} from "@unhead/vue";
 const { lgAndUp } = useDisplay();
+
+// Danh
+route.meta.title = "NZShop ProD";
+useSeoMeta({
+  title: route.meta.title,
+});
 </script>
 
 <template>

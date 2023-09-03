@@ -326,6 +326,13 @@ const fetchLowPriceVariant = async id => {
   }
   return variant;
 };
+
+// Danh
+import {useSeoMeta} from "@unhead/vue";
+route.meta.title = "Category";
+useSeoMeta({
+  title: route.meta.title,
+});
 </script>
 
 <template>

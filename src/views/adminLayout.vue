@@ -95,7 +95,7 @@ main {
   z-index: 10;
 }
 
-.btn-close {
+.bar-sticky:after {
   position: absolute;
   z-index: -1;
   width: 100%;

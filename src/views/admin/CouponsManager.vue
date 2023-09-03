@@ -831,7 +831,7 @@ const fetchCouponList = async (q, ds, de, t, s) => {
   try {
     const res = await axios.get("getListCoupon");
     coupons.value = res.data.filter(data => (
-        (data.name.toLowerCase().includes(queryString) || data.code.includes(queryString)) &&
+        (data.name.toLowerCase().includes(queryString) || data.code.toLowerCase().includes(queryString)) &&
         (!queryDateStart || data.date_start >= queryDateStart || !data.date_start) &&
         (!queryDateEnd || data.date_end <= queryDateEnd || !data.date_end) &&
         (!queryType || data.type_coupon.toLowerCase() === queryType) &&
