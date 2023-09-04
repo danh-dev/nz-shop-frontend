@@ -13,7 +13,7 @@ const routes = [
 	},
 	{
 		name: "categories",
-		path: "/categories/:slugs+",
+		path: "/danh-muc/:slugs+",
 		component: () => import("../views/CategoryPage.vue"),
 	},
 	{
