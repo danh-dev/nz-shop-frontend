@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import axios from "axios";
+import axios from "../../../axiosComfig";
 
 const reviews = ref([]);
 const filteredReviews = ref([]);
@@ -39,7 +39,7 @@ watch([status, reviews], () => {
 
 const fetchUsers = async () => {
     try {
-        const res = await axios.get("http://127.0.0.1:8000/api/users");
+        const res = await axios.get("users");
         if (res.status === 200) {
             users.value = res.data.data;
         }
@@ -54,7 +54,7 @@ const fetchUsers = async () => {
 
 const fetchProducts = async () => {
     try {
-        const res = await axios.get("http://127.0.0.1:8000/api/products");
+        const res = await axios.get("products");
         if (res.status === 200) {
             products.value = res.data.data;
         }
@@ -69,7 +69,7 @@ const fetchProducts = async () => {
 
 const fetchReviews = async () => {
     try {
-        const res = await axios.get("http://127.0.0.1:8000/api/reviews");
+        const res = await axios.get("reviews");
         if (res.status === 200) {
             reviews.value = res.data.data;
         }
@@ -225,4 +225,4 @@ onMounted(async () => {
     -webkit-box-orient: vertical;
     height: 2.8em;
 }
-</style> 
+</style>

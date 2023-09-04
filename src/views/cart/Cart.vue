@@ -2,21 +2,28 @@
 import {computed, ref} from "vue";
 import CartList from "../../components/cart/CartList.vue";
 import {useCartStore} from "@/stores/cart";
+import {rule_coupon} from "@/validators";
 
 const cartStore = useCartStore();
-const shippingValue = ref("200000");
-const couponValue = ref("50000");
+const couponInput = ref("");
+const dataForm = ref();
+const readOnly= ref(false);
 
-const totalCart = computed(() =>
-    totalValue.value + parseFloat(shippingValue.value) - parseFloat(couponValue.value)
-);
+couponInput.value = cartStore.coupon || "";
 
-const totalValue = computed(() =>
-    cartStore.listCart.reduce((total, product) => {
-      const price = (product.priceSale) ? product.priceSale : product.priceRegular;
-      return total + parseFloat(price) * product.quantity;
-    }, 0)
-);
+if(cartStore.coupon){
+  readOnly.value = true;
+}
+
+const onSubmit = () => {
+  if(couponInput.value.length){
+    dataForm.value?.validate().then(({ valid: isValid }) => {
+    if (isValid)
+      cartStore.addCoupon(couponInput.value);
+      readOnly.value = true
+  })}
+}
+const onClear = () => {cartStore.removeCoupon(); readOnly.value = false ;couponInput.value ="";}
 </script>
 
 <template>
@@ -24,37 +31,47 @@ const totalValue = computed(() =>
     <v-container>
       <v-sheet v-if="cartStore.listCart.length" class="mx-auto mt-8 rounded pa-3" elevation="3">
         <v-row class="ma-3" no-gutters>
-          <v-col cols="8" class="rounded pa-3">
+          <v-col cols="12" lg="8" class="rounded pa-3">
             <v-sheet>
               <h4 class="font-weight-bold text-red-accent-4">Giỏ hàng</h4>
               <CartList/>
             </v-sheet>
           </v-col>
-          <v-col cols="4" class="rounded pa-3">
+          <v-col cols="12" lg="4" class="rounded pa-3">
             <h4>Tạm tính:</h4>
             <v-card class="my-2 pa-3">
               <div class="order-summary-inner">
                 <ul class="summary-list py-2">
-                  <li class="d-flex justify-content-between font-weight-medium py-2">
+                  <li class="d-flex justify-space-between font-weight-medium py-2">
                     <span class="summary-list-title">Tổng giá trị :</span>
-                    <span class="summary-list-text">{{ formatPrice(totalValue) }}</span>
+                    <span class="summary-list-text">{{ formatPrice(cartStore.totalValue) }}</span>
                   </li>
-                  <li class="d-flex justify-content-between font-weight-medium py-2">
+                  <li class="d-flex justify-space-between font-weight-medium py-2">
                     <span class="summary-list-title">Giảm giá :</span>
-                    <span class="summary-list-text">-{{ formatPrice(couponValue) }}</span>
+                    <span class="summary-list-text">-{{ formatPrice(cartStore.couponValue) }}</span>
                   </li>
-                  <li class="d-flex justify-content-between font-weight-medium py-2">
+                  <li class="d-flex justify-space-between font-weight-medium py-2">
                     <span class="summary-list-title">Giao hàng :</span>
-                    <span class="summary-list-text">{{ formatPrice(shippingValue) }}</span>
+                    <span class="summary-list-text">{{ cartStore.shippingValue?formatPrice(cartStore.shippingValue):" Free " }}</span>
                   </li>
                 </ul>
                 <span class="font-weight-medium">Mã giảm giá</span>
                 <v-card-text>
-                  <v-text-field label="Mã giảm giá..." append-inner-icon="mdi-ticket-percent-outline"></v-text-field>
+                  <v-form ref="dataForm" @submit.prevent="onSubmit">
+                    <v-text-field label="Mã giảm giá"
+                                  v-model="couponInput"
+                                  :rules="[rule_coupon]"
+                                  clearable
+                                  persistent-clear
+                                  :readonly="readOnly"
+                                  @click:clear="onClear"
+                                  prepend-inner-icon="mdi-ticket-percent-outline"></v-text-field>
+                    <v-btn type="submit" class="d-none"></v-btn>
+                  </v-form>
                 </v-card-text>
-                <div class="d-flex justify-content-between text-h6 font-weight-bold py-2">
-                  <span class="summary-list-title">Tổng tiền tạm tính :</span>
-                  <span class="summary-list-text">{{ formatPrice(totalCart) }}</span>
+                <div class="d-flex justify-space-between text-h6 font-weight-bold py-2">
+                  <span class="summary-list-title">Tổng tiền :</span>
+                  <span class="summary-list-text">{{ formatPrice(cartStore.totalCart) }}</span>
                 </div>
               </div>
               <v-btn block="" variant="flat" size="large" class="w-75 bg-red-accent-4"

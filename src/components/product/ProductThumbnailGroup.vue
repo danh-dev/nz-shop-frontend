@@ -2,12 +2,14 @@
 import ProductThumbnail from "./ProductThumbnail.vue";
 
 defineProps({
-	images: Array,
+	gallery: String,
 	model: Number,
 	maxModel: Number,
 });
 
 defineEmits(["handleGroupButtonClick"]);
+
+const url = "http://127.0.0.1:8000/";
 </script>
 
 <template>
@@ -19,8 +21,8 @@ defineEmits(["handleGroupButtonClick"]);
 			<ProductThumbnail
 				width="20%"
 				height="100%"
-				v-for="(thumbImg, index) in images"
-				:key="thumbImg.id"
+				v-for="(thumbImg, index) in gallery.split('|')"
+				:key="thumbImg"
 				@click="$emit('handleGroupButtonClick', index)"
 				:style="[
 					model === index ? { paddingTop: '2px', borderBottom: '2px solid red' } : '',
@@ -28,9 +30,11 @@ defineEmits(["handleGroupButtonClick"]);
 				]"
 				:class="[model === index ? 'text-body-1' : 'text-body-2']"
 			>
-				<img
-					:src="thumbImg.src"
-					class="rounded w-100 h-100"
+				<v-img
+					:src="`${url}${thumbImg}`"
+					class="rounded"
+					width="70"
+					height="70"
 				/>
 			</ProductThumbnail>
 		</v-slide-x-transition>

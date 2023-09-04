@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import axios from "axios";
+import axios from "../../../axiosComfig";
 
 const comments = ref([]);
 const filteredComments = ref([]);
@@ -35,16 +35,39 @@ watch([status, comments], () => {
     }
 });
 
-watch(comments, newComments => {
-    for (const comment of newComments) {
-        fetchUser(comment);
-        fetchProduct(comment);
+const fetchUsers = async () => {
+    try {
+        const res = await axios.get("users");
+        if (res.status === 200) {
+            users.value = res.data.data;
+        }
+        if (res.status === 204) {
+            console.log("ko co gi");
+        }
     }
-});
+    catch (e) {
+        console.log(e);
+    }
+};
+
+const fetchProducts = async () => {
+    try {
+        const res = await axios.get("products");
+        if (res.status === 200) {
+            products.value = res.data.data;
+        }
+        if (res.status === 204) {
+            console.log("ko co gi");
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+};
 
 const fetchComments = async () => {
     try {
-        const res = await axios.get("http://127.0.0.1:8000/api/product-comments");
+        const res = await axios.get("product-comments");
         if (res.status === 200) {
             comments.value = res.data.data;
         }

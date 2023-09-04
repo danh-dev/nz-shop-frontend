@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
+import axios from "../../axiosComfig";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const newSlider = ref({
@@ -19,7 +19,7 @@ async function createSlider() {
     }
   });
   try {
-    const response = await axios.post("http://127.0.0.1:8000/api/sliders", formData);
+    const response = await axios.post("sliders", formData);
     if (response.data.status === 201) {
       router.push("/admincp/slider");
     }

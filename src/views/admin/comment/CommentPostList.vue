@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import axios from "axios";
+import axios from "../../../axiosComfig";
 
 const comments = ref([]);
 const filteredComments = ref([]);
@@ -44,7 +44,7 @@ watch(comments, newComments => {
 
 const fetchUser = async comment => {
     try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/post-comments/${comment.id}/user`);
+        const res = await axios.get("users");
         if (res.status === 200) {
             comment.user = res.data.data.full_name;
         }
@@ -56,7 +56,7 @@ const fetchUser = async comment => {
 
 const fetchPost = async comment => {
     try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/post-comments/${comment.id}/post`);
+        const res = await axios.get("posts");
         if (res.status === 200) {
             comment.post = res.data.data.title;
         }
@@ -68,7 +68,7 @@ const fetchPost = async comment => {
 
 const fetchComments = async () => {
     try {
-        const res = await axios.get("http://127.0.0.1:8000/api/post-comments");
+        const res = await axios.get("post-comments");
         if (res.status === 200) {
             comments.value = res.data.data;
         }
@@ -84,7 +84,7 @@ const fetchComments = async () => {
 
 const handleCheckButton = async id => {
     try {
-        const res = await axios.put(`http://127.0.0.1:8000/api/post-comments/approve/${id}`);
+        const res = await axios.put(`post-comments/approve/${id}`);
         if (res.status === 200) {
             await fetchComments();
         }
@@ -96,7 +96,7 @@ const handleCheckButton = async id => {
 
 const handleDeleteButton = async id => {
     try {
-        const res = await axios.put(`http://127.0.0.1:8000/api/post-comments/delete/${id}`);
+        const res = await axios.put(`post-comments/delete/${id}`);
         if (res.status === 200) {
             await fetchComments();
         }
