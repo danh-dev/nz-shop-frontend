@@ -17,6 +17,11 @@ const routes = [
 		component: () => import("../views/CategoryPage.vue"),
 	},
 	{
+		name: "search",
+		path: "/tim-kiem",
+		component: () => import("../views/CategoryPage.vue"),
+	},
+	{
 		path: "login",
 		name: "login-page",
 		meta: { auth: "true" },
@@ -41,6 +46,7 @@ const routes = [
 		component: () => import("../views/cart/CheckOut.vue"),
 	},
 	{
+		name: "404",
 		path: ":pathMatch(.*)*",
 		component: () => import("../views/404.vue"),
 	},

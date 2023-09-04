@@ -82,7 +82,7 @@ const fetchProducts = async () => {
   try {
     let url = `product-pagination/?page=${currentPage.value}&per_page=${rowsPerPage}`;
     if (status.value !== null) {
-      url += `&is_deleted=${status.value}`;
+      url += `&is_disabled=${status.value}`;
     }
     if (category.value !== null) {
       url += `&category_id=${category.value}`;

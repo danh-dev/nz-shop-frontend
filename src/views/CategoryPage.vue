@@ -67,29 +67,36 @@ const numberOfPages = computed(() => {
 });
 
 watch(() => categoryStore.categories, async () => {
-  const { params: { slugs } } = route;
-  category.value = findCategoryBySlug(slugs[slugs.length - 1]);
+  const { params: { slugs }, query: { name } } = route;
 
-  slugs.forEach((slug, index, self) => {
-    if (index !== self.length - 1) {
-      const category = findCategoryBySlug(slug);
-      breadCrumbsItems.value.push({
-        title: category.name,
-        href: `/danh-muc${findRecursiveCategorySlug(category)}`,
-        disable: false,
-      });
-    }
-  });
+  if (slugs) {
+    category.value = findCategoryBySlug(slugs[slugs.length - 1]);
 
-  breadCrumbsItems.value.push({
-    title: category.value.name,
-    href: `/danh-muc${findRecursiveCategorySlug(category.value)}`,
-    disable: true,
-    activeColor: "black",
-    active: true
-  });
+    slugs.forEach((slug, index, self) => {
+      if (index !== self.length - 1) {
+        const category = findCategoryBySlug(slug);
+        breadCrumbsItems.value.push({
+          title: category.name,
+          href: `/danh-muc${findRecursiveCategorySlug(category)}`,
+          disable: false,
+        });
+      }
+    });
+    breadCrumbsItems.value.push({
+      title: category.value.name,
+      href: `/danh-muc${findRecursiveCategorySlug(category.value)}`,
+      disable: true,
+      activeColor: "black",
+      active: true
+    });
 
-  products.value = await fetchRecursiveCategoryProducts(category.value.id);
+    products.value = await fetchRecursiveCategoryProducts(category.value.id);
+  }
+
+  else if (name) {
+    products.value = await fetchProductsByName();
+  }
+
   newProducts.value = products.value;
 
   const propertiesDuplicateArr = products.value.reduce((pre, cur) => {
@@ -297,6 +304,20 @@ const fetchRecursiveCategoryProducts = async (id, numbers) => {
   let result = [];
   try {
     const res = await axios.get(`recursive-categories/${id}/products/${numbers ?? ""}`);
+    if (res.status === 200) {
+      result = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
+    }
+  }
+  catch (e) {
+    //push
+  }
+  return result;
+};
+
+const fetchProductsByName = async () => {
+  let result = [];
+  try {
+    const res = await axios.get(`products/name/${route.query.name}`);
     if (res.status === 200) {
       result = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
     }
