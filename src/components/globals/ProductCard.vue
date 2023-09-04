@@ -85,15 +85,15 @@ const love = ref(true);
         </v-card-title>
 
         <v-sheet class="d-flex align-center">
-          <v-sheet class="me-2 text-body-2 text-md-body-2 text-red-accent-4 font-weight-bold">
-            {{ product.discountPrice ? formatPrice(product.discountPrice) :
-              formatPrice(product.sellPrice || 0) }}
+          <v-sheet class="me-2 text-body-2  text-red-accent-4 font-weight-bold">
+            {{ +product.discountPrice ? formatPrice(+product.discountPrice) :
+              formatPrice(+product.sellPrice || 0) }}
           </v-sheet>
           <v-sheet
-            v-if="product.discountPrice"
-            class="text-caption text-md-body-2 text-decoration-line-through text-grey"
+            v-if="+product.discountPrice"
+            class="text-caption text-decoration-line-through text-grey"
           >
-            {{ formatPrice(product.sellPrice) }}
+            {{ +product.sellPrice ? formatPrice(+product.sellPrice) : "" }}
           </v-sheet>
         </v-sheet>
       </v-card-item>
@@ -110,9 +110,8 @@ const love = ref(true);
         </v-rating>
       </v-card-text>
     </v-sheet>
-
     <v-sheet
-      v-if="product.discountPrice"
+      v-if="+product.sellPrice > +product.discountPrice && +product.discountPrice"
       position="absolute"
       location="top left"
       color="red-accent-4"
@@ -123,7 +122,7 @@ const love = ref(true);
         class="text-caption"
         color="transparent"
       >
-        Giam {{ Math.round((1 - product.discountPrice / product.sellPrice) * 100) }}%
+        Giam {{ Math.round((1 - +product.discountPrice / +product.sellPrice) * 100) }}%
       </v-sheet>
     </v-sheet>
   </v-card>

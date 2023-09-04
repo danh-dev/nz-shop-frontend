@@ -19,7 +19,6 @@ const route = useRoute();
 const { xs } = useDisplay();
 
 const product = ref({});
-const variants = ref([]);
 const comments = ref([]);
 const reviews = ref([]);
 const posts = ref([]);
@@ -50,36 +49,11 @@ const fetchProduct = async () => {
 	}
 };
 
-const fetchVariants = async id => {
-	try {
-		const res = await axios.get(`products/${id}/variants`);
-		if (res.status === 200) {
-			variants.value = res.data.data.map(variant => mapKeys(variant, (value, key) => camelCase(key)));
-
-		}
-	}
-	catch (e) {
-		console.log(e);
-	}
-};
-
 const fetchComments = async id => {
 	try {
 		const res = await axios.get(`products/${id}/comments`);
 		if (res.status === 200) {
 			comments.value = res.data.data;
-		}
-	}
-	catch (e) {
-		console.log(e);
-	}
-};
-
-const fetchReviews = async id => {
-	try {
-		const res = await axios.get(`products/${id}/reviews`);
-		if (res.status === 200) {
-			reviews.value = res.data.data;
 		}
 	}
 	catch (e) {
@@ -151,8 +125,6 @@ watch(comments, () => {
 });
 
 watch(product, () => {
-	fetchVariants(product.value.id);
-	fetchReviews(product.value.id);
 	fetchComments(product.value.id);
 });
 
@@ -290,9 +262,9 @@ onMounted(async () => {
 				<v-sheet>
 					<!-- Choosing product: type, color -->
 					<v-sheet>
-						<v-sheet>
+						<v-sheet v-if="product.variants">
 							<v-btn
-								v-for="variant in variants"
+								v-for="variant in JSON.parse(product.variants)"
 								:key="variant.sku"
 								@click="cartStore.add(product.id)"
 								color="red-accent-4"
@@ -301,7 +273,7 @@ onMounted(async () => {
 								class="w-100 h-100 mb-3 py-3 text-none text-center"
 								style="font-size: 1rem;"
 							>
-								{{ variant.value }} <br />
+								{{ variant.name }} <br />
 								{{ formatPrice(variant.discountPrice || variant.sellPrice) }}
 							</v-btn>
 						</v-sheet>
@@ -462,8 +434,11 @@ onMounted(async () => {
 							class="px-1 text-decoration-none text-dark"
 							:style="!more && [{ height: '200px', overflow: 'hidden' }]"
 						>
-							<strong class="text-danger text-body">{{ product.name }}</strong>{{ product.shortDescription }}
-							<p class="py-3">{{ product.longDescription }}</p>
+							<strong class="text-danger text-body">{{ product.name }}</strong>
+							<p
+								class="py-3"
+								v-html="product.description"
+							></p>
 						</div>
 
 					</v-sheet>

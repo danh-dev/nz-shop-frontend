@@ -66,7 +66,7 @@ const fetchData = async () => {
   loading.value = true;
   status.value = null;
   try {
-    const res = await axios.get(`categories`);
+    const res = await axios.get("categories");
     if (res.status === 200) {
       categories.value = res.data.data.map(category => mapKeys(category, (value, key) => camelCase(key)));
     }
