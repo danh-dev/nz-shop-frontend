@@ -80,4 +80,47 @@ function hideLoginModal() {
 	<!-- End : Login Modal  -->
 </template>
 
-<style></style>
+<style scoped>
+/* Begin : Design Modal */
+.modal.open {
+	display: flex;
+}
+
+.modal {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	background: rgba(0, 0, 0, 0.4);
+	display: none;
+	align-items: center;
+	justify-content: center;
+	animation: fadeIn linear 0.5s;
+}
+
+.modal-container {
+	max-width: 600px;
+	z-index: 3;
+}
+
+.modal-close-btn:hover {
+	opacity: 0.7;
+}
+
+.modal-header {
+	height: 10%;
+	color: #fff;
+	font-size: 1.2rem;
+}
+
+.modal-body {
+	max-height: 800px;
+	padding: 16px;
+	background-color: #fff;
+	font-size: 0.9rem;
+	height: 80%;
+	overflow: auto;
+	z-index: 1;
+}
+</style>

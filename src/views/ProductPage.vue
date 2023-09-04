@@ -4,14 +4,13 @@ import axios from "@/axiosComfig";
 import { onMounted, ref, watch } from "vue";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 import { camelCase, mapKeys } from "lodash";
-// import ProductSpecifications from "../components/product/ProductSpecifications.vue";
 import ProductReviews from "../components/product/ProductReviews.vue";
-import ProductQA from "../components/product/ProductQA.vue";
 import ProductNews from "../components/product/ProductNews.vue";
-
+// import ProductGallery from "../components/product/ProductGallery.vue";
 import ProductSlider from "../components/product/ProductSlider.vue";
 import ProductThumbnailGroup from "../components/product/ProductThumbnailGroup.vue";
-// import HomeMainProductSlider from "../components/product/HomeMainProductSlider.vue";
+
+const variantSelected = ref(0);
 
 const more = ref(false);
 
@@ -19,10 +18,48 @@ const route = useRoute();
 const { xs } = useDisplay();
 
 const product = ref({});
-const variants = ref([]);
-const comments = ref([]);
 const reviews = ref([]);
 const posts = ref([]);
+
+const reviewModal = ref(false);
+const userData = JSON.parse(localStorage.getItem("userData") || "null");
+// const review = ref("");
+// const rating = ref(null);
+// const createReview = async () => {
+// 	try {
+// 		await axios.post("reviews", {
+// 			// user_id: userData.id,
+// 			user_id: 1,
+// 			comment: review.value,
+// 			rating: rating.value,
+// 			product_id: product.value.id,
+// 		});
+// 	}
+// 	catch (e) {
+// 		console.log(e);
+// 	}
+// };
+
+const comments = ref([]);
+const comment = ref("");
+const createProductComment = async () => {
+	try {
+		await axios.post("product-comments", {
+			// user_id: userData.id,
+			user_id: 1,
+			product_id: product.value.id,
+			comment: comment.value,
+		});
+	}
+	catch (e) {
+		console.log(e);
+	}
+};
+
+const done = () => {
+	// nhiu tac vu khac
+	reviewModal.value = false;
+};
 
 // Product photos Slider
 const model = ref(0);
@@ -44,7 +81,6 @@ const fetchProduct = async () => {
 		if (res.status === 200) {
 			product.value = mapKeys(res.data.data, (value, key) => camelCase(key));
 		}
-		// console.log(product.value);
 	}
 	catch (e) {
 		console.log(e);
@@ -56,7 +92,7 @@ const fetchComments = async id => {
 	try {
 		const res = await axios.get(`products/${id}/comments`);
 		if (res.status === 200) {
-			comments.value = res.data.data;
+			comments.value = res.data.data.reverse();
 		}
 	}
 	catch (e) {
@@ -64,18 +100,17 @@ const fetchComments = async id => {
 	}
 };
 // fetch Reviews
-const fetchReviews = async id => {
-	try {
-		const res = await axios.get(`products/${id}/reviews`);
-		if (res.status === 200) {
-			reviews.value = res.data.data;
-			// console.log(reviews.value);
-		}
-	}
-	catch (e) {
-		console.log(e);
-	}
-};
+// const fetchReviews = async id => {
+// 	try {
+// 		const res = await axios.get(`products/${id}/reviews`);
+// 		if (res.status === 200) {
+// 			reviews.value = res.data.data;
+// 		}
+// 	}
+// 	catch (e) {
+// 		console.log(e);
+// 	}
+// };
 // fetch random posts
 const fetchRandomPosts = async () => {
 	try {
@@ -90,73 +125,76 @@ const fetchRandomPosts = async () => {
 	}
 };
 
-const fetchFeedbacks = async comment => {
-	try {
-		const res = await axios.get(`comments/${comment.id}/feedbacks`);
-		if (res.status === 200) {
-			comment.feedbacks = res.data.data;
-		}
-	}
-	catch (e) {
-		console.log(e);
-	}
-};
+// fetch random products
+// const fetchRandomProducts = async () => {
+// 	try {
+// 		const response = await axios.get("randomProducts");
+// 		if (response.data.status === 200) {
+// 			products.value = response.data.data.filter(item => {
+// 				return !item.isDeleted;
+// 			});
+// 		}
+// 	} catch (error) {
+// 		console.log("Error: ", error);
+// 	}
+// };
 
-const fetchUserByComment = async comment => {
-	try {
-		const res = await axios.get(`comments/${comment.id}/users`);
-		if (res.status === 200) {
-			comment.user = res.data.data.name;
-		}
-	}
-	catch (e) {
-		console.log(e);
-	}
-};
+// const fetchFeedbacks = async comment => {
+// 	try {
+// 		const res = await axios.get(`comments/${comment.id}/feedbacks`);
+// 		if (res.status === 200) {
+// 			comment.feedbacks = res.data.data;
+// 		}
+// 	}
+// 	catch (e) {
+// 		console.log(e);
+// 	}
+// };
 
-watch(comments, () => {
-	for (const comment of comments.value) {
-		fetchFeedbacks(comment);
-		fetchUserByComment(comment);
-	}
-});
+// const fetchUserByComment = async comment => {
+// 	try {
+// 		const res = await axios.get(`comments/${comment.id}/users`);
+// 		if (res.status === 200) {
+// 			comment.user = res.data.data.name;
+// 		}
+// 	}
+// 	catch (e) {
+// 		console.log(e);
+// 	}
+// };
+
+// watch(comments, () => {
+// 	for (const comment of comments.value) {
+// 		fetchFeedbacks(comment);
+// 		fetchUserByComment(comment);
+// 	}
+// });
 
 watch(product, () => {
-	fetchReviews(product.value.id);
+	// fetchReviews(product.value.id);
 	fetchComments(product.value.id);
 });
 
 onMounted(async () => {
 	fetchRandomPosts();
 	fetchProduct();
+	// fetchRandomProducts();
 });
 </script>
 
 <template>
 	<v-container class="">
-		<v-sheet class="d-none d-sm-block d-md-block d-lg-block">
-			<div class="d-flex align-center my-3">
-				<h2>{{ product.name }}</h2>
-				<!-- <v-rating
-					:model-value="product?.rating"
-					color="yellow-darken-3"
-					readonly
-					density="compact"
-					size="small"
-					class="mx-2"
-				></v-rating> -->
-				<!-- <p class="text-body-1">{{ product?.review }}</p> -->
-			</div>
+		<v-sheet>
+			<h3 class=" my-3">{{ product.name }}</h3>
 		</v-sheet>
 
-		<!-- Product Photos Silder, Product Info, Another Accessories, Product Specifications  -->
+		<!-- Product Photos Silder -->
 		<v-row>
 			<v-col
 				:cols="12"
 				lg="8"
 				md="12"
 			>
-
 				<!-- Product Photos Silder -->
 				<v-sheet
 					max-height="30rem"
@@ -189,66 +227,6 @@ onMounted(async () => {
 						/>
 					</v-sheet>
 				</v-sheet>
-
-				<!-- Product Info -->
-				<v-sheet>
-					<!-- Begin : Thông tin sản phẩm -->
-					<!-- <v-sheet class="my-2">
-						<h4 class="py-2">Thông tin sản phẩm</h4>
-						<v-sheet class="text-medium d-flex py-1">
-							<v-icon>mdi-cellphone</v-icon>
-							<p class="px-2">{{ item.status }}</p>
-						</v-sheet>
-
-						<v-sheet class="text-medium d-flex py-1">
-							<v-icon>mdi-gift-open</v-icon>
-							<summary class="px-2">
-								<p v-for="item in product.productAccessories" :key="item.id">
-									{{ item.name }}
-								</p>
-							</summary>
-						</v-sheet>
-
-						<v-sheet class="text-medium d-flex py-1">
-							<v-icon>mdi-security</v-icon>
-							<p class="px-2">{{ item.guarantee }}</p>
-						</v-sheet>
-						<v-sheet class="text-medium d-flex py-1">
-							<v-icon>mdi-receipt-text</v-icon>
-							<p class="px-2">{{ item.invoice }}</p>
-						</v-sheet>
-					</v-sheet> -->
-				</v-sheet>
-
-
-				<!-- Another Accessories -->
-				<!-- <div class="d-none d-sm-block d-md-block d-lg-block">
-					<h4 class="text-uppercase text-danger py-2">Phụ kiện mua cùng</h4>
-					<HomeMainProductSlider :products="product?.anotherAccessories || []" :products-show="3">
-						<template #default="{ props }">
-							<v-card rounded="lg" class="me-2 flex-1-0" width="calc((100% - 24px)/3)"
-								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">
-								<v-sheet>
-									<a href="#"><v-img :src="props.product.image" class="w-100" /></a>
-									<div class="pa-1 text-center">
-										<p class="text-body-2 font-bold"><a href="#">{{ props.product.name }}</a></p>
-										<v-rating half-increments :model-value="props.product.rating" color="yellow-darken-3" readonly
-											density="compact" size="small" class="mx-2">
-										</v-rating>
-										<v-sheet class="pa-2 text-center text-danger d-flex align-center justify-space-between">
-											<p class="text-danger font-bold">{{ formatPrice(props.product.priceSale) }}</p>
-											<p class="text-muted text-decoration-line-through text-medium">
-												{{ formatPrice(props.product.price) }}
-											</p>
-										</v-sheet>
-									</div>
-								</v-sheet>
-							</v-card>
-						</template>
-					</HomeMainProductSlider>
-				</div> -->
-
-				<!-- <ProductSpecifications class="d-block d-md-none d-sm-block d-lg-none" /> Mobile -->
 			</v-col>
 
 			<v-col
@@ -256,79 +234,30 @@ onMounted(async () => {
 				md="12"
 				lg="4"
 			>
-				<!-- Product Specifications -->
 				<v-sheet>
-					<!-- Choosing product: type, color -->
+					<!-- Product variants -->
 					<v-sheet>
-						<v-sheet>
-							<v-btn
-								v-for="variant in variants"
-								:key="variant.sku"
-								@click="cartStore.add(product.id)"
-								color="red-accent-4"
-								variant="tonal"
-								rounded="lg"
-								class="w-100 h-100 mb-3 py-3 text-none text-center"
-								style="font-size: 1rem;"
+						<h3 class="text-center pb-4">Lựa chọn màu yêu thích</h3>
+						<div class="d-flex text-center">
+							<v-card
+								v-for="(item, index) in JSON.parse(product.variants || '[]')"
+								:key="item.sku"
+								:value="item.name"
+								@click="() => { variantSelected = index }"
+								:class="variantSelected === index ? 'selected' : null"
+								class="mx-2 pa-2 w-100"
 							>
-								{{ variant.value }} <br />
-								{{ formatPrice(variant.discountPrice || variant.sellPrice) }}
-							</v-btn>
-						</v-sheet>
-
-						<v-sheet class="d-flex flex-column justify-center align-center text-none">
-							<!-- <h5 class="text-uppercase pt-3">Lựa chọn màu yêu thích</h5> -->
-							<!-- <v-radio-group inline>
-							<v-radio
-								v-for="color in product.productColors"
-								:key="color.id"
-								:label="color.name"
-								:value="color.value"
-								color="red-accent-4"
-							>
-							</v-radio>
-						</v-radio-group> -->
-						</v-sheet>
-
-						<!-- <v-btn
-						color="red-accent-4"
-						variant="text"
-						size="large"
-						class="w-100 text-h4"
-					>
-						{{ formatPrice(variant.discountPrice || variant.sellPrice) }}
-					</v-btn> -->
+								{{ String(item.name) }}
+								<p
+									class="text-danger text-caption"
+									@click="cartStore.add(product.id)"
+								>{{ formatPrice(item.sellPrice) }}</p>
+							</v-card>
+						</div>
 					</v-sheet>
-
-					<!-- Promotions -->
-					<!-- <v-sheet
-					rounded="lg"
-					elevation="0"
-					class="my-3 pa-2 border-success"
-				>
-					<v-sheet class="d-flex">
-						<v-icon
-							size="20"
-							color="red-accent-4"
-						>mdi-gift</v-icon>
-						<h5 class="text-uppercase text-danger px-1">Khuyến mãi</h5>
-					</v-sheet>
-					<p
-						v-for="item in product.productPromotions"
-						:key="item.id"
-						class="text-medium pa-1"
-					>
-						<v-icon
-							size="18"
-							color="green"
-							class="px-2 text-justify"
-						>mdi-check-circle</v-icon>
-						{{ item.name }}
-					</p>
-				</v-sheet> -->
 
 					<!-- Buy now, Add to cart -->
-					<v-sheet class="d-flex mt-2">
+					<v-sheet class="d-flex mt-5">
 						<v-btn
 							rounded="0"
 							elevation="1"
@@ -357,82 +286,22 @@ onMounted(async () => {
 							>Thêm giỏ hàng</p>
 						</v-btn>
 					</v-sheet>
-
-					<!-- More discounts -->
-					<!-- <v-sheet
-					rounded="lg"
-					elevation="0"
-					class="my-3 pa-2 text-medium text-justify border-success"
-				>
-					<h5 class="text-uppercase text-medium text-danger py-1">Ưu đãi thêm</h5>
-					<v-sheet
-						v-for="item in product.moreDiscounts"
-						:key="item.id"
-					>
-						<p class="py-1">
-							<v-icon
-								size="18"
-								color="green"
-								class="px-2"
-							>mdi-check-circle</v-icon>
-							{{ item.name }}
-						</p>
-					</v-sheet>
-				</v-sheet> -->
-
-					<!-- Specifications -->
-					<!-- <v-sheet
-					elevation="3"
-					rounded="lg"
-				>
-					<v-table class="my-3 py-2 text-medium my-2">
-						<thead>
-							<tr>
-								<th colspan="2">
-									<div class="d-flex align-center">
-										<v-icon color="red-accent-4">mdi-information-variant-circle</v-icon>
-										<h3 class="px-1 text-uppercase">Thông số kỹ thuật</h3>
-									</div>
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr
-								v-for="item in product.productSpecifications"
-								:key="item.id"
-							>
-								<td style="width: 40%; font-weight: 600">{{ item.title }}</td>
-								<td>{{ item.name }}</td>
-							</tr>
-						</tbody>
-					</v-table>
-					<SpecificationsModal />
-				</v-sheet> -->
-
 				</v-sheet>
 			</v-col>
 		</v-row>
 
 		<v-row>
 			<v-col cols="12">
-				<!-- Begin : Đặc điểm nổi bật -->
+				<!-- Special Product Information -->
 				<v-sheet
 					elevation="3"
 					rounded="lg"
-					class="text-medium text-justify my-3 pa-5"
+					class="text-body-2 text-justify pa-5"
 				>
 					<h2 class="text-uppercase text-center text-danger pa-3">đặc điểm nổi bật</h2>
 					<v-sheet class="d-flex align-center py-2">
-						<!-- <v-icon
-								size="20"
-								color="green"
-							>mdi-check-circle</v-icon> -->
-						<div
-							href="#"
-							class="px-1 "
-							:style="!more && [{ height: '500px', overflow: 'hidden' }]"
-						>
-							<p v-html="product.description" class="py-3"></p>
+						<div :style="!more && [{ height: '500px', overflow: 'hidden' }]">
+							<p v-html="product.description"></p>
 						</div>
 
 					</v-sheet>
@@ -444,49 +313,31 @@ onMounted(async () => {
 						<v-btn
 							@click="more = true"
 							color="red-accent-4"
-							variant="text"
-							class="text-white text-none mx-auto"
+							variant="elevated"
+							class="text-white mx-auto"
 							append-icon="mdi-chevron-down"
 						>
 							Xem thêm
+						</v-btn>
+					</div>
+					<div
+						class="d-flex align-center mt-4"
+						v-if="more"
+					>
+						<v-btn
+							@click="more = false"
+							color="red-accent-4"
+							variant="elevated"
+							class="text-white mx-auto"
+							append-icon="mdi-chevron-down"
+						>
+							Thu gọn nội dung
 						</v-btn>
 					</div>
 				</v-sheet>
 			</v-col>
 		</v-row>
 
-		<!-- Product Gallery -->
-		<!-- <v-row>
-			<v-col :cols="12">
-				<v-sheet class="d-none d-sm-none d-md-none d-lg-block">
-					<h4 class="text-uppercase text-danger">Sản phẩm tương tự</h4>
-					<HomeMainProductSlider :products="product?.gallery1" :products-show="5">
-						<template #default="{ props }">
-							<v-card rounded="lg" class="me-2 flex-1-0" width="calc((100% - 40px)/5)"
-								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }">
-								<v-sheet>
-									<a href="#"><v-img :src="props.product.image" class="w-100" /></a>
-									<div class="pa-1 text-center">
-										<p href="#" class="text-body-2 font-bold"><a href="#">{{ props.product.name }}</a></p>
-										<v-rating half-increments :model-value="props.product.rating" color="yellow-darken-3" readonly
-											density="compact" size="small" class="mx-2">
-										</v-rating>
-										<v-sheet class="pa-2 text-center d-flex align-center justify-space-between">
-											<p class="text-danger font-bold">{{ formatPrice(props.product.priceSale) }}</p>
-											<p class="text-muted text-decoration-line-through text-medium">
-												{{ formatPrice(props.product.price) }}
-											</p>
-										</v-sheet>
-									</div>
-								</v-sheet>
-							</v-card>
-						</template>
-					</HomeMainProductSlider>
-				</v-sheet>
-			</v-col>
-		</v-row> -->
-
-		<!-- FAQ, Product Reviews, Q&A, News -->
 		<v-row>
 			<v-col
 				:cols="12"
@@ -494,10 +345,54 @@ onMounted(async () => {
 				md="12"
 			>
 				<!-- Product Reviews -->
-				<ProductReviews :reviews="reviews" :productId="product.id" />
+				<ProductReviews :reviews="reviews" />
 
-				<!-- Q&A -->
-				<ProductQA :comments="comments" />
+				<!-- Comments -->
+				<v-sheet
+					elevation="3"
+					rounded="lg"
+					class="my-5 order-last flex-md-fill"
+				>
+					<h4 class="px-4 py-2">Bình luận:</h4>
+					<v-container class="d-flex flex-column px-3">
+						<div>
+							<v-textarea
+								v-model="comment"
+								variant="filled"
+								auto-grow
+								background="white"
+								placeholder="Bình luận:"
+							></v-textarea>
+							<v-btn
+								prepend-icon="mdi-send-circle"
+								color="red-accent-4"
+								class="text-white"
+								@click="createProductComment"
+							>Gửi</v-btn>
+						</div>
+
+						<v-sheet
+							class="my-2"
+							v-for="item in comments"
+							:key="item.id"
+						>
+							<v-sheet class="d-flex justify-space-between py-2">
+								<v-sheet class="d-flex align-center">
+									<p class="bg-secondary rounded pa-2">{{ item.full_name.slice(0, 1) }}</p>
+									<h5 class="px-2">{{ item.full_name }}</h5>
+								</v-sheet>
+								<p class="text-caption">{{ item.created_at.slice(0, 19) }}</p>
+							</v-sheet>
+
+							<div
+								class="pa-2 text-caption d-flex justify-center flex-column rounded more"
+								style="background-color: rgb(247, 243, 243); margin-left: 5%;"
+							>
+								<p><b>Bình luận: </b>{{ item.comment }}</p>
+							</div>
+						</v-sheet>
+					</v-container>
+				</v-sheet>
 			</v-col>
 
 			<!-- News -->
@@ -513,87 +408,73 @@ onMounted(async () => {
 		</v-row>
 
 	</v-container>
+
+	<!-- Begin : Review Modal  -->
+	<v-dialog
+		v-model="reviewModal"
+		activator="#reviewModalButton"
+		width="auto"
+	>
+		<v-card
+			width="500"
+			class="mx-auto"
+		>
+			<v-sheet class="py-1 d-flex flex-column align-center justify-center text-body-2">
+				<img
+					src="https://cdn2.cellphones.com.vn/213x213,webp,q100/media/wysiwyg/Shipper_CPS.jpg"
+					class="w-25 h-25"
+				>
+				<p>Bạn thấy sản phẩm này như thế nào ?</p>
+			</v-sheet>
+
+			<v-textarea
+				v-model="review"
+				class="ma-2"
+				rounded="lg"
+				cols="30"
+				rows="5"
+				placeholder="Xin mời chia sẻ cảm nhận về sản phẩm"
+			>
+			</v-textarea>
+
+			<v-rating
+				v-model="rating"
+				class="text-caption mx-auto"
+				:item-labels="['Bad', 'So so', 'Ok', 'Good', 'Great']"
+				item-label-position="top"
+				color="yellow-darken-3"
+				denity="comfortable"
+			>
+			</v-rating>
+			<v-card-actions>
+				<v-btn
+					append-icon="mdi-check-outline"
+					color="success"
+					variant="elevated"
+					class="w-50 text-white rounded-xl"
+					@click="createReview"
+				>
+					Gửi đánh giá
+				</v-btn>
+				<v-btn
+					append-icon="mdi-close-outline"
+					color="red-accent-4"
+					variant="elevated"
+					class="ms-1 w-50 text-white rounded-xl"
+					@click="done"
+				>
+					Đóng
+				</v-btn>
+			</v-card-actions>
+
+		</v-card>
+	</v-dialog>
+	<!-- End : Review Modal  -->
 </template>
 
 <style>
-.text-medium {
-	font-size: 0.85rem;
-}
-
-.new>img:hover {
-	transform: scale(1.05);
-}
-
-/* Begin : Design Modal */
-.modal.open,
-.productModal.open,
-.commentModal.open,
-.reviewModal.open {
-	display: flex;
-}
-
-.modal,
-.productModal,
-.commentModal,
-.reviewModal {
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	left: 0;
-	background: rgba(0, 0, 0, 0.4);
-	display: none;
-	align-items: center;
-	justify-content: center;
-	animation: fadeIn linear 0.5s;
-}
-
-.modal-container {
-	max-width: 600px;
-	z-index: 3;
-}
-
-.reviewModal-container {
-	width: 500px;
-	max-width: 500px;
-	min-width: auto;
-	height: 500px;
-	z-index: 3;
-	border-radius: 10px !important;
-}
-
-.productModal-container {
-	width: 500px;
-	max-width: 500px;
-	min-width: auto;
-	height: 600px;
-	min-height: 300px;
-	z-index: 3;
-	border-radius: 10px !important;
-}
-
-
-
-.modal-close-btn:hover,
-.productModal-close-btn:hover,
-.commentModal-close-btn:hover {
-	opacity: 0.7;
-}
-
-.modal-header {
-	height: 10%;
-	color: #fff;
-	font-size: 1.2rem;
-}
-
-.modal-body {
-	max-height: 800px;
-	padding: 16px;
-	background-color: #fff;
-	font-size: 0.9rem;
-	height: 80%;
-	overflow: auto;
-	z-index: 1;
+.selected {
+	border: 2px solid #d50000 !important;
 }
 
 @keyframes fadeIn {
@@ -604,5 +485,4 @@ onMounted(async () => {
 	to {
 		opacity: 1;
 	}
-}
-</style>
+}</style>

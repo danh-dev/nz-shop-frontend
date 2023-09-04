@@ -3,34 +3,13 @@ import { ref } from "vue";
 import axios from "axios";
 const props = defineProps({
   productId: Number,
+
 });
 
-const reviewModal = ref(false);
 
-const userData = JSON.parse(localStorage.getItem("userData") || "null");
-const comment = ref("");
-const rating = ref(null);
 
-const createReview = async () => {
-  try {
-    const res = await axios.post("reviews", {
-      // user_id: userData.id,
-      user_id: 1,
-      comment: comment.value,
-      rating: rating.value,
-      product_id: 1
-      // product_id: props.productId,
-    });
-  }
-  catch (e) {
-    console.log(e);
-  }
-};
 
-const done = () => {
-  // nhiu tac vu khac
-  reviewModal.value = false;
-};
+
 </script>
 
 <template>
@@ -44,14 +23,11 @@ const done = () => {
       width="500"
       class="mx-auto"
     >
-      <v-sheet
-        class="py-1 d-flex flex-column align-center justify-center text-body-2"
-      >
+      <v-sheet class="py-1 d-flex flex-column align-center justify-center text-body-2">
         <img
           src="https://cdn2.cellphones.com.vn/213x213,webp,q100/media/wysiwyg/Shipper_CPS.jpg"
           class="w-25 h-25"
         >
-        <p class="text-lowercase">Apple Macbook Air M2 2022 8GB 256GB</p>
         <p>Bạn thấy sản phẩm này như thế nào ?</p>
       </v-sheet>
 
@@ -80,7 +56,7 @@ const done = () => {
           color="success"
           variant="elevated"
           class="w-50 text-white rounded-xl"
-          @click="createReview & done"
+          @click="createReview"
         >
           Gửi đánh giá
         </v-btn>
@@ -89,7 +65,7 @@ const done = () => {
           color="red-accent-4"
           variant="elevated"
           class="ms-1 w-50 text-white rounded-xl"
-          @click="reviewModal = false"
+          @click="done"
         >
           Đóng
         </v-btn>

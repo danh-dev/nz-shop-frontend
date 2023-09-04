@@ -1,18 +1,14 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import axios from "../../axiosComfig";
 import { useRoute } from "vue-router";
-// import GlobalLoader from "../components/globals/GlobalLoader.vue";
-import useNewsStore from "../../stores/useNewsStore.js";
-import { storeToRefs } from "pinia";
 import getSlugByName from "../../utils/getSlugByName.js";
 
-const { relatedArticles } = storeToRefs(useNewsStore());
 // Post API
 const url = import.meta.env.VITE_PUBLIC_URL;
 const route = useRoute();
-// const loading = ref(false);
 const posts = ref([]);
+
 const post = ref({
   title: "",
   author: "",
@@ -21,10 +17,25 @@ const post = ref({
   created_at: ""
 });
 
+const commentsPost = ref([]);
+const commentPost = ref("");
+const createPostComment = async () => {
+  try {
+    await axios.post("post-comments", {
+      // user_id: userData.id,
+      user_id: 2,
+      comment: commentPost.value,
+      post_id: post.value.id,
+    });
+  }
+  catch (e) {
+    console.log(e);
+  }
+};
+
 const fetchPost = async () => {
   try {
     const response = await axios.get("posts");
-    // loading.value = false;
     if (response.data.status === 200) {
       posts.value = response.data.data;
       post.value = posts.value.find((post) => {
@@ -33,11 +44,29 @@ const fetchPost = async () => {
     }
   } catch (error) {
     console.log("Error: ", error);
-    // loading.value = false;
   }
 };
 
-onMounted(fetchPost);
+
+const fetchCommentsPost = async id => {
+  try {
+    const res = await axios.get(`posts/${id}/comments`);
+    if (res.status === 200) {
+      commentsPost.value = res.data.data.reverse();
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+};
+
+watch(post, () => {
+  fetchCommentsPost(post.value.id);
+});
+
+onMounted(async () => {
+  fetchPost();
+});
 
 </script>
 
@@ -81,32 +110,55 @@ onMounted(fetchPost);
             ></p>
           </v-sheet>
 
-          <v-btn
-            color="danger"
-            variant="flat"
-            class="mt-3 text-h6 rounded-xl"
-          >Bài viết liên quan</v-btn>
-          <v-sheet>
-            <div
-              class="d-flex align-center w-50 my-3"
-              v-for="relatedArticle in relatedArticles"
-              :key="relatedArticle.id"
-            >
-              <img
-                :src="relatedArticle.image"
-                class="w-25 rounded"
-              />
-              <a
-                :href="`/news/${getSlugByName(relatedArticle.title)}`"
-                class="text-caption px-1"
-              >{{
-                relatedArticle.title }}</a>
-            </div>
+          <!-- Comments -->
+          <v-sheet
+            elevation="3"
+            rounded="lg"
+            class="my-3 order-last flex-md-fill"
+          >
+            <h4 class="px-4 py-2">Bình luận bài viết:</h4>
+            <v-container class="d-flex flex-column px-3">
+  						<div>
+  							<v-textarea
+  								v-model="commentPost"
+  								variant="filled"
+  								auto-grow
+  								background="white"
+  								placeholder="Bình luận:"
+  							></v-textarea>
+  							<v-btn
+  								prepend-icon="mdi-send-circle"
+  								color="red-accent-4"
+  								class="text-white"
+  								@click="createPostComment"
+  							>Gửi</v-btn>
+  						</div>
+
+  						<v-sheet
+  							class="my-2"
+  							v-for="item in commentsPost"
+  							:key="item.id"
+  						>
+  							<v-sheet class="d-flex justify-space-between py-2">
+  								<v-sheet class="d-flex align-center">
+  									<p class="bg-secondary rounded pa-2">{{ item.full_name.slice(0, 1) }}</p>
+  									<h5 class="px-2">{{ item.full_name }}</h5>
+  								</v-sheet>
+  								<p class="text-caption">{{ item.created_at.slice(0, 19) }}</p>
+  							</v-sheet>
+
+  							<div
+  								class="pa-2 text-caption d-flex justify-center flex-column rounded more"
+  								style="background-color: rgb(247, 243, 243); margin-left: 3%;"
+  							>
+  								<p><b>Bình luận: </b>{{ item.comment }}</p>
+  							</div>
+  						</v-sheet>
+  					</v-container>
           </v-sheet>
         </v-sheet>
       </v-col>
     </v-row>
-    <!-- <GlobalLoader :loading="loading" /> -->
   </v-sheet>
 </template>
 
@@ -119,9 +171,4 @@ a {
 a:hover {
   color: red-accent-4;
 }
-
-.more {
-  white-space: wrap;
-  /* overflow: hidden;
-	text-overflow: ellipsis; */
-}</style>
+</style>

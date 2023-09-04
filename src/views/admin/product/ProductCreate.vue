@@ -89,7 +89,7 @@ const submit = async () => {
   const formData = new FormData();
 
   if (mainForm.value.category.value) {
-    formData.append("categoryId", mainForm.value.category.value);
+    formData.append("category_id", mainForm.value.category.value);
   }
   formData.append("name", mainForm.value.name.value);
   formData.append("sku", mainForm.value.sku.value.toUpperCase());

@@ -99,8 +99,6 @@ const percentReviews = rating => {
 				<v-btn id="reviewModalButton">
 					Đánh giá
 				</v-btn>
-
-				<ReviewModal :productId="productId" />
 			</v-sheet>
 
 			<!--Begin: Reviews sản phẩm -->
