@@ -90,19 +90,20 @@ const cruds = ref([
         ></v-list-item>
       </template>
       <v-list-item
-        title="Comment-Post"
+        prepend-icon="mdi-news"
+        title="Post"
         :to="{
           name: 'admin-post-comment'
         }"
       ></v-list-item>
       <v-list-item
-        title="Comment-Product"
+        prepend-icon="mdi-package-variant-closed"
+        title="Product"
         :to="{
           name: 'admin-product-comment'
         }"
       ></v-list-item>
     </v-list-group>
-
 
     <v-list-item
       prepend-icon="mdi-star-outline"

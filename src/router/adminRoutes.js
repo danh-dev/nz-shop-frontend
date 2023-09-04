@@ -13,12 +13,22 @@ const routes = [
 	{
 		path: "post-comment",
 		name: "admin-post-comment",
-		component: () => import("../views/admin/comment/CommentList.vue"),
+		component: () => import("../views/admin/comment/CommentPostList.vue"),
 	},
 	{
 		path: "product-comment",
 		name: "admin-product-comment",
-		component: () => import("../views/admin/comment/CommentProduct.vue"),
+		component: () => import("../views/admin/comment/CommentProductList.vue"),
+	},
+	{
+		path: "product-comment/:id/product-feedback",
+		name: "admin-product-feedback",
+		component: () => import("../views/admin/comment/FeedbackProductList.vue"),
+	},
+	{
+		path: "post-feedback",
+		name: "admin-post-feedback",
+		component: () => import("../views/admin/comment/FeedbackPostList.vue"),
 	},
 	{
 		path: "review",

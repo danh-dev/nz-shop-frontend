@@ -2,8 +2,8 @@
 import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 
-const comments = ref([]);
-const filteredComments = ref([]);
+const feedbacks = ref([]);
+const filteredFeedbacks = ref([]);
 
 const status = ref(0);
 const statuses = [
@@ -21,32 +21,25 @@ const statuses = [
     }
 ];
 
-watch([status, comments], () => {
+watch([status, feedbacks], () => {
     switch (status.value) {
         case 0:
-            filteredComments.value = comments.value.filter(item => item.status === "pending");
+            filteredFeedbacks.value = feedbacks.value.filter(item => item.status === "pending");
             break;
         case 1:
-            filteredComments.value = comments.value.filter(item => item.status === "approved");
+            filteredFeedbacks.value = feedbacks.value.filter(item => item.status === "approved");
             break;
         case 2:
-            filteredComments.value = comments.value.filter(item => item.status === "deleted");
+            filteredFeedbacks.value = feedbacks.value.filter(item => item.status === "deleted");
             break;
     }
 });
 
-watch(comments, newComments => {
-    for (const comment of newComments) {
-        fetchUser(comment);
-        fetchProduct(comment);
-    }
-});
-
-const fetchComments = async () => {
+const fetchFeedbacks = async id => {
     try {
-        const res = await axios.get("http://127.0.0.1:8000/api/product-comments");
+        const res = await axios.get(`http://127.0.0.1:8000/api/product-comments/${id}/product-feedbacks`);
         if (res.status === 200) {
-            comments.value = res.data.data;
+            feedbacks.value = res.data.data;
         }
         if (res.status === 204) {
             console.log("ko co gi");
@@ -55,37 +48,15 @@ const fetchComments = async () => {
     catch (e) {
         console.log(e);
     }
-};
 
-const fetchUser = async comment => {
-    try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/product-comments/${comment.id}/user`);
-        if (res.status === 200) {
-            comment.user = res.data.data.full_name;
-        }
-    }
-    catch (e) {
-        console.log(e);
-    }
-};
-
-const fetchProduct = async comment => {
-    try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/product-comments/${comment.id}/product`);
-        if (res.status === 200) {
-            comment.product = res.data.data.name;
-        }
-    }
-    catch (e) {
-        console.log(e);
-    }
 };
 
 const handleCheckButton = async id => {
     try {
         const res = await axios.put(`http://127.0.0.1:8000/api/product-comments/approve/${id}`);
         if (res.status === 200) {
-            await fetchComments();
+            await fetchFeedbacks();
+            console.log(res.data.message);
         }
     }
     catch (e) {
@@ -97,7 +68,8 @@ const handleDeleteButton = async id => {
     try {
         const res = await axios.put(`http://127.0.0.1:8000/api/product-comments/delete/${id}`);
         if (res.status === 200) {
-            await fetchComments();
+            await fetchFeedbacks();
+            console.log(res.data.message);
         }
     }
     catch (e) {
@@ -105,7 +77,9 @@ const handleDeleteButton = async id => {
     }
 };
 
-onMounted(fetchComments);
+onMounted(async () => {
+    await fetchFeedbacks();
+});
 </script>
 
 <template>
@@ -152,10 +126,10 @@ onMounted(fetchComments);
         </thead>
         <tbody>
             <tr
-                v-for="item in filteredComments"
-                :key="item.id"
+                v-for="item in filteredFeedbacks"
+                :key="item.name"
             >
-                <td>{{ item.user }}</td>
+                <td>{{ getUserNameById(item.user_id) }}</td>
                 <td>
                     <div class="review"><v-tooltip
                             width="350px"
@@ -171,8 +145,8 @@ onMounted(fetchComments);
                             activator="parent"
                             location="top"
                             attach
-                        >{{ item.product }}
-                        </v-tooltip>{{ item.product }}</div>
+                        >{{ getProductsTitleById(item.product_id) }}
+                        </v-tooltip>{{ getProductsTitleById(item.product_id) }}</div>
                 </td>
                 <td>{{ item.updated_at }}</td>
                 <td>

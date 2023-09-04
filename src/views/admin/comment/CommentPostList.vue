@@ -87,7 +87,6 @@ const handleCheckButton = async id => {
         const res = await axios.put(`http://127.0.0.1:8000/api/post-comments/approve/${id}`);
         if (res.status === 200) {
             await fetchComments();
-            console.log(res.data.message);
         }
     }
     catch (e) {
@@ -100,7 +99,6 @@ const handleDeleteButton = async id => {
         const res = await axios.put(`http://127.0.0.1:8000/api/post-comments/delete/${id}`);
         if (res.status === 200) {
             await fetchComments();
-            console.log(res.data.message);
         }
     }
     catch (e) {
