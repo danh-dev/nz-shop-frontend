@@ -96,7 +96,7 @@ onMounted(fetchSlider);
           <v-text-field
             v-model="slider.name"
             :rules="[v => !!v || 'Vui lòng không được để trống.']"
-            variant="underlined"
+            variant="outlined"
             :counter="20"
             label="Tên:"
           ></v-text-field>
@@ -110,7 +110,7 @@ onMounted(fetchSlider);
           <v-text-field
             v-model="slider.title"
             :rules="[v => !!v || 'Vui lòng không được để trống.']"
-            variant="underlined"
+            variant="outlined"
             :counter="20"
             label="Tiêu đề:"
             required

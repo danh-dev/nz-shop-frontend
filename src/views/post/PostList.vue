@@ -50,7 +50,7 @@ onMounted(fetchPost);
 
 // Panigation
 const page = ref(1);
-const rowsPerPage = 8;
+const rowsPerPage = 6;
 const numberOfPage = computed(() => {
   return Math.ceil(posts.value.length / rowsPerPage);
 });
@@ -85,23 +85,22 @@ const updatePage = (event) => {
     </div>
     <v-table
       hover
-      class="post text-body-2"
       v-if="posts.length > 0"
     >
       <thead>
         <tr>
           <th
             class="font-weight-bold"
-            style="width: 35%;"
+            style="width: 50%;"
           >
             Tiêu đề
           </th>
-          <th
+          <!-- <th
             class="font-weight-bold"
             style="width: 15%"
           >
             Tác giả
-          </th>
+          </th> -->
           <th
             class="font-weight-bold"
             style="width: 10%;"
@@ -132,20 +131,25 @@ const updatePage = (event) => {
           <td>
             <v-tooltip
               activator="parent"
-              location="top left"
+              location="center left"
               width="400px"
+              close-delay="5"
             >
-              {{ item.title }}
+              <p class="text-caption">{{ item.title }}</p>
             </v-tooltip>
             <p class="extra">{{ item.title }}</p>
           </td>
-          <td class="">{{ item.author }}</td>
-          <td> <img
+
+          <!-- <td class="">{{ item.author }}</td> -->
+
+          <td>
+            <img
               :src="`${url}${item.image}`"
               width="80"
               :alt="item.title"
               class="rounded-lg  d-flex align-center justify-center"
-            /></td>
+            />
+          </td>
           <td class="">{{ item.created_at.slice(0, 10) }}</td>
           <td class="">{{ item.isDeleted ? 'Tạm dừng' : 'Hoạt động' }}</td>
           <td>

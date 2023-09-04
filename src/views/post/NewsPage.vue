@@ -6,7 +6,6 @@ import { useRoute } from "vue-router";
 import useNewsStore from "../../stores/useNewsStore.js";
 import { storeToRefs } from "pinia";
 import getSlugByName from "../../utils/getSlugByName.js";
-import NewsSideBar from "../../components/news/NewsSideBar.vue";
 
 const { relatedArticles } = storeToRefs(useNewsStore());
 // Post API
@@ -49,8 +48,6 @@ onMounted(fetchPost);
         <div>
           <v-img
             :src="`${url}${post.image}`"
-            width="100%"
-            height="80%"
             class="rounded-xl mb-2"
           />
         </div>

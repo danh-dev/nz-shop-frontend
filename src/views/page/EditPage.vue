@@ -84,7 +84,7 @@ onBeforeMount(fetchPage);
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="page.name"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
             label="Tên trang:"
@@ -97,7 +97,7 @@ onBeforeMount(fetchPage);
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="page.author"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
             label="Tác giả:"

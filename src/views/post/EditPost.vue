@@ -2,7 +2,7 @@
 import { ref, onBeforeMount, watch } from "vue";
 import axios from "../../axiosComfig";
 import { useRouter, useRoute } from "vue-router";
-import ContentEditor from "../../components/globals/ContentEditor.vue";
+import ContentEditor from "@/components/globals/ContentEditor.vue";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
 const url = import.meta.env.VITE_PUBLIC_URL;
@@ -110,7 +110,7 @@ onBeforeMount(fetchPost);
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="post.title"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20"
@@ -125,7 +125,7 @@ onBeforeMount(fetchPost);
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="post.author"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20"
@@ -168,7 +168,7 @@ onBeforeMount(fetchPost);
           md="12"
         >
           <v-select
-            variant="underlined"
+            variant="outlined"
             v-model="post.type"
             label="Loại tin tức"
             :rules="[v => !!v || 'Vui lòng lựa chọn.']"
@@ -184,7 +184,7 @@ onBeforeMount(fetchPost);
         >
           <v-textarea
             name="editor"
-            variant="underlined"
+            variant="outlined"
             v-model="post.description"
             :rules="[v => !!v || 'Vui lòng không để trống']"
             label="Mô tả:"
@@ -202,7 +202,6 @@ onBeforeMount(fetchPost);
           <ContentEditor
             :editorContent="post.content"
             @editContent="editContent"
-            :rules="[v => !!v || 'Vui lòng không để trống']"
           />
         </v-col>
       </v-row>

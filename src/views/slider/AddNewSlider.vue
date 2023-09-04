@@ -80,7 +80,7 @@ async function createSlider() {
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="newSlider.name"
             :rules="[v => !!v || 'Vui lòng không được để trống.']"
             :counter="20"
@@ -94,7 +94,7 @@ async function createSlider() {
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="newSlider.title"
             :rules="[v => !!v || 'Vui lòng không được để trống.']"
             :counter="20"

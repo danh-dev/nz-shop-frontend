@@ -46,7 +46,7 @@ defineProps({
               class="cropper"
               :src="imageUrl"
               :stencil-props="{
-                aspectRatio: 3 / 4,
+                aspectRatio: 3 / 3,
               }"
               @change="$emit('changeCropper', $event)"
             />

@@ -37,32 +37,21 @@ watch(model, (cur, pre) => {
 		maxModel.value = cur;
 	}
 });
-
+// fetch Product
 const fetchProduct = async () => {
 	try {
 		const res = await axios.get(`products/${route.params.name}`);
 		if (res.status === 200) {
 			product.value = mapKeys(res.data.data, (value, key) => camelCase(key));
 		}
+		// console.log(product.value);
 	}
 	catch (e) {
 		console.log(e);
 	}
 };
 
-const fetchVariants = async id => {
-	try {
-		const res = await axios.get(`products/${id}/variants`);
-		if (res.status === 200) {
-			variants.value = res.data.data.map(variant => mapKeys(variant, (value, key) => camelCase(key)));
-
-		}
-	}
-	catch (e) {
-		console.log(e);
-	}
-};
-
+// fetch Comment
 const fetchComments = async id => {
 	try {
 		const res = await axios.get(`products/${id}/comments`);
@@ -74,12 +63,13 @@ const fetchComments = async id => {
 		console.log(e);
 	}
 };
-// fetch revies
+// fetch Reviews
 const fetchReviews = async id => {
 	try {
 		const res = await axios.get(`products/${id}/reviews`);
 		if (res.status === 200) {
 			reviews.value = res.data.data;
+			// console.log(reviews.value);
 		}
 	}
 	catch (e) {
@@ -124,25 +114,6 @@ const fetchUserByComment = async comment => {
 	}
 };
 
-const fetchUserByReview = async review => {
-	try {
-		const res = await axios.get(`reviews/${review.id}/users`);
-		if (res.status === 200) {
-			review.user = res.data.data.name;
-		}
-	}
-	catch (e) {
-		console.log(e);
-	}
-};
-
-watch(reviews, () => {
-	for (const review of reviews.value) {
-		fetchFeedbacks(review);
-		fetchUserByReview(review);
-	}
-});
-
 watch(comments, () => {
 	for (const comment of comments.value) {
 		fetchFeedbacks(comment);
@@ -151,7 +122,6 @@ watch(comments, () => {
 });
 
 watch(product, () => {
-	fetchVariants(product.value.id);
 	fetchReviews(product.value.id);
 	fetchComments(product.value.id);
 });
@@ -459,11 +429,10 @@ onMounted(async () => {
 							>mdi-check-circle</v-icon> -->
 						<div
 							href="#"
-							class="px-1 text-decoration-none text-dark"
-							:style="!more && [{ height: '200px', overflow: 'hidden' }]"
+							class="px-1 "
+							:style="!more && [{ height: '500px', overflow: 'hidden' }]"
 						>
-							<strong class="text-danger text-body">{{ product.name }}</strong>{{ product.shortDescription }}
-							<p class="py-3">{{ product.longDescription }}</p>
+							<p v-html="product.description" class="py-3"></p>
 						</div>
 
 					</v-sheet>
@@ -525,7 +494,7 @@ onMounted(async () => {
 				md="12"
 			>
 				<!-- Product Reviews -->
-				<ProductReviews :reviews="reviews" />
+				<ProductReviews :reviews="reviews" :productId="product.id" />
 
 				<!-- Q&A -->
 				<ProductQA :comments="comments" />

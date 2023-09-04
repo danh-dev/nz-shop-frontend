@@ -61,7 +61,7 @@ const updatePage = (event) => {
 </script>
 
 <template>
-  <v-row  class="">
+  <v-row class="">
     <v-col
       aria-colspan="12"
       md="12"
@@ -76,30 +76,33 @@ const updatePage = (event) => {
         </div>
         <v-table
           hover
-          class="post text-body-2"
           v-if="pages.length > 0"
         >
           <thead>
             <tr>
               <th
                 class="font-weight-bold"
-                style="width: 35%;"
+                style="width: 55%;"
               >
                 Tên trang
               </th>
-              <th
+              <!-- <th
                 class="font-weight-bold"
                 style="width: 20%"
               >
                 Tác giả
-              </th>
+              </th> -->
               <th
                 class="font-weight-bold"
-                style="width: 20%;"
+                style="width: 15%;"
               >
                 Ngày tạo
               </th>
-              <th class="font-weight-bold">Tình trạng</th>
+              <th
+                class="font-weight-bold"
+                style="width: 15%;"
+              >
+                Tình trạng</th>
               <th
                 class="font-weight-bold"
                 style="width: 10%"
@@ -117,7 +120,7 @@ const updatePage = (event) => {
               <td>
                 <div class="extra">{{ item.name }}</div>
               </td>
-              <td>{{ item.author }}</td>
+              <!-- <td>{{ item.author }}</td> -->
               <td>{{ item.created_at.slice(0, 10) }}</td>
               <td>{{ item.isDeleted ? 'Đã xóa' : 'Hoạt động' }}</td>
               <td>

@@ -91,7 +91,7 @@ function editContent(event) {
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="newPost.title"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20"
@@ -106,7 +106,7 @@ function editContent(event) {
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="newPost.author"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20"
@@ -148,7 +148,7 @@ function editContent(event) {
           md="12"
         >
           <v-select
-            variant="underlined"
+            variant="outlined"
             v-model="newPost.type"
             :rules="[v => !!v || 'Vui lòng lựa chọn.']"
             label="Loại tin tức:"
@@ -164,7 +164,7 @@ function editContent(event) {
           <v-label class="text-caption">Mô tả bài viết:</v-label>
           <v-textarea
             name="editor"
-            variant="underlined"
+            variant="outlined"
             v-model="newPost.description"
             :rules="[v => !!v || 'Vui lòng không để trống']"
           >

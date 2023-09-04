@@ -107,9 +107,9 @@ const fetchData = async () => {
   status.value = null;
 
   try {
-    const res = await axios.get(`products`);
+    const res = await axios.get("products");
     if (res.status === 200) {
-      products.value = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
+      products.value = res.data.data.reverse().map(product => mapKeys(product, (value, key) => camelCase(key)));
     }
 
     filteredProducts.value = products.value;
@@ -211,25 +211,25 @@ onMounted(fetchData);
       <thead>
         <tr>
           <th
-            class="text-left font-weight-bold"
-            style="width: 15%;"
+            class="font-weight-bold"
+            style="width: 50%;"
           >
             Tên sản phẩm
           </th>
           <th
-            class="text-left font-weight-bold"
+            class="font-weight-bold"
             style="width: 10%"
           >
             Hình ảnh
           </th>
           <th
-            class="text-left font-weight-bold"
+            class="font-weight-bold"
             style="width: 10%"
           >
             Danh mục
           </th>
           <th
-            class="text-left font-weight-bold"
+            class="font-weight-bold"
             style="width: 10%"
           >
             Chức năng
@@ -281,7 +281,7 @@ onMounted(fetchData);
                 size="small"
                 variant="tonal"
                 icon="mdi-pencil"
-                color="primary"
+                color="success"
                 :to="{
                   name: 'admin-product-update',
                   params: {
@@ -317,7 +317,7 @@ onMounted(fetchData);
 .more {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   overflow: hidden;
 }
 </style>

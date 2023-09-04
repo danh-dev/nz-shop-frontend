@@ -19,13 +19,13 @@ const routes = [
 	{
 		path: "login",
 		name: "login-page",
-		meta: { auth: "true" },
+		// meta: { auth: "true" },
 		component: () => import("../views/Login.vue"),
 	},
 	{
 		path: "register",
 		name: "register-page",
-		meta: { auth: "true" },
+		// meta: { auth: "true" },
 		component: () => import("../views/Register.vue"),
 	},
 	// Cart feature

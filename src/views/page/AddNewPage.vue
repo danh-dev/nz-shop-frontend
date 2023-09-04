@@ -55,7 +55,7 @@ function editContent(event) {
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="newPage.name"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20"
@@ -70,7 +70,7 @@ function editContent(event) {
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="newPage.author"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20"
@@ -86,7 +86,7 @@ function editContent(event) {
       >
         <!-- <v-textarea
           name="editor"
-          variant="underlined"
+          variant="outlined"
           v-model="newPage.content"
           :rules="[v => !!v || 'Vui lòng không để trống']"
           label="Nội dung trang:"

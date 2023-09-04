@@ -89,37 +89,39 @@ const updatePage = (event) => {
         </div>
         <v-table
           hover
-          class="text-body-2"
           v-if="sliders.length > 0"
         >
           <thead>
             <tr>
               <th
-                class="font-weight-bold text-center"
-                style="width: 25%;"
+                class="font-weight-bold"
+                style="width: 22.5%;"
               >
                 Tên
               </th>
               <th
-                class="font-weight-bold text-center"
-                style="width: 23.5%;"
+                class="font-weight-bold"
+                style="width: 22.5%;"
               >
                 Tiêu đề
               </th>
               <th
-                class="font-weight-bold text-center"
-                style="width: 10%"
+                class="font-weight-bold"
+                style="width: 15%"
               >
                 Hình ảnh
               </th>
               <th
-                class="font-weight-bold text-center"
+                class="font-weight-bold"
                 style="width: 15%;"
               >
                 Ngày tạo
               </th>
-              <th class="font-weight-bold text-center">Tình trạng</th>
-              <th class="font-weight-bold text-center">
+              <th
+                class="font-weight-bold"
+                style="width: 15%;"
+              >Tình trạng</th>
+              <th class="font-weight-bold">
                 Chức năng
               </th>
             </tr>
@@ -131,9 +133,9 @@ const updatePage = (event) => {
               :key="item.id"
             >
               <td>
-                <div class="more text-uppercase text-left">{{ item.name }}</div>
+                <div class="more text-uppercase">{{ item.name }}</div>
               </td>
-              <td class="text-center">{{ item.title }} </td>
+              <td>{{ item.title }} </td>
               <td>
                 <img
                   :src="url + item.image"
@@ -142,8 +144,8 @@ const updatePage = (event) => {
                   :alt="item.name"
                 />
               </td>
-              <td class="text-center">{{ item.created_at.slice(0, 10) }}</td>
-              <td class="text-center">{{ item.isDeleted ? 'Tạm dừng' : 'Hoạt động' }}</td>
+              <td>{{ item.created_at.slice(0, 10) }}</td>
+              <td>{{ item.isDeleted ? 'Tạm dừng' : 'Hoạt động' }}</td>
               <td>
                 <div class="d-flex align-center justify-center">
                   <v-btn
@@ -181,7 +183,6 @@ const updatePage = (event) => {
         </v-table>
         <!-- phân trang -->
         <GlobalPagination
-
           v-if="sliders.length > rowsPerPage"
           :page="page"
           :numberOfPages="numberOfPage"
