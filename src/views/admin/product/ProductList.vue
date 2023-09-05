@@ -13,31 +13,43 @@ const categoryStore = useCategoryStore();
 
 const headers = [
   {
-    title: "Tên",
+    title: "Tên sản phẩm",
     align: "start",
     key: "name",
+    width: "30%",
   },
   {
     title: "Hình ảnh",
     sortable: false,
     key: "image",
-    align: "start"
+    align: "start",
+    width: "15%",
   },
   {
     title: "Giá",
     key: "price",
-    align: "start"
+    align: "start",
+    width: "20%"
   },
   {
-    title: "Trạng thái",
+    title: "Số lượng",
+    key: "quantity",
+    align: "start",
+    width: "10%"
+  },
+  {
+    title: "Đang hoạt động",
     key: "isDisabled",
+    sortable: false,
+    width: "10%",
     align: "start"
   },
   {
     title: "Chức năng",
     sortable: false,
     key: "action",
-    align: "start"
+    align: "start",
+    width: "10%",
   },
 ];
 
@@ -61,18 +73,18 @@ const statuses = [
     value: false,
   },
   {
-    title: "Đã xoá",
+    title: "Ngừng hoạt động",
     value: true,
   }
 ];
 const status = ref(null);
 
-const categories = [
+const categories = ref([
   {
     title: "Tất cả",
     value: null,
   }
-];
+]);
 const category = ref(null);
 
 const searchInput = ref("");
@@ -151,9 +163,10 @@ watch([status, category, name], () => {
   currentPage.value = 1;
 });
 watch([currentPage, status, category, name], fetchProducts);
-watch(() => categoryStore.categories, () => {
-  for (const category of categoryStore.categories) {
-    categories.push({
+
+watch(() => categoryStore.categories, (newVal) => {
+  for (const category of newVal) {
+    categories.value.push({
       title: category.name,
       value: category.id,
     });
@@ -188,6 +201,7 @@ onMounted(fetchProducts);
         sm="4"
       >
         <v-autocomplete
+          color="red-accent-4"
           prepend-inner-icon="mdi-list-box-outline"
           density="compact"
           label="Danh mục"
@@ -202,6 +216,7 @@ onMounted(fetchProducts);
         sm="4"
       >
         <v-select
+          color="red-accent-4"
           density="compact"
           label="Trạng thái"
           :items="statuses"
@@ -253,71 +268,6 @@ onMounted(fetchProducts);
         </v-alert>
       </v-col>
     </v-row>
-
-
-    <!-- <v-table
-      hover
-      v-if="products.length > 0"
-    >
-      <thead>
-        <tr>
-          <th
-            class="text-left font-weight-bold"
-            style="width: 15%;"
-          >
-            Tên sản phẩm
-          </th>
-          <th
-            class="text-left font-weight-bold"
-            style="width: 10%"
-          >
-            Hình ảnh
-          </th>
-          <th
-            class="text-left font-weight-bold"
-            style="width: 10%"
-          >
-            Danh mục
-          </th>
-          <th
-            class="text-left font-weight-bold"
-            style="width: 10%"
-          >
-            Chức năng
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="item in products.slice((page - 1) * rowsPerPage, page * rowsPerPage)"
-          :key="item.id"
-        >
-          <td>
-            <div class="more">{{ item.name }}</div>
-          </td>
-          <td>
-            <v-img
-              :src="`${url}${item.image}`"
-              width="60"
-            ></v-img>
-          </td>
-          <td>
-            <div class="more">{{ getCategoryNameById(item.categoryId) }}</div>
-          </td>
-          <td>
-            
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
-
-    <v-alert
-      v-else
-      density="compact"
-      text="Không có sản phẩm"
-      type="info"
-      variant="tonal"
-    ></v-alert> -->
     <v-row>
       <v-col>
         <v-data-table
@@ -330,9 +280,52 @@ onMounted(fetchProducts);
           hover
           no-data-text="Không có sản phẩm!"
         >
-          <!-- <template #item.price="{item}">
+          <template #column.price="{ column }">
+            <div class="v-data-table-header__content flex-wrap">
+              <v-chip
+                color="amber"
+                label
+              >Giá gốc
+              </v-chip>
+              <v-chip
+                color="success"
+                label
+              >Giá bán
+              </v-chip>
+              <v-chip
+                color="red-accent-4"
+                label
+              >Giá khuyến mãi
+              </v-chip>
+            </div>
+          </template>
+          <template #item.price="{ item }">
+            <div class="my-2">
+              <v-chip
+                color="amber"
+                label
+                class="justify-center"
+              >
+                {{ item.raw.originPrice }}
+              </v-chip>
+              <v-chip
+                color="success"
+                label
+                class="justify-center"
+              >
+                {{ item.raw.sellPrice }}
+              </v-chip>
+              <v-chip
+                v-if="item.raw.discountPrice"
+                color="red-accent-4"
+                label
+                class="justify-center"
+              >
+                {{ item.raw.discountPrice }}
+              </v-chip>
+            </div>
 
-          </template> -->
+          </template>
           <template #item.image="{ item }">
             <v-img
               :src="`${url}${item.columns.image}`"
