@@ -30,4 +30,4 @@ const productList = [
         url: "#"
     },
 ]
-export { productList, userList };
+export { productList };

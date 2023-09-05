@@ -1,13 +1,5 @@
 <template>
   <v-app>
-    <v-overlay :model-value="siteStore.isLoading" class="align-center justify-center" scrim="#fff" :persistent="true">
-      <v-progress-circular color="red-darken-2" indeterminate size="72"></v-progress-circular>
-    </v-overlay>
-    <v-snackbar v-for="(message, index) in siteStore.apiMessages" :key="index" v-model="message.show"
-      transition="scroll-y-reverse-transition" location="bottom end"
-      :color="message.status === 'error' ? 'red-darken-1' : 'green-darken-1'" :style="{ bottom: `${index * 60}px` }">
-      {{ message.message }}
-    </v-snackbar>
     <aside>
       <v-navigation-drawer v-model="drawer" class="pa-3" elevation="1">
         <template #prepend>
@@ -15,9 +7,9 @@
             <img id="logoShop" src="/assets/NZShop-Text.svg" alt="logo shop">
           </RouterLink>
           <v-btn density="compact" class="btn-close hidden-lg-and-up" icon="mdi-close"
-            @click.stop="drawer = !drawer"></v-btn>
+                 @click.stop="drawer = !drawer"></v-btn>
         </template>
-        <MenuList />
+        <MenuList/>
         <template #append>
           <div class="pa-2">
             <v-btn block color="blue-grey-darken-4">
@@ -33,7 +25,7 @@
           <v-toolbar rounded class="bg-white m-card">
             <div class="hidden-lg-and-up  ms-3">
               <v-btn prepend-icon="mdi-apps" variant="tonal" class="font-weight-bold bg-red-darken-1"
-                @click.stop="drawer = !drawer">
+                     @click.stop="drawer = !drawer">
                 Tính năng
               </v-btn>
             </div>
@@ -48,7 +40,7 @@
           </v-toolbar>
         </header>
         <main class="my-3">
-          <router-view />
+          <router-view/>
         </main>
         <footer class="footer-sticky">
           <div class="ms-1 ma-3">
@@ -68,13 +60,10 @@
 
 <script setup>
 import MenuList from "../components/admincp/MenuList.vue";
-import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { siteData } from "@/stores/globals";
+import {ref} from "vue";
+import {useRoute, useRouter} from "vue-router";
 
 const drawer = ref(true);
-
-const siteStore = siteData();
 
 
 const route = useRoute();
@@ -85,7 +74,7 @@ const router = useRouter();
 
 <style scoped>
 main {
-  min-height: 83vh;
+  min-height: 80vh;
 }
 
 .bar-sticky {

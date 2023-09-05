@@ -92,7 +92,6 @@
   </v-container>
 </template>
 <script setup>
-<<<<<<< HEAD
 import {useSeoMeta} from "@unhead/vue";
 import {useRoute} from "vue-router";
 
@@ -128,10 +127,6 @@ function create () {
   newTask.value = null
 }
 
-=======
-import { useSeoMeta } from "@unhead/vue";
-import { useRoute } from "vue-router";
->>>>>>> home-view
 const route = useRoute();
 
 route.meta.title = "Dashboard";

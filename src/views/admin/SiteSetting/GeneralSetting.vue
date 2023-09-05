@@ -12,8 +12,8 @@
                         autocomplete="off">
             <template #prepend-inner>
               <div @click="openModel('fileNewFavicon')">
-              <v-img v-if="fileNewFavicon" :src="fileNewFavicon" alt="logo mini" title="logo mini" width="18"></v-img>
-              <v-img v-else :src="oldLogoFA" alt="logo mini" title="logo mini" width="18"></v-img>
+                <v-img v-if="fileNewFavicon" :src="fileNewFavicon" alt="logo mini" title="logo mini" width="18"></v-img>
+                <v-img v-else :src="oldLogoFA" alt="logo mini" title="logo mini" width="18"></v-img>
               </div>
             </template>
           </v-text-field>
@@ -90,7 +90,8 @@
         </v-col>
         <v-col cols="12" md="4">
           <v-hover v-slot="{ isHovering, props }">
-            <div class="m-box active d-flex pa-3 justify-center position-relative bg-grey-lighten-3" v-bind="props" style="height: 100%"
+            <div class="m-box active d-flex pa-3 justify-center position-relative bg-grey-lighten-3" v-bind="props"
+                 style="height: 100%"
                  @click="openModel('fileNewLogoMini')">
               <v-chip
                   v-if="!isHovering"
@@ -102,7 +103,8 @@
                 Favicon
               </v-chip>
               <div>
-                <v-img v-if="fileNewLogoMini" :src="fileNewLogoMini" alt="logo mini" title="logo mini" width="40"></v-img>
+                <v-img v-if="fileNewLogoMini" :src="fileNewLogoMini" alt="logo mini" title="logo mini"
+                       width="40"></v-img>
                 <v-img v-else :src="oldLogoMini" alt="logo mini" title="logo mini" width="40"></v-img>
               </div>
               <v-expand-transition>
@@ -126,7 +128,6 @@
       <v-row>
         <v-col cols="12" md="6">
           <v-autocomplete
-              clearable
               density="compact"
               label="Múi giờ"
               v-model="formGSTimeZone"
@@ -141,7 +142,6 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-autocomplete
-              clearable
               density="compact"
               label="Mã ngôn ngữ"
               v-model="formGSLangCode"
@@ -151,6 +151,34 @@
               variant="outlined"
               autocomplete="off"
               hint="Tên quốc tế của ngôn ngữ"
+              persistent-hint
+          ></v-autocomplete>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="6">
+          <v-text-field
+              type="text"
+              v-model="formGSColorMain"
+              label="Màu chính website"
+              variant="outlined"
+              density="compact"
+              readonly
+              autocomplete="off">
+            <template #prepend-inner>
+              <v-btn
+                  density="compact" :color="formGSColorMain" @click="()=>{ modelColorPicker = !modelColorPicker; }"></v-btn>
+            </template>
+          </v-text-field>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-autocomplete
+              density="compact"
+              label="Font website"
+              v-model="formGSFontMain"
+              :items="fontList"
+              variant="outlined"
+              autocomplete="off"
               persistent-hint
           ></v-autocomplete>
         </v-col>
@@ -221,6 +249,7 @@
       <v-btn color="red-darken-2" @click="updateGSetting">Lưu</v-btn>
     </v-container>
   </v-form>
+
   <v-dialog
       v-model="modelOpen"
       persistent
@@ -331,16 +360,31 @@
       </v-card-text>
     </v-card>
   </v-dialog>
+
+
+  <v-dialog
+      v-model="modelColorPicker"
+      max-width="350">
+    <v-card>
+      <v-card-text>
+        <v-color-picker v-model="colorPicked" show-swatches>
+        </v-color-picker>
+      </v-card-text>
+      <v-card-actions><v-btn color="red-darken-2" variant="flat" block @click="()=>{formGSColorMain = colorPicked; modelColorPicker=false;}">Chọn</v-btn></v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 <script setup>
 import {onMounted, ref} from "vue";
 import {Cropper} from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
 import {siteData} from "@/stores/globals";
-const siteStore = siteData();
 import axios from "@/axiosComfig";
 import timezone from "../../../utils/timezone-citys.json";
 import langLocales from "../../../utils/lang-locales.json";
+import fontList from "../../../utils/fontList.json";
+
+const siteStore = siteData();
 
 const fileNewLogoBG = ref();
 const fileNewLogoWH = ref();
@@ -353,6 +397,8 @@ const croppedImageData = ref();
 
 const formGSName = ref();
 const formGSTimeZone = ref();
+const formGSColorMain = ref();
+const formGSFontMain = ref();
 const formGSLangCode = ref();
 const formGSIdApp = ref();
 const formGSKey = ref("Oh! Are you cheating?");
@@ -369,6 +415,8 @@ const oldLogoWH = ref("https://dummyimage.com/180x53/ffffff/5d5a68.png&text=Logo
 const oldLogoFA = ref("https://dummyimage.com/18x18/dc3545/FFF.png&text=nz");
 const oldLogoMini = ref("https://dummyimage.com/40x40/dc3545/FFF.png&text=nz");
 
+const modelColorPicker = ref(false);
+const colorPicked = ref();
 
 // Function
 const openModel = (value) => {
@@ -437,12 +485,14 @@ const fetchGSetting = async () => {
   try {
     const res = await axios.get("fetchGSetting");
     formGSName.value = res.data.siteName;
-    oldLogoBG.value = res.data.logoBG ? import.meta.env.VITE_PUBLIC_URL+ res.data.logoBG : "https://dummyimage.com/180x53/dc3545/FFF.png&text=Logo";
-    oldLogoWH.value = res.data.logoWH ? import.meta.env.VITE_PUBLIC_URL+ res.data.logoWH : "https://dummyimage.com/180x53/ffffff/5d5a68.png&text=Logo";
-    oldLogoFA.value = res.data.favicon ? import.meta.env.VITE_PUBLIC_URL+ res.data.favicon : "https://dummyimage.com/16x16/dc3545/FFF.png&text=nz";
-    oldLogoMini.value = res.data.logoMini ? import.meta.env.VITE_PUBLIC_URL+ res.data.logoMini : "https://dummyimage.com/40x40/dc3545/FFF.png&text=nz";
+    oldLogoBG.value = res.data.logoBG ? import.meta.env.VITE_PUBLIC_URL + res.data.logoBG : "https://dummyimage.com/180x53/dc3545/FFF.png&text=Logo";
+    oldLogoWH.value = res.data.logoWH ? import.meta.env.VITE_PUBLIC_URL + res.data.logoWH : "https://dummyimage.com/180x53/ffffff/5d5a68.png&text=Logo";
+    oldLogoFA.value = res.data.favicon ? import.meta.env.VITE_PUBLIC_URL + res.data.favicon : "https://dummyimage.com/16x16/dc3545/FFF.png&text=nz";
+    oldLogoMini.value = res.data.logoMini ? import.meta.env.VITE_PUBLIC_URL + res.data.logoMini : "https://dummyimage.com/40x40/dc3545/FFF.png&text=nz";
     formGSTimeZone.value = res.data.timeZone;
     formGSLangCode.value = res.data.langCode;
+    formGSColorMain.value = res.data.mainColor;
+    formGSFontMain.value = res.data.mainFont;
     formGSIdApp.value = res.data.idApp;
   } catch (e) {
     siteStore.errorSystem();
@@ -462,6 +512,8 @@ const updateGSetting = async () => {
       favicon: fileNewFavicon.value,
       time_zone: formGSTimeZone.value,
       lang_code: formGSLangCode.value,
+      main_color: formGSColorMain.value,
+      main_font: formGSFontMain.value,
     });
     siteStore.hasRes(res);
   } catch (e) {

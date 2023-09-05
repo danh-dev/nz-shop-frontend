@@ -43,6 +43,7 @@ const tabList = ref([
   {icon: "mdi-store-marker-outline", text: "Shop Setting", tabAction: "shopSetting"},
   {icon: "mdi-store-marker-outline", text: "SEO Setting", tabAction: "seoSetting"},
 ]);
+
 const route = useRoute();
 
 

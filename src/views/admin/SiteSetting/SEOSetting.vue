@@ -97,11 +97,11 @@
               Google Search Virtual
             </template>
             <v-card-text>
-              <v-skeleton-loader v-if="!doneGoogle"
+              <v-skeleton-loader v-if="doneVirtual"
                   class="mx-auto"
                   elevation="5"
                   max-width="400"
-                  type="table-heading, list-item-two-line"
+                  type="table-heading, text,text,text,list-item-two-line,"
               ></v-skeleton-loader>
               <v-card v-else
                   class="pa-3 d-flex flex-column"
@@ -148,7 +148,7 @@
             </template>
             <v-card-text>
               <v-skeleton-loader
-                  v-if="!doneFacebook"
+                  v-if="doneVirtual"
                   class="mx-auto"
                   elevation="5"
                   max-width="400"
@@ -170,7 +170,7 @@
           </v-card>
         </v-col>
       </v-row>
-      <v-btn color="red-darken-2 my-3" @click="updateSEOSetting">Lưu</v-btn>
+      <v-btn color="red-darken-2 my-3" @click="updateSEOSetting">Lưu</v-btn> <v-btn @click="doneVirtual = false">Xem trước</v-btn>
     </v-container>
   </v-form>
 
@@ -243,8 +243,7 @@ const modelOpen = ref(false);
 const fileFavicon = ref("https://dummyimage.com/18x18/dc3545/FFF.png&text=nz");
 const oldImg = ref("https://dummyimage.com/1200x630/dc3545/FFF.png&text=Image Display Social");
 
-const doneGoogle = computed(()=>formSEOTitle.value && formSEODescription.value)
-const doneFacebook = computed(()=>fileNew.value || oldImg.value && formSEOTitle.value  )
+const doneVirtual = ref(true);
 
 const openModel = () => {
   modelOpen.value = true;

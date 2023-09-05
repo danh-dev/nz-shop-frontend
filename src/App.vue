@@ -1,14 +1,58 @@
 <script setup>
-import {RouterView} from "vue-router";
+import {RouterView, useRoute} from "vue-router";
 import ScrollToTop from "@/components/globals/ScrollToTop.vue";
-import {useRecaptchaProvider} from "vue-recaptcha";
-// import Footer from "./components/copy/Footer.vue";
-useRecaptchaProvider();
+import {siteData} from "@/stores/globals";
+import {useHead, useSeoMeta} from "@unhead/vue";
+import {onMounted} from "vue";
 
+const siteStore = siteData();
+const route = useRoute();
 
+onMounted(async () => {
+  await siteStore.fetchSettingSite()
+  const rootElement = document.documentElement;
+  rootElement.style.setProperty("--main-color", siteStore.siteSetings.main_color);
+  if (siteStore.siteSetings.main_font) {
+    rootElement.style.setProperty("font-family", `"` + siteStore.siteSetings.main_font + `", sans-serif`);
+    const styleElement = document.createElement("style");
+    styleElement.textContent = `
+    .text-body-2, .text-body-1, .text-h1,.text-h2,.text-h3,.text-h4,.text-h5,.text-h6 {
+      font-family: ` + siteStore.siteSetings.main_font + `, sans-serif !important ;
+    }
+  `;
+    document.head.appendChild(styleElement);
+  }
+});
+useHead({
+  htmlAttrs: {
+    lang: siteStore.siteSetings.lang_code,
+  },
+  link: [{
+    rel: "icon",
+    type: "image/png",
+    href: import.meta.env.VITE_PUBLIC_URL + siteStore.siteSetings.favicon,
+  }, {
+    rel: "stylesheet",
+    href: `https://fonts.googleapis.com/css2?family=` + siteStore.siteSetings.main_font + `&display=swap`,
+  }]
+});
+useSeoMeta({
+  title: siteStore.siteSetings.meta_tag_title,
+  description: siteStore.siteSetings.meta_tag_description,
+  keywords: siteStore.siteSetings.meta_tag_keywords,
+  "og:image": import.meta.env.VITE_PUBLIC_URL + siteStore.siteSetings.meta_tag_social_img,
+});
 </script>
-
 <template>
+  <v-overlay :model-value="siteStore.isLoading" class="align-center justify-center" scrim="#fff" :persistent="true">
+    <v-progress-circular color="red-darken-2" indeterminate size="72"></v-progress-circular>
+  </v-overlay>
+  <v-snackbar v-for="(message, index) in siteStore.apiMessages" :key="index" v-model="message.show"
+              transition="scroll-y-reverse-transition" location="bottom end"
+              :color="message.status === 'error' ? 'red-darken-1' : 'green-darken-1'"
+              :style="{ bottom: `${index * 60}px` }">
+    {{ message.message }}
+  </v-snackbar>
   <RouterView/>
   <ScrollToTop/>
 </template>
@@ -66,21 +110,6 @@ a {
   height: 300px;
   border: 1px solid rgb(211, 211, 211) !important;
 }
-
-/*
-.cke_chrome {
-  border-radius: 10px;
-  border: 1px solid #695656;
-  border-width: thin;
-}
-
-.cke_top {
-  border-radius: 10px 10px 0px 0px
-}
-
-.cke_bottom {
-  border-radius: 0px 0px 10px 10px
-} */
 
 @media (min-width: 1920px) {
   .v-container {
