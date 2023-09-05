@@ -5,7 +5,6 @@ import { mapKeys, camelCase } from "lodash";
 import { useRoute } from "vue-router";
 import { useDisplay } from "vuetify";
 import useCategoryStore from "@/stores/category";
-import useLoadingStore from "@/stores/loading";
 
 import BreadCrumbs from "@/components/category/BreadCrumbs.vue";
 import FilterChip from "@/components/category/FilterChip.vue";
@@ -13,8 +12,8 @@ import RangeSlider from "@/components/category/RangeSlider.vue";
 import FilterCard from "@/components/category/FilterCard.vue";
 import ProductList from "@/components/category/ProductList.vue";
 import GlobalPagination from "@/components/globals/GlobalPagination.vue";
+
 const categoryStore = useCategoryStore();
-const loadingStore = useLoadingStore();
 const route = useRoute();
 const { findCategoryBySlug, findRecursiveCategorySlug } = categoryStore;
 const { name } = useDisplay();
@@ -68,35 +67,37 @@ const numberOfPages = computed(() => {
 });
 
 watch(() => categoryStore.categories, async () => {
-  const { params: { slugs } } = route;
-  category.value = findCategoryBySlug(slugs[slugs.length - 1]);
+  const { params: { slugs }, query: { name } } = route;
 
-  slugs.forEach((slug, index, self) => {
-    if (index !== self.length - 1) {
-      const category = findCategoryBySlug(slug);
-      breadCrumbsItems.value.push({
-        title: category.name,
-        href: `/categories${findRecursiveCategorySlug(category)}`,
-        disable: false,
-      });
-    }
-  });
+  if (slugs) {
+    category.value = findCategoryBySlug(slugs[slugs.length - 1]);
 
-  breadCrumbsItems.value.push({
-    title: category.value.name,
-    href: `/categories${findRecursiveCategorySlug(category.value)}`,
-    disable: true,
-    activeColor: "black",
-    active: true
-  });
+    slugs.forEach((slug, index, self) => {
+      if (index !== self.length - 1) {
+        const category = findCategoryBySlug(slug);
+        breadCrumbsItems.value.push({
+          title: category.name,
+          href: `/danh-muc${findRecursiveCategorySlug(category)}`,
+          disable: false,
+        });
+      }
+    });
+    breadCrumbsItems.value.push({
+      title: category.value.name,
+      href: `/danh-muc${findRecursiveCategorySlug(category.value)}`,
+      disable: true,
+      activeColor: "black",
+      active: true
+    });
 
-  loadingStore.loading = true;
-  products.value = await fetchRecursiveCategoryProducts(category.value.id);
-  for (const product of products.value) {
-    product.variant = await fetchLowPriceVariant(product.id);
+    products.value = await fetchRecursiveCategoryProducts(category.value.id);
   }
+
+  else if (name) {
+    products.value = await fetchProductsByName();
+  }
+
   newProducts.value = products.value;
-  loadingStore.loading = false;
 
   const propertiesDuplicateArr = products.value.reduce((pre, cur) => {
     if (pre === "") {
@@ -239,7 +240,7 @@ const handleSearchClick = () => {
   // }
   newProducts.value = products.value;
   if (priceRange.value[0] !== 0 || priceRange.value[1] !== max) {
-    newProducts.value = products.value.filter(item => ((item.variant.discountPrice || item.variant.sellPrice) >= priceRange.value[0]) && ((item.variant.discountPrice || item.variant.sellPrice) <= priceRange.value[1]));
+    newProducts.value = products.value.filter(item => ((item.discountPrice || item.sellPrice) >= priceRange.value[0]) && ((item.discountPrice || item.sellPrice) <= priceRange.value[1]));
   }
   const filterArray2 = filterArray.value.map(item => item.choices.map(choice => item.enName + "-" + item.items[choice])).filter(item => item.length !== 0);
   newProducts.value = newProducts.value.filter(product => {
@@ -313,19 +314,20 @@ const fetchRecursiveCategoryProducts = async (id, numbers) => {
   return result;
 };
 
-const fetchLowPriceVariant = async id => {
-  let variant;
+const fetchProductsByName = async () => {
+  let result = [];
   try {
-    const res = await axios.get(`products/${id}/variant`);
+    const res = await axios.get(`products/name/${route.query.name}`);
     if (res.status === 200) {
-      variant = mapKeys(res.data.data, (value, key) => camelCase(key));
+      result = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
     }
   }
   catch (e) {
     //push
   }
-  return variant;
+  return result;
 };
+
 </script>
 
 <template>

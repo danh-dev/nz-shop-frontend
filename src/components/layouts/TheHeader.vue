@@ -2,6 +2,8 @@
 import { useDisplay } from "vuetify";
 import { useCartStore } from "@/stores/cart";
 import { userData } from "@/stores/userData";
+import { useRouter } from "vue-router";
+import { ref } from "vue";
 
 import HeaderButton from "../HeaderButton.vue";
 import HeaderLogo from "../HeaderLogo.vue";
@@ -9,8 +11,9 @@ import HeaderLogo from "../HeaderLogo.vue";
 const { lgAndUp, mdAndUp } = useDisplay();
 const cartStore = useCartStore();
 const userStore = userData();
+const router = useRouter();
 
-
+const searchInput = ref("");
 </script>
 
 <template>
@@ -34,14 +37,23 @@ const userStore = userData();
 
 			<v-row style="max-width: 380px; min-width: 250px">
 				<v-col cols="12">
-					<v-text-field
-						variant="solo"
-						hide-details
-						prepend-inner-icon="mdi-magnify"
-						label="Bạn cần tìm gì?"
-						single-line
-						density="compact"
-					/></v-col>
+					<v-form @submit.prevent="router.push({
+						name: 'search',
+						query: {
+							name: searchInput
+						},
+					})">
+						<v-text-field
+							variant="solo"
+							hide-details
+							prepend-inner-icon="mdi-magnify"
+							label="Bạn cần tìm gì?"
+							single-line
+							density="compact"
+							v-model="searchInput"
+						/>
+					</v-form>
+				</v-col>
 			</v-row>
 
 

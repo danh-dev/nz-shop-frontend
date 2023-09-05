@@ -83,7 +83,7 @@ const variantFields = ref([]);
 const previewProduct = computed(() => ({
   name: mainForm.value.name.value,
   sellPrice: mainForm.value.sellPrice.value,
-  discountPrice: mainForm.value.sellPrice.value,
+  discountPrice: mainForm.value.discountPrice.value,
 }));
 
 const submit = async () => {
@@ -94,8 +94,6 @@ const submit = async () => {
   }
   formData.append("name", mainForm.value.name.value);
   formData.append("sku", mainForm.value.sku.value.toUpperCase());
-
-  formData.append("quantity", mainForm.value.quantity.value);
 
   formData.append("origin_price", mainForm.value.originPrice.value);
   formData.append("sell_price", mainForm.value.sellPrice.value);
@@ -141,10 +139,15 @@ const submit = async () => {
         copy.endDate = copy.endDate.value;
         return copy;
       });
+      const newQuantity = temp.reduce((pre, cur) => {
+        return pre + +cur.quantity;
+      }, 0);
+      formData.append("quantity", newQuantity);
       formData.append("variants", JSON.stringify(temp));
       sendFormData(formData);
     }
     else {
+      formData.append("quantity", mainForm.value.quantity.value);
       mainForm.value.multiVariant.errorMessages = "Chưa có biến thể được tạo!";
     }
   }
@@ -217,6 +220,7 @@ const editContent = (event) => {
   // handleInput(mainForm.value.description);
 };
 
+const oldPreviewImage = ref(null);
 const previewImage = ref(null);
 const dialog = ref(false);
 
@@ -430,7 +434,7 @@ const fetchOneProductById = async () => {
         mainForm.value.endDate.value = product.endDate;
       }
 
-      previewImage.value = `${url}${product.image}`;
+      oldPreviewImage.value = `${url}${product.image}`;
       galleryArray.value = product.gallery.split("|");
       mainForm.value.description.value = product.description;
 
@@ -465,7 +469,7 @@ onMounted(fetchOneProductById);
     >
       <v-row>
         <v-col cols="12">
-          <h1>Sản phẩm mới</h1>
+          <h2>Cập nhật sản phẩm</h2>
         </v-col>
       </v-row>
 
@@ -509,7 +513,6 @@ onMounted(fetchOneProductById);
         :imageUrl="mainForm.image.value.file.length > 0 ? getImageUrl(mainForm.image.value.file[0]) : ''"
         @changeCropper="changeCropper"
         :file="mainForm.image.value.file"
-        @hideDialog="hideDialog"
       ></CropImageModal>
 
       <v-row>
@@ -551,6 +554,7 @@ onMounted(fetchOneProductById);
                 :error-messages="mainForm.quantity.errorMessages"
                 variant="outlined"
                 @update:model-value="() => handleInput(mainForm.quantity)"
+                :disabled="mainForm.multiVariant.value"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -658,7 +662,7 @@ onMounted(fetchOneProductById);
                 :height="height"
                 class="rounded-sm overflow-hidden mx-auto"
                 @click="() => { dialog = true; }"
-                src="https://dummyimage.com/600x400/000/fff"
+                :src="oldPreviewImage"
               />
             </template>
           </ProductCard>

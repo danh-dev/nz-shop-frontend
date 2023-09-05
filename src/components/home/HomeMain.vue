@@ -209,7 +209,9 @@ onMounted(() => {
 		v-for="category in categoryStore.parentCategories"
 		:key="category.id"
 	>
-		<HomeMainProductLayout v-if="category.name !== 'Phụ kiện'">
+		<HomeMainProductLayout
+			v-if="category.name !== 'Phụ kiện' && products[category.id] && products[category.id].length >= 8"
+		>
 			<template #title>
 				{{ category.name }}
 			</template>

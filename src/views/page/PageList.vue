@@ -80,33 +80,20 @@ const updatePage = (event) => {
         >
           <thead>
             <tr>
-              <th
-                class="font-weight-bold"
-                style="width: 55%;"
-              >
+              <th style="width: 55%;">
                 Tên trang
               </th>
               <!-- <th
-                class="font-weight-bold"
                 style="width: 20%"
               >
                 Tác giả
               </th> -->
-              <th
-                class="font-weight-bold"
-                style="width: 15%;"
-              >
+              <th style="width: 15%;">
                 Ngày tạo
               </th>
-              <th
-                class="font-weight-bold"
-                style="width: 15%;"
-              >
+              <th style="width: 15%;">
                 Tình trạng</th>
-              <th
-                class="font-weight-bold"
-                style="width: 10%"
-              >
+              <th style="width: 10%">
                 Chức năng
               </th>
             </tr>

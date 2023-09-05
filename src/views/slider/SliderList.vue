@@ -94,31 +94,26 @@ const updatePage = (event) => {
           <thead>
             <tr>
               <th
-                class="font-weight-bold"
                 style="width: 22.5%;"
               >
                 Tên
               </th>
               <th
-                class="font-weight-bold"
                 style="width: 22.5%;"
               >
                 Tiêu đề
               </th>
               <th
-                class="font-weight-bold"
                 style="width: 15%"
               >
                 Hình ảnh
               </th>
               <th
-                class="font-weight-bold"
                 style="width: 15%;"
               >
                 Ngày tạo
               </th>
               <th
-                class="font-weight-bold"
                 style="width: 15%;"
               >Tình trạng</th>
               <th class="font-weight-bold">

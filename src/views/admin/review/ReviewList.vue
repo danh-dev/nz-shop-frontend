@@ -131,13 +131,13 @@ onMounted(async () => {
             <tr>
                 <th
                     class="text-left"
-                    style="width: 25%;"
+                    style="width: 20%;"
                 >
                     Người đánh giá
                 </th>
                 <th
                     class="text-left"
-                    style="width: 5%;"
+                    style="width: 10%;"
                 >
                     Đánh giá
                 </th>
@@ -155,13 +155,13 @@ onMounted(async () => {
                 </th>
                 <th
                     class="text-left"
-                    style="width: 10%;"
+                    style="width: 15%;"
                 >
                     Thời gian
                 </th>
                 <th
                     class="text-left"
-                    style="width: 10%;"
+                    style="width: 15%;"
                 >
                     Chức năng
                 </th>
@@ -193,7 +193,7 @@ onMounted(async () => {
                         >{{ getProductNameById(item.product_id) }}
                         </v-tooltip>{{ getProductNameById(item.product_id) }}</div>
                 </td>
-                <td>{{ item.updated_at }}</td>
+                <td>{{ item.updated_at.slice(0, 19) }}</td>
                 <td>
                     <v-btn
                         v-if="status !== 1"

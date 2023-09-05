@@ -18,44 +18,72 @@ const route = useRoute();
 const { xs } = useDisplay();
 
 const product = ref({});
-const reviews = ref([]);
 const posts = ref([]);
-
+const products = ref([]);
+// const userData = JSON.parse(localStorage.getItem("userData") || "null");
 const reviewModal = ref(false);
-const userData = JSON.parse(localStorage.getItem("userData") || "null");
-// const review = ref("");
-// const rating = ref(null);
-// const createReview = async () => {
-// 	try {
-// 		await axios.post("reviews", {
-// 			// user_id: userData.id,
-// 			user_id: 1,
-// 			comment: review.value,
-// 			rating: rating.value,
-// 			product_id: product.value.id,
-// 		});
-// 	}
-// 	catch (e) {
-// 		console.log(e);
-// 	}
-// };
 
-const comments = ref([]);
-const comment = ref("");
-const createProductComment = async () => {
+// Create & fetch product reviews
+const review = ref("");
+const reviews = ref([]);
+const rating = ref(null);
+const createReview = async () => {
 	try {
-		await axios.post("product-comments", {
+		await axios.post("reviews", {
 			// user_id: userData.id,
-			user_id: 1,
+			user_id: 2,
 			product_id: product.value.id,
-			comment: comment.value,
+			comment: review.value,
+			rating: rating.value,
 		});
+		// fetchReviews();
 	}
 	catch (e) {
 		console.log(e);
 	}
 };
 
+const fetchReviews = async id => {
+	try {
+		const res = await axios.get(`products/${id}/reviews`);
+		if (res.status === 200) {
+			comments.value = res.data.data.reverse();
+		}
+	}
+	catch (e) {
+		console.log(e);
+	}
+};
+
+// Create & fetch product comments
+const comments = ref([]);
+const comment = ref("");
+const createProductComment = async () => {
+	try {
+		await axios.post("product-comments", {
+			// user_id: userData.id,
+			user_id: 2,
+			product_id: product.value.id,
+			comment: comment.value,
+		});
+		// fetchComments();
+	}
+	catch (e) {
+		console.log(e);
+	}
+};
+
+const fetchComments = async id => {
+	try {
+		const res = await axios.get(`products/${id}/comments`);
+		if (res.status === 200) {
+			comments.value = res.data.data.reverse();
+		}
+	}
+	catch (e) {
+		console.log(e);
+	}
+};
 const done = () => {
 	// nhiu tac vu khac
 	reviewModal.value = false;
@@ -87,30 +115,6 @@ const fetchProduct = async () => {
 	}
 };
 
-// fetch Comment
-const fetchComments = async id => {
-	try {
-		const res = await axios.get(`products/${id}/comments`);
-		if (res.status === 200) {
-			comments.value = res.data.data.reverse();
-		}
-	}
-	catch (e) {
-		console.log(e);
-	}
-};
-// fetch Reviews
-// const fetchReviews = async id => {
-// 	try {
-// 		const res = await axios.get(`products/${id}/reviews`);
-// 		if (res.status === 200) {
-// 			reviews.value = res.data.data;
-// 		}
-// 	}
-// 	catch (e) {
-// 		console.log(e);
-// 	}
-// };
 // fetch random posts
 const fetchRandomPosts = async () => {
 	try {
@@ -126,18 +130,18 @@ const fetchRandomPosts = async () => {
 };
 
 // fetch random products
-// const fetchRandomProducts = async () => {
-// 	try {
-// 		const response = await axios.get("randomProducts");
-// 		if (response.data.status === 200) {
-// 			products.value = response.data.data.filter(item => {
-// 				return !item.isDeleted;
-// 			});
-// 		}
-// 	} catch (error) {
-// 		console.log("Error: ", error);
-// 	}
-// };
+const fetchRandomProducts = async () => {
+	try {
+		const response = await axios.get("randomProducts");
+		if (response.data.status === 200) {
+			products.value = response.data.data.filter(item => {
+				return !item.isDisabled;
+			});
+		}
+	} catch (error) {
+		console.log("Error: ", error);
+	}
+};
 
 // const fetchFeedbacks = async comment => {
 // 	try {
@@ -171,14 +175,14 @@ const fetchRandomPosts = async () => {
 // });
 
 watch(product, () => {
-	// fetchReviews(product.value.id);
+	fetchReviews(product.value.id);
 	fetchComments(product.value.id);
 });
 
 onMounted(async () => {
-	fetchRandomPosts();
 	fetchProduct();
-	// fetchRandomProducts();
+	fetchRandomProducts();
+	fetchRandomPosts();
 });
 </script>
 
@@ -351,7 +355,7 @@ onMounted(async () => {
 				<v-sheet
 					elevation="3"
 					rounded="lg"
-					class="my-5 order-last flex-md-fill"
+					class="my-5 flex-md-fill"
 				>
 					<h4 class="px-4 py-2">Bình luận:</h4>
 					<v-container class="d-flex flex-column px-3">
@@ -406,7 +410,6 @@ onMounted(async () => {
 				</v-sheet>
 			</v-col>
 		</v-row>
-
 	</v-container>
 
 	<!-- Begin : Review Modal  -->
@@ -485,4 +488,5 @@ onMounted(async () => {
 	to {
 		opacity: 1;
 	}
-}</style>
+}
+</style>
