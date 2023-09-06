@@ -2,7 +2,7 @@
   <div style="min-height: inherit;
     display: grid;
     place-content: center;">
-    <v-card class="mx-auto pa-12 pb-8" elevation="8" rounded="lg" min-width="450">
+    <v-card class="mx-auto pa-12 pb-8" elevation="8" rounded="lg" width="450">
       <v-form @submit.prevent="onSubmit" ref="dataForm">
         <h2 class="text-center mb-4">Đăng ký</h2>
         <v-text-field class="my-3" v-model="full_name" density="compact" label="Họ và tên" :rules="[rule_fullname]"
@@ -73,7 +73,7 @@ const v2_captcha = ref(null);
 const errors_captcha = ref(null);
 const errors = ref();
 
-const rule_repass = computed(() => password.value === password_cf.value ? "" : "Re-Password và Password không trùng khớp");
+const rule_repass = computed(() => password.value === password_cf.value ? true : "Re-Password và Password không trùng khớp");
 
 watch(v2_captcha, () => errors_captcha.value = v2_captcha.value ? null : "Mã xác thực đã hết hạn.");
 const register = async () => {

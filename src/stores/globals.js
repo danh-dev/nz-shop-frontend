@@ -41,10 +41,17 @@ export const siteData = defineStore("siteData", () => {
         });
         const cartInfo = ref({
             cartList:[],
-            infoAddress:{},
-            coupon:"",
-            shipping:0,
-            step:0
+            infoAddress:{
+                name: "",
+                phone_number: "",
+                address: "",
+                ward: null,
+                district: null,
+                city: null
+            },
+            coupon:null,
+            shipping:{},
+            selectStep:"stepAddress"
         })
 
         const fetchSettingSite = async () => {
