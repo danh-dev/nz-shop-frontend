@@ -233,6 +233,7 @@ const crop = () => {
 
 const getUploadedImage = (e) => {
   mainForm.value.image.value.file = e;
+  mainForm.value.image.errorMessages = "";
 
   if (e.length === 0) {
     changeCropper();
@@ -612,7 +613,7 @@ const generateSku = async () => {
               />
             </template>
           </ProductCard>
-
+          <div class="text-caption text-red-darken-4 text-center">{{ mainForm.image.errorMessages }}</div>
         </v-col>
       </v-row>
 

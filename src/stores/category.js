@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "../axiosComfig";
-import { mapKeys, camelCase, lowerFirst } from "lodash";
+import { mapKeys, camelCase } from "lodash";
 import { ref, computed, getCurrentInstance, onMounted } from "vue";
 
 import getSlugByName from "../utils/getSlugByName.js";
@@ -50,7 +50,8 @@ const useCategoryStore = defineStore("category", () => {
     parentCategories,
     findBrandsOfParentCategory,
     findRecursiveCategorySlug,
-    findCategoryBySlug
+    findCategoryBySlug,
+    fetchCategories
   };
 });
 

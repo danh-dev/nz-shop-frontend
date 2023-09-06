@@ -124,6 +124,11 @@ const handleInput = (input) => {
 const editContent = event => {
   mainForm.value.description.value = event;
 };
+
+const getImageUrl = (file) => {
+  return URL.createObjectURL(file);
+};
+
 </script>
 
 <template>
@@ -151,6 +156,8 @@ const editContent = event => {
       <v-row>
         <v-col cols="12">
           <v-text-field
+            density="compact"
+            color="red-accent-4"
             v-model="mainForm.name.value"
             :label="mainForm.name.label"
             :error-messages="mainForm.name.errorMessages"
@@ -167,15 +174,24 @@ const editContent = event => {
         >
           <v-label>Ảnh hiện tại</v-label>
           <v-img
+            v-if="mainForm.image.value.length === 0"
             :src="imagePath ? `${url}${imagePath}` : ''"
             max-width="100"
           ></v-img>
+          <v-img
+            v-else
+            :src="getImageUrl(mainForm.image.value[0])"
+            max-width="100"
+          >
+          </v-img>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col cols="12">
           <v-file-input
+            density="compact"
+            color="red-accent-4"
             v-model="mainForm.image.value"
             :label="mainForm.image.label"
             :error-messages="mainForm.image.errorMessages"
@@ -201,6 +217,8 @@ const editContent = event => {
       <v-row>
         <v-col cols="6">
           <v-autocomplete
+            density="compact"
+            color="red-accent-4"
             v-model="mainForm.parentCategoryId.value"
             :items="categories"
             item-title="name"
@@ -216,6 +234,8 @@ const editContent = event => {
         </v-col>
         <v-col cols="6">
           <v-file-input
+            density="compact"
+            color="red-accent-4"
             v-if="!mainForm.parentCategoryId.value"
             v-model="mainForm.icon.value"
             :label="mainForm.icon.label"
@@ -233,6 +253,8 @@ const editContent = event => {
           </v-file-input>
           <v-checkbox
             v-else
+            density="compact"
+            color="red-accent-4"
             v-model="mainForm.isBrand.value"
             :label="mainForm.isBrand.label"
           ></v-checkbox>
