@@ -184,7 +184,7 @@ onMounted(async () => {
                         >{{ getPostTitleById(item.post_id) }}
                         </v-tooltip>{{ getPostTitleById(item.post_id) }}</div>
                 </td>
-                <td>{{ item.updated_at }}</td>
+                <td>{{ item.updated_at.slice(0, 19) }}</td>
                 <td>
                     <v-btn
                         v-if="status !== 1"

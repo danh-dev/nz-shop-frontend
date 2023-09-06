@@ -82,19 +82,17 @@ const variantFields = ref([]);
 const previewProduct = computed(() => ({
   name: mainForm.value.name.value,
   sellPrice: mainForm.value.sellPrice.value,
-  discountPrice: mainForm.value.sellPrice.value,
+  discountPrice: mainForm.value.discountPrice.value,
 }));
 
 const submit = async () => {
   const formData = new FormData();
 
   if (mainForm.value.category.value) {
-    formData.append("categoryId", mainForm.value.category.value);
+    formData.append("category_id", mainForm.value.category.value);
   }
   formData.append("name", mainForm.value.name.value);
   formData.append("sku", mainForm.value.sku.value.toUpperCase());
-
-  formData.append("quantity", mainForm.value.quantity.value);
 
   formData.append("origin_price", mainForm.value.originPrice.value);
   formData.append("sell_price", mainForm.value.sellPrice.value);
@@ -135,6 +133,10 @@ const submit = async () => {
         copy.endDate = copy.endDate.value;
         return copy;
       });
+      const newQuantity = temp.reduce((pre, cur) => {
+        return pre + +cur.quantity;
+      }, 0);
+      formData.append("quantity", newQuantity);
       formData.append("variants", JSON.stringify(temp));
       sendFormData(formData);
     }
@@ -143,6 +145,7 @@ const submit = async () => {
     }
   }
   else {
+    formData.append("quantity", mainForm.value.quantity.value);
     sendFormData(formData);
   }
 };
@@ -456,7 +459,6 @@ const generateSku = async () => {
         :imageUrl="mainForm.image.value.file.length > 0 ? getImageUrl(mainForm.image.value.file[0]) : ''"
         @changeCropper="changeCropper"
         :file="mainForm.image.value.file"
-        @hideDialog="hideDialog"
       ></CropImageModal>
 
       <v-row>
@@ -498,6 +500,7 @@ const generateSku = async () => {
                 :error-messages="mainForm.quantity.errorMessages"
                 variant="outlined"
                 @update:model-value="() => handleInput(mainForm.quantity)"
+                :disabled="mainForm.multiVariant.value"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -960,7 +963,7 @@ const generateSku = async () => {
         <v-col cols="12">
           <v-btn
             type="submit"
-            class="mt-2"
+            class="mt-2 me-2"
           >
             Submit
           </v-btn>

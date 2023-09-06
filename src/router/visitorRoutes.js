@@ -18,19 +18,24 @@ const routes = [
 	},
 	{
 		name: "categories",
-		path: "/categories/:slugs+",
+		path: "/danh-muc/:slugs+",
+		component: () => import("../views/CategoryPage.vue"),
+	},
+	{
+		name: "search",
+		path: "/tim-kiem",
 		component: () => import("../views/CategoryPage.vue"),
 	},
 	{
 		path: "login",
 		name: "login-page",
-		meta: { auth: "true" },
+		// meta: { auth: "true" },
 		component: () => import("../views/Login.vue"),
 	},
 	{
 		path: "register",
 		name: "register-page",
-		meta: { auth: "true" },
+		// meta: { auth: "true" },
 		component: () => import("../views/Register.vue"),
 	},
 	// Cart feature
@@ -45,6 +50,7 @@ const routes = [
 		component: () => import("../views/cart/CheckOut.vue"),
 	},
 	{
+		name: "404",
 		path: ":pathMatch(.*)*",
 		redirect: () => {
 			return { name: "page-404" };

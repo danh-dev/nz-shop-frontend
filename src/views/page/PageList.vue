@@ -21,7 +21,7 @@ watch(selected, () => {
 
 const fetchPage = async () => {
   try {
-    const response = await axios.get(`pages`);
+    const response = await axios.get("pages");
     if (response.data.status === 200) {
       pages.value = response.data.data.reverse();
       filteredPages.value = pages.value;
@@ -35,7 +35,7 @@ const fetchPage = async () => {
 async function deletePage(id) {
   try {
     await axios
-      .delete(`http://127.0.0.1:8000/api/pages/delete/${id}`);
+      .delete(`${url}api/pages/delete/${id}`);
     fetchPage();
   } catch (error) {
     console.log("Error delete page: ", error);
@@ -49,7 +49,7 @@ onMounted(fetchPage);
 
 // Panigation
 const page = ref(1);
-const rowsPerPage = 10;
+const rowsPerPage = 5;
 const numberOfPage = computed(() => {
   return Math.ceil(pages.value.length / rowsPerPage);
 });
@@ -61,55 +61,39 @@ const updatePage = (event) => {
 </script>
 
 <template>
-  <v-row>
+  <v-row class="">
     <v-col
       aria-colspan="12"
       md="12"
     >
-      <div>
-        <div class="d-flex justify-space-between my-5">
-          <h3 class="da">Danh sách trang</h3>
-          <!-- <v-select v-model="selected" label="Tình trạng" variant="outlined" :items="[{
-            title: 'Hoạt động', value: 0
-          }, { title: 'Đã xóa', value: 1, }]" density="compact" style="margin: 0 10%;">
-          </v-select> -->
+      <v-card class="m-card">
+        <div class="d-flex justify-space-between ma-5">
+          <h2 class="">Danh sách trang</h2>
           <v-btn
+            prepend-icon="mdi-plus"
             :to="`/admincp/page/add`"
-            color="info"
-            variant="tonal"
-            class="text-none"
           >Thêm mới</v-btn>
         </div>
         <v-table
           hover
-          class="post text-body-2 m-card my-3"
           v-if="pages.length > 0"
         >
           <thead>
             <tr>
-              <th
-                class="font-weight-bold text-center"
-                style="width: 35%;"
-              >
+              <th style="width: 55%;">
                 Tên trang
               </th>
-              <th
-                class="font-weight-bold text-center"
+              <!-- <th
                 style="width: 20%"
               >
                 Tác giả
-              </th>
-              <th
-                class="font-weight-bold text-center"
-                style="width: 20%;"
-              >
+              </th> -->
+              <th style="width: 15%;">
                 Ngày tạo
               </th>
-              <th class="font-weight-bold text-center">Tình trạng</th>
-              <th
-                class="font-weight-bold text-center"
-                style="width: 10%"
-              >
+              <th style="width: 15%;">
+                Tình trạng</th>
+              <th style="width: 10%">
                 Chức năng
               </th>
             </tr>
@@ -121,52 +105,60 @@ const updatePage = (event) => {
               :key="item.id"
             >
               <td>
-                <div class="text-uppercase">{{ item.name }}</div>
-            </td>
-            <td class="text-center">{{ item.author }}</td>
-            <td class="text-center">{{ item.created_at.slice(0, 10) }}</td>
-            <td class="text-center">{{ item.isDeleted ? 'Đã xóa' : 'Hoạt động' }}</td>
-            <td>
-              <div class="d-flex align-center justify-space-between">
-                <v-btn
-                  @click="editPage(item.id)"
-                  size="x-small"
-                  variant="tonal"
-                  icon="mdi-pencil"
-                  color="success"
-                  class="text-none"
-                >
-                </v-btn>
-                <v-btn
-                  @click="deletePage(item.id)"
-                  size="x-small"
-                  variant="tonal"
-                  icon="mdi-trash-can-outline"
-                  color="red-accent-4"
-                  class="text-none"
-                  onclick="return confirm('Bạn muốn xóa bài viết này ?')"
-                >
-                </v-btn>
-                <v-btn
-                  size="x-small"
-                  variant="text"
-                  icon="mdi-dots-vertical"
-                  color=""
-                  class="text-none"
-                >
-                </v-btn>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
-      <GlobalPagination
-        v-if="pages.length > rowsPerPage"
-        :page="page"
-        :numberOfPages="numberOfPage"
-        @update:page="updatePage"
-      />
-    </div>
-  </v-col>
-</v-row></template>
+                <div class="extra">{{ item.name }}</div>
+              </td>
+              <!-- <td>{{ item.author }}</td> -->
+              <td>{{ item.created_at.slice(0, 10) }}</td>
+              <td>{{ item.isDeleted ? 'Đã xóa' : 'Hoạt động' }}</td>
+              <td>
+                <div class="d-flex align-center justify-space-between">
+                  <v-btn
+                    @click="editPage(item.id)"
+                    size="x-small"
+                    variant="tonal"
+                    icon="mdi-pencil"
+                    color="success"
+                    class="text-none"
+                  >
+                  </v-btn>
+                  <v-btn
+                    @click="deletePage(item.id)"
+                    size="x-small"
+                    variant="tonal"
+                    icon="mdi-trash-can-outline"
+                    color="red-accent-4"
+                    class="text-none"
+                    onclick="return confirm('Bạn muốn xóa trang này ?')"
+                  >
+                  </v-btn>
+                  <v-btn
+                    size="x-small"
+                    variant="text"
+                    icon="mdi-dots-vertical"
+                    color=""
+                    class="text-none"
+                  >
+                  </v-btn>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </v-table>
+        <v-alert
+          v-else
+          density="compact"
+          text="Không có thông tin trang"
+          type="info"
+          variant="tonal"
+        ></v-alert>
+        <GlobalPagination
+          v-if="pages.length > rowsPerPage"
+          :page="page"
+          :numberOfPages="numberOfPage"
+          @update:page="updatePage"
+        />
+      </v-card>
+    </v-col>
+  </v-row>
+</template>
 <style></style>

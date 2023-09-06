@@ -66,7 +66,7 @@ const fetchData = async () => {
   loading.value = true;
   status.value = null;
   try {
-    const res = await axios.get(`categories`);
+    const res = await axios.get("categories");
     if (res.status === 200) {
       categories.value = res.data.data.map(category => mapKeys(category, (value, key) => camelCase(key)));
     }
@@ -224,28 +224,16 @@ onMounted(fetchData);
     >
       <thead>
         <tr>
-          <th
-            class="text-left font-weight-bold"
-            style="width: 15%;"
-          >
+          <th style="width: 15%;">
             Tên danh mục
           </th>
-          <th
-            class="text-left font-weight-bold"
-            style="width: 10%"
-          >
+          <th style="width: 10%">
             Hình ảnh
           </th>
-          <th
-            class="text-left font-weight-bold"
-            style="width: 10%"
-          >
+          <th style="width: 10%">
             Icon
           </th>
-          <th
-            class="text-left font-weight-bold"
-            style="width: 10%"
-          >
+          <th style="width: 10%">
             Chức năng
           </th>
         </tr>

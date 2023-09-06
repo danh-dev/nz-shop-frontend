@@ -1,100 +1,135 @@
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch } from "vue";
 import axios from "../../../axiosComfig";
 import { mapKeys, camelCase, lowerFirst } from "lodash";
-import useCategoryStore from "@/stores/category";
 import GlobalPagination from "../../../components/globals/GlobalPagination.vue";
-import GlobalLoader from "../../../components/globals/GlobalLoader.vue";
+import useCategoryStore from "@/stores/category";
+
+import { siteData } from "@/stores/globals.js";
+const siteStore = siteData();
 
 const url = import.meta.env.VITE_PUBLIC_URL;
 const categoryStore = useCategoryStore();
 
-const loading = ref(false);
-const status = ref(null);
+const headers = [
+  {
+    title: "Tên",
+    align: "start",
+    key: "name",
+  },
+  {
+    title: "Hình ảnh",
+    sortable: false,
+    key: "image",
+    align: "start"
+  },
+  {
+    title: "Giá",
+    key: "price",
+    align: "start"
+  },
+  {
+    title: "Trạng thái",
+    key: "isDisabled",
+    align: "start"
+  },
+  {
+    title: "Chức năng",
+    sortable: false,
+    key: "action",
+    align: "start"
+  },
+];
 
-const alert = ref([
-  {
-    text: "",
-    show: false,
-  },
-  {
-    text: "",
-    show: false,
-  },
-]);
+const products = ref([]);
+const rowsPerPage = 7;
+const numberOfPages = ref(0);
+const currentPage = ref(1);
+
+const alert = ref("");
 
 const tempId = ref(0);
+const tempStatus = ref(null);
 
-const filter = ref([
+const statuses = [
+  {
+    title: "Tất cả",
+    value: null,
+  },
   {
     title: "Đang hoạt động",
-    value: 0
+    value: false,
   },
   {
     title: "Đã xoá",
-    value: 1,
+    value: true,
+  }
+];
+const status = ref(null);
+
+const categories = ref([
+  {
+    title: "Tất cả",
+    value: null,
   }
 ]);
+const category = ref(null);
 
-const products = ref([]);
-const filteredProducts = ref([]);
-const sortedProducts = ref([]);
-const categoryId = ref(null);
-const page = ref(1);
-const sort = ref({
-  column: "",
-  ascending: 0,
-});
-const selected = ref(0);
-const rowsPerPage = 5;
+const searchInput = ref("");
+const name = ref(null);
 
-const numberOfPages = computed(() => {
-  return Math.ceil(products.value.length / rowsPerPage);
-});
-
-const sortIcon = computed(() => {
-  return sort.value.ascending === 0 ? "" : sort.value.ascending < 0 ? "mdi-chevron-down" : "mdi-chevron-up";
-});
-
-
-const updatePage = event => {
-  page.value = event;
-};
-
-watch(selected, () => {
-  filteredProducts.value = products.value.filter(item => item.categoryId === selected.value);
-  sortedProducts.value = filteredProducts.value;
-});
-
-watch([() => sort.value.column, () => sort.value.ascending], () => {
-  sortedProducts.value = [...filteredProducts.value].sort((a, b) => a[sort.value.column] > b[sort.value.column] ? sort.value.ascending * 1 : sort.value.ascending * -1);
-});
-
-watch(() => categoryStore.parentCategories, () => {
-  selected.value = categoryStore.parentCategories[0].id;
-});
-
-const handleDeleteRecoverButton = (id, name) => {
-  const action = status.value ? "Khôi phục" : "Xoá";
-  alert.value[0].text = `${action} sản phẩm ${name} sẽ ${lowerFirst(action)} tất cả các biến thể của sản phẩm này. Bạn chắc chắn chứ?`;
-  alert.value[1].text = `${action} thành công!`;
-  alert.value[0].show = true;
-  alert.value[1].show = false;
-  tempId.value = id;
-};
-
-const confirmFirstAlert = async () => {
-  alert.value[0].show = false;
+const fetchProducts = async () => {
   try {
-    const action = status.value ? "recover" : "delete";
-    const res = await axios.put(`products/${action}/${tempId.value}`);
+    let url = `product-pagination/?page=${currentPage.value}&per_page=${rowsPerPage}`;
+    if (status.value !== null) {
+      url += `&is_disabled=${status.value}`;
+    }
+    if (category.value !== null) {
+      url += `&category_id=${category.value}`;
+    }
+    if (name.value !== null) {
+      url += `&name=${name.value}`;
+    }
+    siteStore.hasLoading();
+    const res = await axios.get(url);
 
     if (res.status === 200) {
-      await fetchData();
-      alert.value[1].show = true;
-      setTimeout(() => {
-        alert.value[1].show = false;
-      }, 5000);
+      products.value = res.data.data.products.map(product => mapKeys(product, (value, key) => camelCase(key)));
+      numberOfPages.value = res.data.data.numberOfPages;
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+  finally {
+    siteStore.doneLoading();
+  }
+};
+
+const updatePage = event => {
+  currentPage.value = event;
+};
+
+const confirmAlert = async () => {
+
+  try {
+    const res = await axios.delete(`products/delete/${tempId.value}`);
+
+    if (res.status === 200) {
+      await fetchProducts();
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+  alert.value = "";
+};
+
+const handleToggleButton = async id => {
+  try {
+    const res = await axios.get(`products`);
+    if (res.status === 200) {
+      products.value = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
     }
   }
   catch (e) {
@@ -102,134 +137,149 @@ const confirmFirstAlert = async () => {
   }
 };
 
-const fetchData = async () => {
-  loading.value = true;
-  status.value = null;
-
-  try {
-    const res = await axios.get(`products`);
-    if (res.status === 200) {
-      products.value = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
-    }
-
-    filteredProducts.value = products.value;
-    sortedProducts.value = filteredProducts.value;
-
-    status.value = 0;
-    loading.value = false;
-  }
-  catch (e) {
-    loading.value = false;
-  }
+const handleDeleteButton = async (id, name) => {
+  tempId.value = id;
+  alert.value = `Bạn có muốn xoá sản phẩm ${name} không?`;
 };
 
-const getCategoryNameById = id => {
-  return categoryStore.parentCategories.find(item => item.id === id)?.name;
+const search = () => {
+  name.value = searchInput.value;
 };
 
-onMounted(fetchData);
+watch([status, category, name], () => {
+  currentPage.value = 1;
+});
+watch([currentPage, status, category, name], fetchProducts);
+watch(() => categoryStore.categories, (newVal) => {
+  for (const category of newVal) {
+    categories.value.push({
+      title: category.name,
+      value: category.id,
+    });
+  }
+});
+
+onMounted(fetchProducts);
 </script>
 
 <template>
-  <div>
-    <div class="d-flex align-center my-5">
-      <h1>Danh sách sản phẩm</h1>
-      <!-- <v-autocomplete
-        prepend-inner-icon="mdi-list-box-outline"
-        density="compact"
-        label="Danh mục"
-        :items="categories"
-        item-title="name"
-        item-value="id"
-        v-model="selected"
-        variant="outlined"
-        hide-no-data
-        hide-details
-        style="max-width: 500px;"
-      ></v-autocomplete> -->
-      <v-btn
-        prepend-icon="mdi-plus"
-        class="ms-auto"
-        :to="{
-          name: 'admin-product-create',
-
-        }"
+  <v-container>
+    <v-row>
+      <v-col
+        cols="12"
+        class="d-flex align-center"
       >
-        Thêm mới
-      </v-btn>
-    </div>
-    <div class="d-flex align-center my-5">
-      <v-autocomplete
-        class="ms-auto"
-        prepend-inner-icon="mdi-list-box-outline"
-        density="compact"
-        label="Trạng thái"
-        :items="filter"
-        v-model="status"
-        variant="outlined"
-        hide-no-data
-        hide-details
-        style="max-width: 500px;"
-      ></v-autocomplete>
-    </div>
-    <v-alert
-      type="warning"
-      :text="alert[0].text"
-      v-model="alert[0].show"
-      variant="tonal"
-    >
-      <template #append>
+        <h2>Danh sách sản phẩm</h2>
         <v-btn
+          prepend-icon="mdi-plus"
+          class="ms-auto"
+          :to="{
+            name: 'admin-product-create',
+          }"
+        >
+          Thêm mới
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col
+        cols="6"
+        sm="4"
+      >
+        <v-autocomplete
+          prepend-inner-icon="mdi-list-box-outline"
           density="compact"
-          color="red-accent-4"
-          icon="mdi-window-close"
-          variant="flat"
-          class="mr-2"
-          @click="alert[0].show = false"
-        ></v-btn>
-        <v-btn
+          label="Danh mục"
+          :items="categories"
+          v-model="category"
+          variant="outlined"
+          hide-details
+        ></v-autocomplete>
+      </v-col>
+      <v-col
+        cols="6"
+        sm="4"
+      >
+        <v-select
           density="compact"
-          color="success"
-          icon="mdi-check"
-          variant="flat"
-          @click="confirmFirstAlert"
-        ></v-btn>
-      </template>
-    </v-alert>
-    <v-alert
-      type="success"
-      :text="alert[1].text"
-      v-model="alert[1].show"
-      variant="tonal"
-      closable
-    >
-    </v-alert>
-    <v-table
+          label="Trạng thái"
+          :items="statuses"
+          v-model="status"
+          variant="outlined"
+          hide-details
+        ></v-select>
+      </v-col>
+      <v-col>
+        <v-text-field
+          v-model="searchInput"
+          density="compact"
+          append-inner-icon="mdi-magnify"
+          label="Tìm kiếm theo tên"
+          variant="outlined"
+          hide-details
+          clearable
+          @click:append-inner="search"
+          @keyup.enter="search"
+        ></v-text-field>
+
+      </v-col>
+    </v-row>
+    <v-row v-if="alert">
+      <v-col>
+        <v-alert
+          type="warning"
+          :text="alert"
+          :model-value="!!alert"
+          variant="tonal"
+        >
+          <template #append>
+            <v-btn
+              density="compact"
+              color="red-accent-4"
+              icon="mdi-window-close"
+              variant="flat"
+              class="mr-2"
+              @click="alert = ''"
+            ></v-btn>
+            <v-btn
+              density="compact"
+              color="success"
+              icon="mdi-check"
+              variant="flat"
+              @click="confirmAlert"
+            ></v-btn>
+          </template>
+        </v-alert>
+      </v-col>
+    </v-row>
+
+
+    <!-- <v-table
       hover
       v-if="products.length > 0"
     >
       <thead>
         <tr>
           <th
-            class="text-left font-weight-bold"
-            style="width: 15%;"
+            class="font-weight-bold"
+            style="width: 50%;"
           >
             Tên sản phẩm
           </th>
           <th
-            class="text-left font-weight-bold"
+            class="font-weight-bold"
             style="width: 10%"
           >
             Hình ảnh
           </th>
           <th
-            class="text-left font-weight-bold"
+            class="font-weight-bold"
             style="width: 10%"
           >
             Danh mục
           </th>
           <th
-            class="text-left font-weight-bold"
+            class="font-weight-bold"
             style="width: 10%"
           >
             Chức năng
@@ -254,16 +304,51 @@ onMounted(fetchData);
             <div class="more">{{ getCategoryNameById(item.categoryId) }}</div>
           </td>
           <td>
-            <div class="d-flex">
-              <v-btn
-                size="small"
-                variant="tonal"
-                :icon="status ? 'mdi-restore' : 'mdi-trash-can-outline'"
-                :color="status ? 'success' : 'red-accent-4'"
-                @click="() => handleDeleteRecoverButton(item.id, item.name)"
-              >
-              </v-btn>
+            
+          </td>
+        </tr>
+      </tbody>
+    </v-table>
 
+    <v-alert
+      v-else
+      density="compact"
+      text="Không có sản phẩm"
+      type="info"
+      variant="tonal"
+    ></v-alert> -->
+    <v-row>
+      <v-col>
+        <v-data-table
+          :items-per-page="rowsPerPage"
+          :page="currentPage"
+          :headers="headers"
+          :items="products"
+          class="elevation-1"
+          item-value="name"
+          hover
+          no-data-text="Không có sản phẩm!"
+        >
+          <!-- <template #item.price="{item}">
+
+          </template> -->
+          <template #item.image="{ item }">
+            <v-img
+              :src="`${url}${item.columns.image}`"
+              width="60"
+            ></v-img>
+          </template>
+          <template #item.isDisabled="{ item }">
+
+            <v-switch
+              color="red-accent-4"
+              :model-value="!item.raw.isDisabled"
+              @update:modelValue="() => handleToggleButton(item.raw.id)"
+              hide-details
+            ></v-switch>
+          </template>
+          <template #item.action="{ item }">
+            <div class="d-flex">
               <v-btn
                 size="small"
                 variant="tonal"
@@ -272,7 +357,7 @@ onMounted(fetchData);
                 :to="{
                   name: 'admin-product-detail',
                   params: {
-                    id: item.id,
+                    id: item.raw.id,
                   },
                 }"
               >
@@ -281,43 +366,45 @@ onMounted(fetchData);
                 size="small"
                 variant="tonal"
                 icon="mdi-pencil"
-                color="primary"
+                color="success"
                 :to="{
                   name: 'admin-product-update',
                   params: {
-                    id: item.id,
+                    id: item.raw.id,
                   },
                 }"
               >
               </v-btn>
+              <v-btn
+                v-if="item.raw.isDisabled"
+                size="small"
+                variant="tonal"
+                icon="mdi-trash-can-outline"
+                color="red-accent-4"
+                @click="() => handleDeleteButton(item.raw.id, item.raw.name)"
+              >
+              </v-btn>
             </div>
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
-    <v-alert
-      v-else
-      density="compact"
-      text="Không có sản phẩm"
-      type="info"
-      variant="tonal"
-    ></v-alert>
+          </template>
+          <template #bottom>
+            <GlobalPagination
+              v-if="numberOfPages > 1"
+              :numberOfPages="numberOfPages"
+              :page="currentPage"
+              @update:page="updatePage"
+            ></GlobalPagination>
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
 
-    <GlobalPagination
-      v-if="products.length > rowsPerPage"
-      :numberOfPages="numberOfPages"
-      :page="page"
-      @update:page="updatePage"
-    ></GlobalPagination>
-
-    <GlobalLoader :loading="loading"></GlobalLoader>
-  </div>
+  </v-container>
 </template>
 <style>
 .more {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   overflow: hidden;
 }
 </style>

@@ -55,7 +55,7 @@ function editContent(event) {
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="newPage.name"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20"
@@ -70,7 +70,7 @@ function editContent(event) {
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="newPage.author"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
             :counter="20"
@@ -84,18 +84,19 @@ function editContent(event) {
         cols="12"
         md="12"
       >
-        <v-textarea
+        <!-- <v-textarea
           name="editor"
-          variant="underlined"
+          variant="outlined"
           v-model="newPage.content"
-          :rules="[v => !!v || 'Vui lòng không để trống & không vượt quá 10000 ký tự..']"
-          :counter="10000"
+          :rules="[v => !!v || 'Vui lòng không để trống']"
           label="Nội dung trang:"
         >
-        </v-textarea>
+        </v-textarea> -->
+        <v-label class="text-caption">Nội dung trang:</v-label>
         <ContentEditor
           :editorContent="newPage.content"
           @editContent="editContent"
+          :rules="[v => !!v || 'Vui lòng không để trống']"
         />
       </v-col>
     </v-row>
@@ -105,17 +106,14 @@ function editContent(event) {
         md="12"
       >
         <v-btn
-          class="me-2"
-          type="submit"
-          color="info"
-          variant="tonal"
-        >Đăng bài</v-btn>
-        <v-btn
-          :to="`/admincp/page`"
-          type="reset"
-          color="text-darken-3"
-          variant="tonal"
-        >Hủy bỏ</v-btn>
+            class="me-2"
+            type="submit"
+          >Hoàn tất</v-btn>
+          <v-btn
+            :to="`/admincp/page`"
+            href=""
+            type="reset"
+          >Hủy bỏ</v-btn>
       </v-col>
     </v-row>
   </v-container>
