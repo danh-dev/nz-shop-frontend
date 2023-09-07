@@ -2,22 +2,19 @@
 import { ref, computed, onMounted } from "vue";
 import axios from "../../axiosComfig";
 import getSlugByName from "../../utils/getSlugByName.js";
-//import NewsSideBar from "../../components/news/NewsSideBar.vue";
 import GlobalPagination from "../../components/globals/GlobalPagination.vue";
-// import GlobalLoader from "../../components/globals/GlobalLoader.vue";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 
 const { xs } = useDisplay();
-const loading = ref(false);
 // Post API
 const url = import.meta.env.VITE_PUBLIC_URL;
 const posts = ref([]);
-// get posts []
+const randomPosts = ref([]);
+
+// fetch all posts
 const fetchPost = async () => {
-  loading.value = true;
   try {
     const response = await axios.get(`${url}api/posts`);
-    loading.value = false;
     if (response.data.status === 200) {
       posts.value = response.data.data.reverse().filter(item => {
         return !item.isDeleted;
@@ -25,11 +22,27 @@ const fetchPost = async () => {
     }
   } catch (error) {
     console.log("Error: ", error);
-    loading.value = false;
   }
 };
 
-onMounted(fetchPost);
+// fetch random posts
+const fetchRandomPosts = async () => {
+  try {
+    const response = await axios.get("randomPosts");
+    if (response.data.status === 200) {
+      randomPosts.value = response.data.data.filter(item => {
+        return !item.isDeleted;
+      });
+    }
+  } catch (error) {
+    console.log("Error: ", error);
+  }
+};
+
+onMounted(async () => {
+  fetchPost();
+  fetchRandomPosts();
+});
 
 // Pagination
 const page = ref(1);
@@ -55,7 +68,7 @@ const updatePage = (event) => {
         class="border rounded-xl"
       >
         <v-carousel-item
-          v-for="item in posts.slice(1, 6)"
+          v-for="item in randomPosts"
           :key="item.id"
           :style="xs ? { aspectRatio: 16 / 9 } : { aspectRatio: 3 / 2 }"
         >
@@ -65,7 +78,7 @@ const updatePage = (event) => {
           >
             <img
               class="w-75 h-75 rounded-xl"
-              :src="`${url}${item.image}`"
+              :src="`${url}${item.image}` || 'https://th.bing.com/th/id/OIP.AC9frN1qFnn-I2JCycN8fwHaEK?w=312&h=180&c=7&r=0&o=5&dpr=1.1&pid=1.7'"
               :alt="item.title"
             />
             <div class="px-3 text-justify">
@@ -73,10 +86,11 @@ const updatePage = (event) => {
                 :href="`/news/${getSlugByName(item.title)}`"
                 class="text-body font-weight-bold"
               >
-                {{ item.title }}</a>
-              <p class="py-3 text-body-2">
-                {{ item.description }}
-              </p>
+                {{ item.title }}
+                <p class="py-3 text-body-2">
+                  {{ item.description }}
+                </p>
+              </a>
             </div>
           </v-sheet>
         </v-carousel-item>
@@ -132,7 +146,7 @@ const updatePage = (event) => {
       <v-sheet>
         <h4 class="px-2 py-1 text-danger text-right">Xem nhiều tuần qua</h4>
         <div
-          v-for="item in posts.slice(6, 10)"
+          v-for="item in randomPosts"
           :key="item.id"
           class="my-2 w-75 float-right"
         >
@@ -170,4 +184,5 @@ const updatePage = (event) => {
 <style scoped>
 a:hover {
   color: #c50000;
-}</style>
+}
+</style>

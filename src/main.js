@@ -20,7 +20,8 @@ const vuetify = createVuetify({
 	},
 	icons: {
 		defaultSet: "mdi",
-	}, defaults: {},
+	},
+	defaults: {},
 });
 
 const pinia = createPinia();

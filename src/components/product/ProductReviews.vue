@@ -12,7 +12,7 @@ const props = defineProps({
 });
 
 
-const more = ref(false);
+const moreReview = ref(false);
 
 const averageRating = computed(() => {
 	let totalRating = 0;
@@ -30,14 +30,14 @@ const percentReviews = rating => {
 <template>
 	<v-sheet>
 		<v-sheet
-			class="my-4 d-flex flex-column py-3 v-rating"
+			class="my-2 d-flex flex-column v-rating"
 			elevation="3"
 			width="100%"
 			rounded="lg"
 		>
 
 			<div class="d-flex align-center flex-column">
-				<h4 class="d-flex justify-center">Đánh giá & nhận xét</h4>
+				<h3 class="pt-5 d-flex justify-center text-uppercase">Đánh giá & nhận xét</h3>
 				<div class="text-h2 mt-3">
 					{{ averageRating }}
 					<span class="text-h6 ml-n3">/5</span>
@@ -94,68 +94,69 @@ const percentReviews = rating => {
 				<v-btn
 					id="reviewModalButton"
 					color="#d50000"
-					class="mb-5"
+					class="mt-2"
 				>
 					Đánh giá ngay
 				</v-btn>
 			</v-sheet>
 
 			<!--Begin: Reviews sản phẩm -->
-			<v-container
-				v-for="review in reviews"
-				:key="review.id"
-			>
-				<v-sheet class="d-flex justify-space-between py-2">
-					<v-sheet class="d-flex align-center">
-						<p class="bg-secondary rounded pa-2">{{ review.full_name.slice(0, 1) }}</p>
-						<h5 class="px-2">{{ review.full_name }}</h5>
-					</v-sheet>
-					<p class="text-caption">{{ review.created_at.slice(0, 19) }}</p>
-				</v-sheet>
-
+			<v-container>
 				<v-sheet
-					class="pa-2 text-caption d-flex justify-center flex-column rounded"
-					style="background-color: rgb(247, 243, 243); margin-left: 5%"
+					v-for="review in reviews"
+					:key="review.id"
 				>
-					<p class="d-flex align-center">
-						<b>Đánh giá:</b>
-						<v-rating
-							:model-value="review.rating"
-							color="yellow-darken-3"
-							readonly
-							density="compact"
-							size="small"
-							class="mx-2"
-						>
-						</v-rating>
-					</p>
-					<p class="more"><b>Nhận xét:</b> {{ review.comment }}</p>
+					<v-sheet class="d-flex justify-space-between py-2">
+						<v-sheet class="d-flex align-center">
+							<p class="bg-secondary rounded pa-2">{{ review.full_name.slice(0, 1) }}</p>
+							<h5 class="px-2">{{ review.full_name }}</h5>
+						</v-sheet>
+						<p class="text-caption">{{ review.created_at.slice(0, 19) }}</p>
+					</v-sheet>
+
+					<v-sheet
+						class="pa-2 text-caption d-flex justify-center flex-column rounded"
+						style="background-color: rgb(247, 243, 243); margin-left: 5%"
+					>
+						<p class="d-flex align-center">
+							<b>Đánh giá:</b>
+							<v-rating
+								:model-value="review.rating"
+								color="yellow-darken-3"
+								readonly
+								density="compact"
+								size="small"
+								class="mx-2"
+							>
+							</v-rating>
+						</p>
+						<p class="more"><b>Nhận xét:</b> {{ review.comment }}</p>
+					</v-sheet>
 				</v-sheet>
 			</v-container>
-			<!--End: Reviews sản phẩm -->
 
-			<v-sheet
-				class="mt-4"
-				v-if="!more"
-			>
-				<v-btn
-					@click="more = true"
-					href=""
-					location="center"
-					color="red-accent-4"
-					class="text-white"
-					append-icon="mdi-chevron-down"
-				>
-					Xem tất cả đánh giá
-				</v-btn>
-			</v-sheet>
-
-			<v-sheet
+			<v-sheet>
+				<div
 					class="mt-4"
-					v-if="more"
+					v-if="!moreReview && reviews.length > 5"
 				>
 					<v-btn
-						@click="more = false"
+						@click="moreReview = true"
+						location="center"
+						color="red-accent-4"
+						class="text-white"
+						append-icon="mdi-chevron-down"
+					>
+						Xem thêm đánh giá
+					</v-btn>
+				</div>
+
+				<div
+					class="mt-4"
+					v-if="moreReview"
+				>
+					<v-btn
+						@click="moreReview = false"
 						href=""
 						location="center"
 						color="red-accent-4"
@@ -164,7 +165,9 @@ const percentReviews = rating => {
 					>
 						Thu gọn
 					</v-btn>
-				</v-sheet>
+				</div>
+			</v-sheet>
+
 		</v-sheet>
 	</v-sheet>
 </template>
@@ -174,4 +177,5 @@ const percentReviews = rating => {
 	white-space: wrap;
 	/* overflow: hidden; */
 	/* text-overflow: ellipsis; */
-}</style>
+}
+</style>
