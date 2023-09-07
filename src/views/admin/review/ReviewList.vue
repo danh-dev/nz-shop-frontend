@@ -1,110 +1,131 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import axios from "../../../axiosComfig";
+import { mapKeys, camelCase } from "lodash";
+import GlobalPagination from "../../../components/globals/GlobalPagination.vue";
 
+import { siteData } from "@/stores/globals.js";
+const siteStore = siteData();
+
+const headers = [
+    {
+        title: "Người đánh giá",
+        align: "start",
+        sortable: false,
+        key: "fullName",
+    },
+    {
+        title: "Đánh giá",
+        sortable: false,
+        key: "rating",
+        align: "start"
+    },
+    {
+        title: "Nội dung",
+        sortable: false,
+        key: "comment",
+        align: "start"
+    },
+    {
+        title: "Tên sản phẩm",
+        sortable: false,
+        key: "name",
+        align: "start"
+    },
+    {
+        title: "Thời gian",
+        key: "updatedAt",
+        align: "start"
+    },
+    {
+        title: "Đã duyệt / Chờ duyệt",
+        key: "isApproved",
+        align: "start"
+    },
+    {
+        title: "Chức năng",
+        sortable: false,
+        key: "action",
+        align: "start"
+    },
+];
 const reviews = ref([]);
-const filteredReviews = ref([]);
-const users = ref([]);
-const products = ref([]);
+const rowsPerPage = 7;
+const numberOfPages = ref(0);
+const currentPage = ref(1);
 
-const status = ref(0);
+const alert = ref("");
+const tempId = ref(0);
+
+const status = ref(null);
 const statuses = [
     {
-        title: "Tất cả review",
-        value: 0,
+        title: "Tất cả",
+        value: null,
     },
     {
         title: "Đã duyệt",
-        value: 1,
+        value: false,
     },
     {
         title: "Chờ duyệt",
-        value: 2,
+        value: true,
     }
 ];
 
-watch([status, reviews], () => {
-    switch (status.value) {
-        case 0:
-            filteredReviews.value = reviews.value;
-            break;
-        case 1:
-            filteredReviews.value = reviews.value.filter(item => item.status === "approved");
-            break;
-        case 2:
-            filteredReviews.value = reviews.value.filter(item => item.status === "pending");
-            break;
-    }
-});
-
-const fetchUsers = async () => {
-    try {
-        const res = await axios.get("users");
-        if (res.status === 200) {
-            users.value = res.data.data;
-        }
-        if (res.status === 204) {
-            console.log("ko co gi");
-        }
-    }
-    catch (e) {
-        console.log(e);
-    }
-};
-
-const fetchProducts = async () => {
-    try {
-        const res = await axios.get("products");
-        if (res.status === 200) {
-            products.value = res.data.data;
-        }
-        if (res.status === 204) {
-            console.log("ko co gi");
-        }
-    }
-    catch (e) {
-        console.log(e);
-    }
-};
-
 const fetchReviews = async () => {
     try {
-        const res = await axios.get("reviews");
-        if (res.status === 200) {
-            reviews.value = res.data.data;
+        let url = `review-pagination/?page=${currentPage.value}&per_page=${rowsPerPage}`;
+        if (status.value !== null) {
+            url += `&is_approved=${status.value}`;
         }
-        if (res.status === 204) {
-            console.log("ko co gi");
+        siteStore.hasLoading();
+        const res = await axios.get(url);
+
+        if (res.status === 200) {
+            reviews.value = res.data.data.reviews.map(comment => mapKeys(comment, (value, key) => camelCase(key)));
+            numberOfPages.value = res.data.data.numberOfPages;
         }
     }
     catch (e) {
         console.log(e);
     }
-
+    finally {
+        siteStore.doneLoading();
+    }
 };
 
-const getUserNameById = id => users.value.find(item => item.id === id)?.full_name;
-const getProductNameById = id => products.value.find(item => item.id === id)?.name;
 
-const handleCheckButton = async id => {
+const updatePage = event => {
+    currentPage.value = event;
+};
+
+const handleDeleteButton = async (id) => {
+    tempId.value = id;
+    alert.value = "Bạn có muốn xoá bình luận này không?";
+};
+
+const confirmAlert = async () => {
+
     try {
-        const res = await axios.put(`http://127.0.0.1:8000/api/reviews/approve/${id}`);
+        const res = await axios.delete(`reviews-comments/delete/${tempId.value}`);
+
         if (res.status === 200) {
-            await fetchReviews();
-            console.log(res.data.message);
+            fetchReviews();
         }
     }
     catch (e) {
         console.log(e);
     }
+    alert.value = "";
 };
 
-const handleDeleteButton = async id => {
+const handleToggleButton = async id => {
     try {
-        const res = await axios.put(`http://127.0.0.1:8000/api/reviews/delete/${id}`);
+        const res = await axios.put(`reviews/toggleApprove/${id}`);
+
         if (res.status === 200) {
-            await fetchReviews();
-            console.log(res.data.message);
+            fetchReviews();
         }
     }
     catch (e) {
@@ -112,129 +133,121 @@ const handleDeleteButton = async id => {
     }
 };
 
-onMounted(async () => {
-    await fetchReviews();
-    await fetchUsers();
-    await fetchProducts();
+watch(status, () => {
+    currentPage.value = 1;
 });
+watch([currentPage, status], fetchReviews);
+
+onMounted(fetchReviews);
 </script>
-
 <template>
-    <h2>Danh sách đánh giá</h2>
-    <v-select
-        label="Trạng thái"
-        v-model="status"
-        :items="statuses"
-    ></v-select>
-    <v-table>
-        <thead>
-            <tr>
-                <th
-                    class="text-left"
-                    style="width: 25%;"
-                >
-                    Người đánh giá
-                </th>
-                <th
-                    class="text-left"
-                    style="width: 5%;"
-                >
-                    Đánh giá
-                </th>
-                <th
-                    class="text-left"
-                    style="width: 25%;"
-                >
-                    Nội dung
-                </th>
-                <th
-                    class="text-left"
-                    style="width: 25%;"
-                >
-                    Sản phẩm
-                </th>
-                <th
-                    class="text-left"
-                    style="width: 10%;"
-                >
-                    Thời gian
-                </th>
-                <th
-                    class="text-left"
-                    style="width: 10%;"
-                >
-                    Trạng Thái
-                </th>
-                <th
-                    class="text-left"
-                    style="width: 10%;"
-                >
-                    Chức năng
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr
-                v-for="item in filteredReviews"
-                :key="item.name"
+    <v-container>
+        <v-row>
+            <v-col
+                cols="12"
+                class="d-flex align-center"
             >
-                <td>{{ getUserNameById(item.user_id) }}</td>
-                <td>{{ item.rating }}</td>
-                <td>
-                    <div class="review"><v-tooltip
-                            width="350px"
-                            activator="parent"
-                            location="top"
-                            attach
-                        >{{ item.comment }}
-                        </v-tooltip>
-                        {{ item.comment }}</div>
-                </td>
-                <td>
-                    <div class="review"><v-tooltip
-                            width="350px"
-                            activator="parent"
-                            location="top"
-                            attach
-                        >{{ getProductNameById(item.product_id) }}
-                        </v-tooltip>{{ getProductNameById(item.product_id) }}</div>
-                </td>
-                <td>{{ item.updated_at }}</td>
-                <td>
-                    <v-chip variant="outlined">
-                        {{ item.status === "pending" ? "Chờ duyệt" : "Đã duyệt" }}
-                    </v-chip>
+                <h2>Danh sách đánh giá</h2>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col
+                cols="6"
+                sm="4"
+            >
+                <v-select
+                    density="compact"
+                    label="Trạng thái"
+                    :items="statuses"
+                    v-model="status"
+                    variant="outlined"
+                    hide-details
+                ></v-select>
+            </v-col>
+        </v-row>
+        <v-row v-if="alert">
+            <v-col>
+                <v-alert
+                    type="warning"
+                    :text="alert"
+                    :model-value="!!alert"
+                    variant="tonal"
+                >
+                    <template #append>
+                        <v-btn
+                            density="compact"
+                            color="red-accent-4"
+                            icon="mdi-window-close"
+                            variant="flat"
+                            class="mr-2"
+                            @click="alert = ''"
+                        ></v-btn>
+                        <v-btn
+                            density="compact"
+                            color="success"
+                            icon="mdi-check"
+                            variant="flat"
+                            @click="confirmAlert"
+                        ></v-btn>
+                    </template>
+                </v-alert>
+            </v-col>
+        </v-row>
 
-                </td>
-                <td>
-                    <v-btn
-                        v-if="item.status !== `approved`"
-                        icon="mdi-check"
-                        color="success"
-                        variant="tonal"
-                        size="small"
-                        @click="() => handleCheckButton(item.id)"
-                    ></v-btn>
-                    <v-btn
-                        v-if="status !== 3"
-                        icon="mdi-trash-can-outline"
-                        color="red-accent-4"
-                        variant="tonal"
-                        size="small"
-                        @click="() => handleDeleteButton(item.id)"
-                    ></v-btn>
-                </td>
-            </tr>
-        </tbody>
-    </v-table>
+        <v-row>
+            <v-col>
+                <v-data-table
+                    :items-per-page="rowsPerPage"
+                    :page="currentPage"
+                    :headers="headers"
+                    :items="reviews"
+                    class="elevation-1"
+                    item-value="review"
+                    hover
+                    no-data-text="Không có bình luận!"
+                >
+                    <template #item.isApproved="{ item }">
+                        <v-switch
+                            color="red-accent-4"
+                            :model-value="!item.raw.isApproved"
+                            @update:modelValue="() => handleToggleButton(item.raw.id)"
+                            hide-details
+                        ></v-switch>
+                    </template>
+
+                    <template #item.action="{ item }">
+                        <div class="d-flex align-center">
+                            <v-btn
+                                v-if="item.raw.isApproved"
+                                size="small"
+                                variant="tonal"
+                                icon="mdi-trash-can-outline"
+                                color="red-accent-4"
+                                @click="() => handleDeleteButton(item.raw.id)"
+                            >
+                            </v-btn>
+                        </div>
+                    </template>
+                    <template #bottom>
+                        <GlobalPagination
+                            v-if="numberOfPages > 1"
+                            :numberOfPages="numberOfPages"
+                            :page="currentPage"
+                            @update:page="updatePage"
+                        ></GlobalPagination>
+                    </template>
+                </v-data-table>
+            </v-col>
+        </v-row>
+
+    </v-container>
 </template>
 
 <style>
-.review {
-    -webkit-line-clamp: 2;
-    overflow: hidden;
+.more {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    height: 2.8em;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
 }
-</style>
+</style> 

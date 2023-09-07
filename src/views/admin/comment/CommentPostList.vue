@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, onBeforeMount } from "vue";
 import axios from "../../../axiosComfig";
 import { mapKeys, camelCase, lowerFirst } from "lodash";
 import GlobalPagination from "../../../components/globals/GlobalPagination.vue";
@@ -117,15 +117,14 @@ const statuses = [
 
 const fetchComments = async () => {
     try {
-        let url = `post-comment-pagination/?page=${currentPage.value}&per_page=${rowsPerPage}`;
+        let url = `post-comments/?page=${currentPage.value}&per_page=${rowsPerPage}`;
         if (status.value !== null) {
             url += `&is_approved=${status.value}`;
         }
         siteStore.hasLoading();
         const res = await axios.get(url);
-        console.log(res);
         if (res.status === 200) {
-            comments.value = res.data.data.comments.map(comment => mapKeys(comment, (value, key) => camelCase(key)));
+            comments.value = res.data.data.map(comment => mapKeys(comment, (value, key) => camelCase(key)));
             numberOfPages.value = res.data.data.numberOfPages;
         }
     }
@@ -294,6 +293,7 @@ onMounted(fetchComments);
                 </v-alert>
             </v-col>
         </v-row>
+
         <v-row>
             <v-col>
                 <v-data-table
