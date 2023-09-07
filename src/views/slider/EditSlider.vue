@@ -163,7 +163,7 @@ onMounted(fetchSlider);
     </v-container>
 
   </v-form>
-<!-- callModel to upload new image -->
+  <!-- callModel to upload new image -->
   <v-dialog
     v-model="callModel"
     width="auto"

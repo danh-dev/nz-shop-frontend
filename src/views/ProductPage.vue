@@ -13,9 +13,17 @@ import {siteData} from "@/stores/globals";
 //Danh
 const siteStore = siteData();
 const variantSelected = ref(null);
-const more = ref(false);
+const readMore = ref(false);
+const moreComment = ref(false);
 const route = useRoute();
 const { xs } = useDisplay();
+const moreDiscount = ref([
+	{ id: 1, icon: "mdi-check-circle", name: "Giảm thêm tới 1% cho thành viên Smember (áp dụng tùy sản phẩm)" },
+	{ id: 2, icon: "mdi-check-circle", name: "Ưu đãi đến 500k khi mở thẻ VP Bank" },
+	{ id: 3, icon: "mdi-check-circle", name: "Mở thẻ tín dụng VIB - Nhận voucher 200.000đ mua hàng tại NZShop" },
+	{ id: 4, icon: "mdi-check-circle", name: "Giảm 500k đơn hàng từ 10 triệu (trừ các sản phẩm Apple)" },
+]);
+
 const product = ref({});
 const posts = ref([]);
 const products = ref([]);
@@ -57,15 +65,23 @@ const fetchReviews = async id => {
 // Create & fetch product comments
 const comments = ref([]);
 const comment = ref("");
-const createProductComment = async () => {
+const createComment = async () => {
 	try {
-		await axios.post("product-comments", {
+		const response = await axios.post("product-comments", {
 			// user_id: userData.id,
 			user_id: 2,
 			product_id: product.value.id,
 			comment: comment.value,
 		});
-		// fetchComments();
+		const commentId = response.data.data.id;
+		const commentDate = response.data.data.created_at;
+		comments.value.push(
+			{
+				id: commentId,
+				created_at: commentDate,
+				comment: comment.value,
+			});
+		alert("Bình luận thành công.");
 	}
 	catch (e) {
 		console.log(e);
@@ -83,6 +99,7 @@ const fetchComments = async id => {
 		console.log(e);
 	}
 };
+
 const done = () => {
 	// nhiu tac vu khac
 	reviewModal.value = false;
@@ -217,11 +234,11 @@ onMounted(async () => {
 								:value="item.name"
 								@click="() => { variantSelected = index }"
 								:class="variantSelected === index ? 'selected' : null"
-								class="mx-2 pa-2 w-100"
+								class="pa-1 me-2 rounded-lg text-caption"
 							>
-								{{ String(item.name) }}
+								<b>{{ String(item.name) }}</b>
 								<p
-									class="text-danger text-caption"
+									class="text-red-accent-4"
 									@click="cartStore.add(product.id)"
 								>{{ formatPrice(item.sellPrice) }}</p>
 							</v-card>
@@ -251,35 +268,51 @@ onMounted(async () => {
               <p class="text-caption text-center px-1">Giao nhanh trong 2 giờ hoặc nhận tại cửa hàng</p>
 						</v-btn>
 					</v-sheet>
+
+					<!-- More discount -->
+					<v-sheet class="my-4 border-success rounded-lg">
+						<h3 class="text-uppercase text-white text-center bg-red-accent-4 pa-2 rounded-t-lg">ưu đãi thêm</h3>
+						<div
+							v-for="item in moreDiscount"
+							:key="item.id"
+							class="d-flex my-2"
+						>
+							<v-icon
+								size="x-small"
+								color="success"
+								class="ma-1"
+							>{{ item.icon }}</v-icon>
+							<p class="ps-1">{{ item.name }}</p>
+						</div>
+					</v-sheet>
 				</v-sheet>
 			</v-col>
 		</v-row>
 
+		<!-- Special Product Information -->
 		<v-row>
 			<v-col cols="12">
-				<!-- Special Product Information -->
 				<v-sheet
 					elevation="3"
 					rounded="lg"
-					class="text-body-2 text-justify pa-5"
+					class="text-body-2 text-justify"
 				>
-					<h2 class="text-uppercase text-center text-danger pa-3">đặc điểm nổi bật</h2>
-					<v-sheet class="d-flex align-center py-2">
-						<div :style="!more && [{ height: '500px', overflow: 'hidden' }]">
+					<h2 class="rounded-t-lg text-uppercase text-center text-white pa-5 bg-red-accent-4">đặc điểm nổi bật</h2>
+					<v-sheet class="d-flex align-center pa-5">
+						<div :style="!readMore && [{ height: '500px', overflow: 'hidden' }]">
 							<p v-html="product.description"></p>
 						</div>
-
 					</v-sheet>
 
 					<div
 						class="d-flex align-center mt-4"
-						v-if="!more"
+						v-if="!readMore"
 					>
 						<v-btn
-							@click="more = true"
+							@click="readMore = true"
 							color="red-accent-4"
 							variant="elevated"
-							class="text-white mx-auto"
+							class="text-white mx-auto mb-5"
 							append-icon="mdi-chevron-down"
 						>
 							Xem thêm
@@ -287,13 +320,13 @@ onMounted(async () => {
 					</div>
 					<div
 						class="d-flex align-center mt-4"
-						v-if="more"
+						v-if="readMore"
 					>
 						<v-btn
-							@click="more = false"
+							@click="readMore = false"
 							color="red-accent-4"
 							variant="elevated"
-							class="text-white mx-auto"
+							class="text-white mx-auto mb-5"
 							append-icon="mdi-chevron-down"
 						>
 							Thu gọn nội dung
@@ -320,7 +353,8 @@ onMounted(async () => {
 				>
 					<h4 class="px-4 py-2">Bình luận:</h4>
 					<v-container class="d-flex flex-column px-3">
-						<div>
+						<!-- Create a comment -->
+						<v-sheet>
 							<v-textarea
 								v-model="comment"
 								variant="filled"
@@ -332,30 +366,60 @@ onMounted(async () => {
 								prepend-icon="mdi-send-circle"
 								color="red-accent-4"
 								class="text-white"
-								@click="createProductComment"
+								@click="createComment"
 							>Gửi</v-btn>
+						</v-sheet>
+
+						<!-- Dislay comments -->
+						<div>
+							<v-sheet
+								class="my-4"
+								v-for="item in comments"
+								:key="item.id"
+							>
+								<v-sheet>
+									<div
+										class="pa-4 text-body-2 rounded-lg more"
+										style="background-color: rgb(247, 243, 243); margin-left: 5%;"
+									>
+										<div class="d-flex justify-space-between">
+											<p class="px-2"><b>Username: </b>{{ item.full_name }}</p>
+											<p class="">{{ item.created_at.slice(0, 19) }}</p>
+										</div>
+
+										<div class="pa-2">
+											<p><b>Bình luận: </b>{{ item.comment }}</p>
+										</div>
+									</div>
+								</v-sheet>
+							</v-sheet>
 						</div>
 
-						<v-sheet
-							class="my-2"
-							v-for="item in comments"
-							:key="item.id"
-						>
-							<v-sheet class="d-flex justify-space-between py-2">
-								<v-sheet class="d-flex align-center">
-									<p class="bg-secondary rounded pa-2">{{ item.full_name.slice(0, 1) }}</p>
-									<h5 class="px-2">{{ item.full_name }}</h5>
-								</v-sheet>
-								<p class="text-caption">{{ item.created_at.slice(0, 19) }}</p>
-							</v-sheet>
+						<!-- <v-sheet class="d-flex justify-center">
+							<div
+								v-if="!moreComment"
+								class="mt-4"
+							>
+								<v-btn
+									@click="moreComment = true"
+									color="#d50000"
+								>
+									Xem thêm bình luận
+								</v-btn>
+							</div>
 
 							<div
-								class="pa-2 text-caption d-flex justify-center flex-column rounded more"
-								style="background-color: rgb(247, 243, 243); margin-left: 5%;"
+								v-if="moreComment"
+								class="mt-4"
 							>
-								<p><b>Bình luận: </b>{{ item.comment }}</p>
+								<v-btn
+									@click="moreComment = false"
+									color="#d50000"
+								>
+									Thu gọn
+								</v-btn>
 							</div>
-						</v-sheet>
+						</v-sheet> -->
 					</v-container>
 				</v-sheet>
 			</v-col>
@@ -437,8 +501,12 @@ onMounted(async () => {
 </template>
 
 <style>
+.border-success {
+	border: 1px solid forestgreen;
+}
+
 .selected {
-	border: 2px solid #d50000 !important;
+	border: 1px solid #d50000 !important;
 }
 
 @keyframes fadeIn {

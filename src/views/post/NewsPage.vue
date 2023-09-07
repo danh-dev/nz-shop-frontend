@@ -4,6 +4,7 @@ import axios from "../../axiosComfig";
 import { useRoute } from "vue-router";
 import getSlugByName from "../../utils/getSlugByName.js";
 
+const more = ref(false);
 // Post API
 const url = import.meta.env.VITE_PUBLIC_URL;
 const route = useRoute();
@@ -17,16 +18,24 @@ const post = ref({
   created_at: ""
 });
 
-const commentsPost = ref([]);
-const commentPost = ref("");
+const comment = ref("");
+const comments = ref([]);
 const createPostComment = async () => {
   try {
-    await axios.post("post-comments", {
+    const response = await axios.post("post-comments", {
       // user_id: userData.id,
-      user_id: 2,
-      comment: commentPost.value,
+      user_id: 1,
       post_id: post.value.id,
+      comment: comment.value,
     });
+    const commentId = response.data.data.id;
+    const commentDate = response.data.data.created_at;
+    comments.value.push({
+      id: commentId,
+      created_at: commentDate,
+      comment: comment.value,
+    });
+    alert("Bình luận thành công.");
   }
   catch (e) {
     console.log(e);
@@ -52,7 +61,7 @@ const fetchCommentsPost = async id => {
   try {
     const res = await axios.get(`posts/${id}/comments`);
     if (res.status === 200) {
-      commentsPost.value = res.data.data.reverse();
+      comments.value = res.data.data.reverse();
     }
   }
   catch (e) {
@@ -106,55 +115,84 @@ onMounted(async () => {
           <v-sheet>
             <p
               class="py-2"
+              :style="!more && [{ height: '60rem', overflow: 'hidden' }]"
               v-html="post.content"
             ></p>
+            <div
+              class="d-flex align-center mt-4"
+              v-if="!more"
+            >
+              <v-btn
+                @click="more = true"
+                color="red-accent-4"
+                variant="elevated"
+                class="text-white mx-auto mb-5"
+                append-icon="mdi-chevron-down"
+              >
+                Xem thêm
+              </v-btn>
+            </div>
+            <div
+              class="d-flex align-center mt-4"
+              v-if="more"
+            >
+              <v-btn
+                @click="more = false"
+                color="red-accent-4"
+                variant="elevated"
+                class="text-white mx-auto mb-5"
+                append-icon="mdi-chevron-down"
+              >
+                Thu gọn nội dung
+              </v-btn>
+            </div>
           </v-sheet>
 
           <!-- Comments -->
           <v-sheet
-            elevation="3"
+            elevation="2"
             rounded="lg"
             class="my-3 order-last flex-md-fill"
           >
-            <h4 class="px-4 py-2">Bình luận bài viết:</h4>
+            <h4 class="pa-4">Bình luận bài viết</h4>
             <v-container class="d-flex flex-column px-3">
-  						<div>
-  							<v-textarea
-  								v-model="commentPost"
-  								variant="filled"
-  								auto-grow
-  								background="white"
-  								placeholder="Bình luận:"
-  							></v-textarea>
-  							<v-btn
-  								prepend-icon="mdi-send-circle"
-  								color="red-accent-4"
-  								class="text-white"
-  								@click="createPostComment"
-  							>Gửi</v-btn>
-  						</div>
+              <div>
+                <v-textarea
+                  v-model="comment"
+                  variant="filled"
+                  auto-grow
+                  background="white"
+                  placeholder="Bình luận:"
+                ></v-textarea>
+                <v-btn
+                  prepend-icon="mdi-send-circle"
+                  color="red-accent-4"
+                  class="text-white"
+                  @click="createPostComment"
+                >Gửi</v-btn>
+              </div>
 
-  						<v-sheet
-  							class="my-2"
-  							v-for="item in commentsPost"
-  							:key="item.id"
-  						>
-  							<v-sheet class="d-flex justify-space-between py-2">
-  								<v-sheet class="d-flex align-center">
-  									<p class="bg-secondary rounded pa-2">{{ item.full_name.slice(0, 1) }}</p>
-  									<h5 class="px-2">{{ item.full_name }}</h5>
-  								</v-sheet>
-  								<p class="text-caption">{{ item.created_at.slice(0, 19) }}</p>
-  							</v-sheet>
+              <v-sheet
+                class="mt-4 mb-2"
+                v-for="item in comments"
+                :key="item.id"
+              >
+                <v-sheet
+                  class="pa-4 text-body-2 rounded-lg"
+                  style="background-color: rgb(247, 243, 243); margin-left: 5%;"
+                >
+                  <div class="d-flex align-center justify-space-between">
+                    <p class="px-2"><b>Username: </b>{{ item.full_name }}</p>
+                    <p class="text-caption">{{ item.created_at.slice(0, 19) }}</p>
+                  </div>
+                  <div class="pa-2 more">
+                    <p><b>Bình luận: </b>{{ item.comment }}</p>
+                  </div>
+                </v-sheet>
 
-  							<div
-  								class="pa-2 text-caption d-flex justify-center flex-column rounded more"
-  								style="background-color: rgb(247, 243, 243); margin-left: 3%;"
-  							>
-  								<p><b>Bình luận: </b>{{ item.comment }}</p>
-  							</div>
-  						</v-sheet>
-  					</v-container>
+
+              </v-sheet>
+            </v-container>
           </v-sheet>
         </v-sheet>
       </v-col>
