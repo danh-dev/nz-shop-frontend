@@ -1,38 +1,38 @@
 <template>
   <v-card class="my-2" elevation="0">
     <v-container id="productList">
-      <v-row class="border-bottom my-3" v-for="(product, index) in cartStore.listCart" :key="index">
+      <v-row class="border-bottom my-3" v-for="(product, index) in siteStore.listCart" :key="index">
         <v-col cols="4">
-          <v-img class="ma-auto" :width="100" aspect-ratio="1/1" cover :src="product.thumbnail"></v-img>
+         <div> <v-img class="ma-auto" max-width="150" aspect-ratio="1/1" cover :src="'http://localhost:8000/'+product.info.image" @error="siteStore.errorImage(150,150)" :alt="product.info.name"></v-img></div>
         </v-col>
         <v-col cols="8" class="d-flex flex-column justify-space-around">
           <div class="productDetail">
-            <h4><a class="titleProduct" :href="product.url">{{ product.name }}</a></h4>
-            <div class="listVariations py-1">
+            <h4><a class="titleProduct" :href="'san-pham/' + product.info.slug">{{ product.info.name }}</a></h4>
+            <div v-if="product.info.name_variant.length>0" class="listVariations py-1">
               <v-badge color="white" class="border rounded border-danger px-2 me-2"
-                       v-for="variation in product.variations"
+                       v-for="variation in product.info.name_variant"
                        :key="variation" :content="variation" inline></v-badge>
             </div>
           </div>
           <div class="d-flex justify-space-between">
             <div class="productPrice py-1">
-              <span v-if="product.priceSale" class="sale-price text-body-1 text-red-accent-4 font-weight-bold me-2">
-                {{ formatPrice(product.priceSale) }}
+              <span v-if="product.info.discount_price" class="sale-price text-body-1 text-red-accent-4 font-weight-bold me-2">
+                {{ formatPrice(product.info.discount_price) }}
               </span>
-              <span :class="!product.priceSale ?
+              <span :class="!product.info.discount_price ?
                 'text-body-1 text-red-accent-4 font-weight-bold' : 'regular-price text-body-2'
                 ">
-                {{ formatPrice(product.priceRegular) }}
+                {{ formatPrice(product.info.sell_price) }}
               </span>
             </div>
             <div class="quantityUpdate d-flex">
               <span class="m-minus d-flex justify-center align-center m-pointer"
-                    @click="cartStore.remove(product.id)">-</span>
+                    @click="()=>{product.quantity<=1?deleteProductInCart(product.sku):siteStore.removeQuantity(product.sku)}">-</span>
               <input class="text-center" type="text" :value="product.quantity" readonly>
               <span class="m-plus d-flex justify-center align-center m-pointer"
-                    @click="()=>{product.quantity>=10?cartError('max'):cartStore.add(product.id)}">+</span>
+                    @click="()=>{product.quantity>=10?cartError('max'):siteStore.addProduct(product.sku)}">+</span>
               <span class="delete d-flex justify-center align-center m-pointer"
-                    @click="deleteProductInCart(product.id)"><i
+                    @click="deleteProductInCart(product.sku)"><i
                   class="mdi-delete-outline mdi text-red-accent-4"></i></span>
             </div>
           </div>
@@ -64,12 +64,9 @@
 </template>
 
 <script setup>
-import {useCartStore} from "@/stores/cart";
 import {siteData} from "@/stores/globals";
 import {ref} from "vue";
-
 const siteStore = siteData();
-const cartStore = useCartStore();
 const showError = ref(false);
 const errorTitle = ref();
 const errorContent = ref();
@@ -77,16 +74,16 @@ const cartError = (value) => {
   if (value === "max") {
     errorTitle.value = "Xin lỗi!";
     errorContent.value = "Số lượng sản phẩm đã đạt đến mức tối đa " +
-        "Quý khách có nhu cầu mua số lượng nhiều vui lòng liên hệ phòng bán hàng doanh nghiệp B2B" +
-        "Mr.Danh -  03599xxxxxx";
+        "Quý khách có nhu cầu mua số lượng nhiều vui lòng liên hệ phòng bán hàng :"+siteStore.siteSetings.shop_cskh;
     showError.value = !showError.value;
   }
 };
-const deleteProductInCart = (id) => {
+
+const deleteProductInCart = (sku) => {
   if (confirm("Are you sure?")) {
     siteStore.isLoading = true;
     try {
-      cartStore.removeAll(id);
+      siteStore.removeProduct(sku);
       siteStore.hasRes({data: {status: "ok", message: "Đã xoá thành công"}});
     } catch (e) {
       siteStore.errorSystem();

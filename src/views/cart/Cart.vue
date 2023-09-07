@@ -1,9 +1,10 @@
 <script setup>
 import CartList from "../../components/cart/CartList.vue";
 import {useCartStore} from "@/stores/cart";
+import {siteData} from "@/stores/globals";
 
 const cartStore = useCartStore();
-
+const siteStore = siteData();
 
 </script>
 
@@ -11,7 +12,7 @@ const cartStore = useCartStore();
   <div style="
     min-height: inherit;
 ">
-    <v-sheet v-if="cartStore.listCart.length" class="rounded pa-3" elevation="2" style="min-height: inherit;">
+    <v-sheet v-if="siteStore.listCart.length" class="rounded pa-3" elevation="2" style="min-height: inherit;">
       <v-row class="ma-3" no-gutters>
         <v-col cols="12" lg="8" class="rounded pa-3">
           <v-sheet>
@@ -25,7 +26,7 @@ const cartStore = useCartStore();
             <div class="order-summary-inner">
               <div class="d-flex justify-space-between text-h6 font-weight-bold py-2">
                 <span class="summary-list-title">Tổng tiền :</span>
-                <span class="summary-list-text">{{ formatPrice(cartStore.totalCart) }}</span>
+                <span class="summary-list-text">{{ formatPrice(siteStore.totalValue) }}</span>
               </div>
             </div>
             <v-btn block="" variant="flat" size="large" class="w-75 bg-red-accent-4"

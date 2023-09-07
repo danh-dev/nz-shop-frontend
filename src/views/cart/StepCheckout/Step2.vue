@@ -1,45 +1,68 @@
 <script setup>
 import {siteData} from "@/stores/globals";
-import {ruleShipping} from "@/validators";
-import {computed, ref} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import axios from "@/axiosComfig";
 
 const siteStore = siteData();
 const formCoupon = ref();
 const inputCoupon = ref();
 const selectedShipping = ref();
-const infoSelected = computed(() => typeShipping.find(item => item.value === selectedShipping.value));
-const priceShipping = computed(()=> {
-  if(siteStore.cartInfo.coupon){
-    if(siteStore.cartInfo.coupon.type_value==='free_shipping'){
-      return 0;
-    }
-    if(siteStore.cartInfo.coupon.type_value==='reduce_shipping'){
-      return selectedShipping.value - siteStore.cartInfo.coupon.value
-    }
+const apiGHN = ref("");
+const apiGHTK = ref("");
+const infoSelected = computed(() => selectedShipping.value !== null && selectedShipping.value !== undefined ? typeShipping.value[selectedShipping.value] : {});
+const priceShipping = computed(() => {
+  if (siteStore.cartInfo.coupon && siteStore.cartInfo.coupon.type_value === "free_shipping") {
+    return 0;
   }
-  return selectedShipping.value
-})
-const typeShipping = [
-  {
-    icon: "mdi-store-marker-outline",
-    name: "Pickup",
-    text: "Trực tiếp tại cửa hàng",
-    value: "0"
-  },
-  {
-    icon: "mdi-moped",
-    name: "Giao hàng thường",
-    text: "Giao hàng từ 5-7 ngày",
-    value: "50000"
-  },
-  {
-    icon: "mdi-truck-fast-outline",
-    name: "Hoả tốc",
-    text: "Giao gấp 1-2 ngày",
-    value: "150000"
-  },
-];
+  if (siteStore.cartInfo.coupon && siteStore.cartInfo.coupon.type_value === "reduce_shipping") {
+    let calculatePrice = typeShipping.value[selectedShipping.value].value - siteStore.cartInfo.coupon.value;
+    return calculatePrice>=0?calculatePrice:0;
+  }
+  return typeShipping.value[selectedShipping.value].value;
+});
+const typeShipping = ref([]);
+watch(() => apiGHTK.value, async () => {
+  await fetchGHTK();
+});
+const fetchDSetting = async () => {
+  siteStore.isLoading = true;
+  try {
+    const res = await axios.get("fetchPublicDSetting");
+    typeShipping.value = JSON.parse(res.data.custom_Shipping) || [];
+    apiGHN.value = res.data.api_ghn;
+    apiGHTK.value = res.data.api_ghtk;
+  } catch (e) {
+    siteStore.errorSystem();
+    console.log(e);
+  } finally {
+    siteStore.isLoading = false;
+  }
+};
+const fetchGHTK = async () => {
+  siteStore.isLoading = true;
+  try {
+    const res = await axios.post("API_PROXY_GHTK", {
+      pick_province: "Thành Phố Hồ Chí Minh",
+      pick_district: "Quận 3",
+      province: siteStore.cartInfo.infoAddress.city,
+      district: siteStore.cartInfo.infoAddress.district,
+      weight: 500 * siteStore.totalUnit
+    });
+    if (res.data.success) {
+      typeShipping.value.push({
+        icon: "mdi-truck-cargo-container",
+        name: "Giao Hàng Tiết Kiệm",
+        text: "Đối tác Giao hàng tiết kiệm",
+        value: res.data.data
+      });
+    }
+  } catch (e) {
+    siteStore.errorSystem();
+    console.log(e);
+  } finally {
+    siteStore.isLoading = false;
+  }
+};
 const typeValue = computed(() => {
   if (siteStore.cartInfo.coupon.type_value === "reduce_shipping") {
     return "Giảm phí vận chuyển";
@@ -50,13 +73,13 @@ const typeValue = computed(() => {
   if (siteStore.cartInfo.coupon.type_value === "number_value" && siteStore.cartInfo.coupon.type_coupon === "totalcart") {
     return "Giảm trực tiếp số tiền tổng đơn";
   }
-  if (siteStore.cartInfo.coupon.type_value === "number_value"&& siteStore.cartInfo.coupon.type_coupon === "onproduct") {
+  if (siteStore.cartInfo.coupon.type_value === "number_value" && siteStore.cartInfo.coupon.type_coupon === "onproduct") {
     return "Giảm trực tiếp số tiền trên mỗi sản phẩm chỉ định";
   }
   if (siteStore.cartInfo.coupon.type_value === "percent_value" && siteStore.cartInfo.coupon.type_coupon === "totalcart") {
     return "Giảm trực theo phần trăm tiền tổng đơn";
   }
-  if (siteStore.cartInfo.coupon.type_value === "percent_value"&& siteStore.cartInfo.coupon.type_coupon === "onproduct") {
+  if (siteStore.cartInfo.coupon.type_value === "percent_value" && siteStore.cartInfo.coupon.type_coupon === "onproduct") {
     return "Giảm trực theo phần trăm trên mỗi sản phẩm chỉ định";
   }
 });
@@ -85,6 +108,9 @@ const submitCoupon = () => {
     }
   });
 };
+onMounted(async () => {
+  await fetchDSetting();
+});
 </script>
 
 <template>
@@ -98,17 +124,18 @@ const submitCoupon = () => {
         <v-radio-group
             v-model="selectedShipping"
             color="red-darken-3"
-            :rules="[ruleShipping]"
             class="ma-4"
+            v-if="typeShipping.length>0"
         >
           <v-row>
-            <v-col cols="12" sm="4" v-for="item in typeShipping">
+            <v-col cols="12" sm="4" v-for="(type,index) in typeShipping" :key="index">
               <v-label class="m-pointer d-flex flex-column pa-2 m-box"
-                       :class="selectedShipping === item.value ? 'active' : ''">
-                <v-icon :icon="item.icon" size="35"></v-icon>
-                <h5 class="text-red-darken-3 m-text">{{ item.name }}</h5>
-                <p class="text-body-2 m-text">{{ item.text }}</p>
-                <v-radio :value="item.value"></v-radio>
+                       :class="selectedShipping === index ? 'active' : ''">
+                <v-icon :icon="type.icon?type.icon:'mdi-truck-cargo-container'" size="35"></v-icon>
+                <h5 class="text-red-darken-3 m-text">{{ type.name }}</h5>
+                <p class="text-body-2 m-text">{{ type.text }}</p>
+                <p class="text-body-2 m-text">{{ formatPrice(type.value) }}</p>
+                <v-radio :value="index"></v-radio>
               </v-label>
             </v-col>
           </v-row>
@@ -116,7 +143,7 @@ const submitCoupon = () => {
       </v-card>
       <v-card class="ma-6 pa-2">
         <v-card-title class="font-weight-bold">
-          Su dung ma giam gia:
+          Sử dụng mã giảm giá:
         </v-card-title>
         <v-card-item>
           <v-form ref="formCoupon" validate-on="submit" @submit.prevent="submitCoupon">
@@ -125,7 +152,7 @@ const submitCoupon = () => {
                           density="compact" variant="solo-filled" label="Nhập mã giảm giá" v-model="inputCoupon"
                           autocomplete="off" prepend-inner-icon="mdi-ticket-percent-outline">
               <template #append>
-                <v-btn type="submit" size="large">Xác nhận</v-btn>
+                <v-btn type="submit" size="large" color="red-darken-2">Xác nhận</v-btn>
               </template>
             </v-text-field>
           </v-form>
@@ -138,12 +165,44 @@ const submitCoupon = () => {
           Thông tin:
         </v-card-title>
         <v-card-item>
+          <v-card-subtitle class="font-weight-bold text-black ms-2">Giỏ hàng:</v-card-subtitle>
           <div>
             <v-card
-                v-if="siteStore.cartInfo.infoAddress.name"
+                v-if="siteStore.listCart.length"
                 class="pa-2"
+                elevation="0"
             >
-              <v-card-subtitle>Địa chỉ giao hàng:</v-card-subtitle>
+              <v-row v-for="(product, index) in siteStore.listCart" :key="index">
+                <v-col cols="3">
+                  <div>
+                    <v-img class="ma-auto" max-width="80" aspect-ratio="3/4" cover
+                           :src="'http://localhost:8000/'+product.info.image" @error="siteStore.errorImage(60,80)"
+                           :alt="product.info.name"></v-img>
+                  </div>
+                </v-col>
+                <v-col cols="9" class="d-flex flex-column justify-space-between">
+                  <v-card-title class="text-body-2 font-weight-bold"
+                                :title="product.info.name+' - '+product.info.name_variant">{{ product.info.name }}
+                  </v-card-title>
+
+                  <v-card-text v-if="product.info.name_variant.length>0" class="pa-0">
+                    <v-badge color="white" class="border rounded border-danger px-2 me-2"
+                             v-for="variation in product.info.name_variant"
+                             :key="variation" :content="variation" inline></v-badge>
+                  </v-card-text>
+                  <v-card-text v-if="product.info.name_variant.length>0" class="pa-0">
+                    {{ product.quantity }} x {{ formatPrice(product.info.discount_price ?? product.info.sell_price) }}
+                  </v-card-text>
+                </v-col>
+              </v-row>
+            </v-card>
+          </div>
+          <v-card-subtitle class="font-weight-bold text-black ms-2">Địa chỉ giao hàng:</v-card-subtitle>
+          <div>
+            <v-card elevation="0"
+                    v-if="siteStore.cartInfo.infoAddress.name"
+                    class="pa-2"
+            >
               <v-card-title class="text-body-1 font-weight-bold">{{ siteStore.cartInfo.infoAddress.name }} -
                 {{ siteStore.cartInfo.infoAddress.phone_number }}
               </v-card-title>
@@ -155,10 +214,10 @@ const submitCoupon = () => {
           </div>
           <div>
             <v-card
-                v-if="selectedShipping"
+                v-if="infoSelected.name"
                 class="pa-2"
             >
-              <v-card-subtitle>Phương thức giao hàng:</v-card-subtitle>
+              <v-card-subtitle class="font-weight-bold text-black">Phương thức giao hàng:</v-card-subtitle>
               <v-card-title class="text-body-1 font-weight-bold">{{ infoSelected.name }} -
                 {{ formatPrice(priceShipping) }}
               </v-card-title>
@@ -171,17 +230,27 @@ const submitCoupon = () => {
                 v-if="siteStore.cartInfo.coupon"
                 class="pa-2"
             >
-              <v-card-subtitle>Mã giảm giá:</v-card-subtitle>
-              <v-card-title class="text-body-1 font-weight-bold">{{ siteStore.cartInfo.coupon.code }}<v-icon color="red-darken-2" @click="siteStore.cartInfo.coupon=null">mdi-close-circle</v-icon></v-card-title>
+              <v-card-subtitle class="font-weight-bold text-black">Mã giảm giá:</v-card-subtitle>
+              <v-card-title class="text-body-1 font-weight-bold"><v-icon color="red-darken-2" @click="siteStore.cartInfo.coupon=null">mdi-close-circle</v-icon>{{ siteStore.cartInfo.coupon.code }}
+
+              </v-card-title>
               <v-card-text class="pa-0">Tên mã: {{ siteStore.cartInfo.coupon.name }}<br>
-                {{typeValue }}
+                {{ typeValue }}
               </v-card-text>
-              <v-card-text  class="pa-0" v-if="siteStore.cartInfo.coupon.type_value!=='free_shipping'">Giá trị:{{siteStore.cartInfo.coupon.type_value==='percent_value'? siteStore.cartInfo.coupon.value+"%": formatPrice(siteStore.cartInfo.coupon.value) }}</v-card-text>
+              <v-card-text class="pa-0" v-if="siteStore.cartInfo.coupon.type_value!=='free_shipping'">Giá trị:{{
+                  siteStore.cartInfo.coupon.type_value === "percent_value" ? siteStore.cartInfo.coupon.value + "%" : formatPrice(siteStore.cartInfo.coupon.value)
+                }}
+              </v-card-text>
             </v-card>
           </div>
         </v-card-item>
+        <v-card-item>
+          <v-card elevation="2" color="red" variant="tonal" rounded="5" class="ma-1">
+            <v-card-text class="d-flex justify-space-between"><span>Giỏ hàng:</span> {{formatPrice(siteStore.totalValue)}}</v-card-text>
+          </v-card>
+        </v-card-item>
         <v-card-actions>
-          <v-btn :disabled="!selectedShipping"
+          <v-btn :disabled="!infoSelected.value"
                  @click="()=>{siteStore.cartInfo.selectStep ='stepPayment'; siteStore.cartInfo.shipping = infoSelected}"
                  block variant="flat" color="red">
             Phương thức thanh toán

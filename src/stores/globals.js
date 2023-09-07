@@ -1,8 +1,9 @@
 import {defineStore} from "pinia";
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import axios from "@/axiosComfig";
 
 export const siteData = defineStore("siteData", () => {
+        const titleNow = ref("");
         const isLoading = ref(false);
         const apiMessages = ref([]);
         const isLogin = ref();
@@ -40,8 +41,8 @@ export const siteData = defineStore("siteData", () => {
             status: ""
         });
         const cartInfo = ref({
-            cartList:[],
-            infoAddress:{
+            cartList: {},
+            infoAddress: {
                 name: "",
                 phone_number: "",
                 address: "",
@@ -49,10 +50,71 @@ export const siteData = defineStore("siteData", () => {
                 district: null,
                 city: null
             },
-            coupon:null,
-            shipping:{},
-            selectStep:"stepAddress"
+            coupon: null,
+            shipping: {},
+            selectStep: "stepAddress"
+        });
+        const totalUnit = computed(() => {
+            return Object.keys(cartInfo.value.cartList).reduce(
+                (total, sku) => total + cartInfo.value.cartList[sku].quantity,
+                0
+            );
+        });
+        const listCart = computed(() => {
+            return Object.values(cartInfo.value.cartList);
+        });
+        const valueDiscount = computed(()=>{
+            if(cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon==='totalcart' && cartInfo.value.coupon.type_value==='number_value'){
+                return cartInfo.value.coupon.value
+            }
+            if(cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon==='totalcart' && cartInfo.value.coupon.type_value==='percent_value'){
+                return (totalValue.value/100) * cartInfo.value.coupon.value;
+            }
+            if(cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon==='totalcart' && cartInfo.value.coupon.type_value==='number_value'){
+                return (totalValue.value/100) * cartInfo.value.coupon.value;
+            }
+            if(cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon==='totalcart' && cartInfo.value.coupon.type_value==='percent_value'){
+                return (totalValue.value/100) * cartInfo.value.coupon.value;
+            }
         })
+        const totalValue = computed(() => {
+            return listCart.value.reduce((total, product) => {
+                const price = product.info.discount_price ? product.info.discount_price : product.info.sell_price;
+                return total + parseFloat(price) * product.quantity;
+            }, 0);
+        });
+
+        // Function
+        const addProduct = async (sku) => {
+            if (cartInfo.value.cartList.hasOwnProperty(sku)) {
+                cartInfo.value.cartList[sku].quantity += 1;
+            } else {
+                let info = await fetchProduct(sku);
+                cartInfo.value.cartList[sku] = {
+                    sku: sku,
+                    info: info,
+                    quantity: 1,
+                };
+            }
+        };
+        const fetchProduct = async (sku) => {
+            const res = await axios.post("products/sku", {
+                sku: sku
+            });
+            return res.data.data;
+        };
+        const removeQuantity = (sku) => {
+            const cartItem = cartInfo.value.cartList[sku];
+            if (cartItem) {
+                cartItem.quantity -= 1;
+                if (cartItem.quantity === 0) {
+                    delete cartInfo.value.cartList[sku];
+                }
+            }
+        };
+        const removeProduct = (sku) => {
+            delete cartInfo.value.cartList[sku];
+        };
 
         const fetchSettingSite = async () => {
             let ver = await axios.get("verSetting");
@@ -148,7 +210,15 @@ export const siteData = defineStore("siteData", () => {
                 apiMessages.value.splice(apiMessages.value.indexOf(errorMessage), 1);
             }, 5000);
         };
+
+        const errorImage = (w,h) => {
+            // console.log("hit")
+            // console.log(event.srcElement)
+            event.srcElement.setAttribute('src', `https://dummyimage.com/${w}x${h}/dc3545/FFF.png&text=Not%20Found`);
+        };
+
         return {
+            titleNow,
             isLoading,
             apiMessages,
             useGuest,
@@ -157,6 +227,9 @@ export const siteData = defineStore("siteData", () => {
             siteSetings,
             userInfo,
             cartInfo,
+            totalUnit,
+            listCart,
+            totalValue,
             hasLoading,
             doneLoading,
             hasRes,
@@ -166,6 +239,10 @@ export const siteData = defineStore("siteData", () => {
             logout,
             fetchSettingSite,
             hadDisable,
+            addProduct,
+            removeQuantity,
+            removeProduct,
+            errorImage,
         };
     }
 // , {
@@ -180,6 +257,6 @@ export const siteData = defineStore("siteData", () => {
 // });
     , {
         persist: {
-            paths: ["useGuest", "isLogin", "isAdmin", "userInfo", "siteSetings","cartInfo"],
+            paths: ["useGuest", "isLogin", "isAdmin", "userInfo", "siteSetings", "cartInfo"],
         },
     });

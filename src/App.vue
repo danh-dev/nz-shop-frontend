@@ -9,7 +9,6 @@ const siteStore = siteData();
 const route = useRoute();
 
 onMounted(async () => {
-  await siteStore.fetchSettingSite()
   const rootElement = document.documentElement;
   rootElement.style.setProperty("--main-color", siteStore.siteSetings.main_color);
   if (siteStore.siteSetings.main_font) {

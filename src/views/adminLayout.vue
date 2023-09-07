@@ -30,7 +30,7 @@
               </v-btn>
             </div>
             <v-toolbar-title class="text-h6 font-weight-bold text-blue-grey-darken-1">
-              {{ route.meta.title ? route.meta.title : "Trang admin" }}
+              {{ siteStore.titleNow }}
             </v-toolbar-title>
             <div class="hidden-md-and-down ms-3">
             </div>
@@ -62,7 +62,9 @@
 import MenuList from "../components/admincp/MenuList.vue";
 import {ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
+import {siteData} from "@/stores/globals";
 
+const siteStore = siteData();
 const drawer = ref(true);
 
 

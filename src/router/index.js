@@ -38,6 +38,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const siteStore = siteData();
+    await siteStore.fetchSettingSite()
     const checkIsLoginFirstTime = async () => {
         const token = localStorage.getItem(import.meta.env.VITE_NAME_KEY_TOKEN || "accessToken");
         if (token) {

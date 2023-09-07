@@ -282,7 +282,7 @@
                     item-value="value"
                     variant="outlined"
                     color="red-accent-2"
-                    aria-autocomplete="none"
+                    autocomplete="off"
                 />
               </v-col>
               <v-col cols="6" md="8">
@@ -300,11 +300,13 @@
               <v-col cols="12" v-if="formTypeCoupon==='onproduct'">
                 <v-autocomplete
                     v-model="formSelectProduct"
+                    v-model:search="formSearchProduct"
+                    :items="formProductList"
                     density="compact"
+                    item-title="name"
+                    item-value="id"
                     chips
                     label="Sản phẩm"
-                    :rules="[(value) => (this.formTypeCoupon === 'onproduct' && !value) || 'Vui lòng chọn sản phẩm']"
-                    :items="formProductList"
                     multiple
                     clearable
                     closable-chips
@@ -567,6 +569,7 @@ const formMaxQ = ref();
 const formMinCart = ref();
 const formMaxValue = ref();
 const formSearchUser = ref();
+const formSearchProduct = ref();
 const roles = ref();
 const coupons = ref([]);
 
@@ -722,6 +725,12 @@ watch(formSearchUser, () => {
     fetchUserList();
   }, 1000);
 });
+watch(()=>formSearchProduct.value,()=>{
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    fetchProductList();
+  }, 1000);
+})
 watch(formTypeCoupon, () => formTypeValue.value = null);
 watchEffect(() => formTypeValue.value === "free_shipping" ? formValue.value = 999 : formValue.value = "");
 
@@ -803,6 +812,20 @@ const changeStatus = async (id) => {
   } finally {
     await fetchCouponList();
     siteStore.isLoading = false;
+  }
+};
+const fetchProductList = async () => {
+  if (String(formSearchProduct.value).length >= 3) {
+    siteStore.isLoading = true;
+    try {
+      const res = await axios.get(`products/name/${formSearchProduct.value}`);
+     formProductList.value = res.data.data;
+    } catch (e) {
+      siteStore.errorSystem();
+      console.log(e);
+    } finally {
+      siteStore.isLoading = false;
+    }
   }
 };
 const fetchUserList = async () => {
@@ -919,7 +942,6 @@ const generateCoupon = async () => {
   }
 };
 const createCoupon = async () => {
-  formSelectProduct.value = formSelectProduct.value || [10, 23, 4];
   try {
     siteStore.isLoading = true;
     let res = await axios.post("createCoupon", {
@@ -927,7 +949,7 @@ const createCoupon = async () => {
       code: formCode.value,
       type_coupon: formTypeCoupon.value,
       value: formValue.value,
-      product_id: formSelectProduct.value,
+      products_id: formSelectProduct.value,
       type_value: formTypeValue.value,
       date_start: formDateStart.value,
       date_end: formDateEnd.value,
@@ -944,14 +966,14 @@ const createCoupon = async () => {
   }
 };
 const updateCoupon = async (id) => {
-  formSelectProduct.value = formSelectProduct.value || 10;
   try {
     siteStore.isLoading = true;
     let res = await axios.put(`/updateCoupon/${id}`, {
       name: formName.value,
       code: formCode.value,
       type_coupon: formTypeCoupon.value,
-      value: formTypeCoupon.value === "onproduct" ? formValue.value + "|p" + formSelectProduct.value : formValue.value,
+      value: formValue.value,
+      products_id: formSelectProduct.value,
       type_value: formTypeValue.value,
       date_start: formDateStart.value,
       date_end: formDateEnd.value,
@@ -1011,9 +1033,9 @@ watchEffect(() => {
   fetchCouponList(searchQuery.value, selectDateStart.value, selectDateEnd.value, selectedType.value, selectedStatus.value);
 });
 
-route.meta.title = "Coupons Management";
+siteStore.titleNow = "Coupons Management";
 useSeoMeta({
-  title: route.meta.title,
+  title: siteStore.titleNow,
 });
 </script>
 

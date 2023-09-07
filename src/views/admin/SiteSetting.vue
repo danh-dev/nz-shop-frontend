@@ -18,6 +18,8 @@
               <MailSetting v-if="selectSetting==='mailSetting'"/>
               <ShopOnlineSetting v-if="selectSetting==='shopSetting'"/>
               <SEOSetting v-if="selectSetting==='seoSetting'"/>
+              <DeliverySetting v-if="selectSetting==='deliverySetting'"/>
+              <PaymentSetting v-if="selectSetting==='paymentSetting'"/>
             </v-col>
           </v-row>
         </v-container>
@@ -27,13 +29,16 @@
 </template>
 <script setup>
 import {useSeoMeta} from "@unhead/vue";
-import {useRoute} from "vue-router";
 import {ref} from "vue";
 import GeneralSetting from "./SiteSetting/GeneralSetting.vue";
 import SEOSetting from "./SiteSetting/SEOSetting.vue";
 import ShopOnlineSetting from "./SiteSetting/ShopOnlineSetting.vue";
 import MailSetting from "./SiteSetting/MailSetting.vue";
+import DeliverySetting from "./SiteSetting/DeliverySetting.vue";
+import PaymentSetting from "./SiteSetting/PaymentSetting.vue";
+import {siteData} from "@/stores/globals";
 
+const siteStore = siteData();
 const selectSetting = ref("generalSetting");
 
 
@@ -41,15 +46,13 @@ const tabList = ref([
   {icon: "mdi-file-cog-outline", text: "General Setting", tabAction: "generalSetting"},
   {icon: "mdi-email-lock-outline", text: "Mail Setting", tabAction: "mailSetting"},
   {icon: "mdi-store-marker-outline", text: "Shop Setting", tabAction: "shopSetting"},
-  {icon: "mdi-store-marker-outline", text: "SEO Setting", tabAction: "seoSetting"},
+  {icon: "mdi-tab-search", text: "SEO Setting", tabAction: "seoSetting"},
+  {icon: "mdi-truck-fast-outline", text: "Delivery Setting", tabAction: "deliverySetting"},
+  {icon: "mdi-cash-register", text: "Payment Setting", tabAction: "paymentSetting"},
 ]);
-
-const route = useRoute();
-
-
-route.meta.title = "Site Settings";
+siteStore.titleNow = "Site Settings";
 useSeoMeta({
-  title: route.meta.title,
+  title: siteStore.titleNow,
 });
 </script>
 

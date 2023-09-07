@@ -198,7 +198,7 @@
                   color="red-darken-2"
                   rounded
                   density="compact"
-                  @click="()=>{ modelConfirm = !modelConfirm; }"
+                  @click="()=>{selectedNew='id'; modelConfirm = !modelConfirm; }"
               >
               </v-btn>
             </template>
@@ -219,7 +219,7 @@
                   color="red-darken-2"
                   rounded
                   density="compact"
-                  @click="()=>{ modelConfirm = !modelConfirm; }"
+                  @click="()=>{selectedNew='key'; modelConfirm = !modelConfirm; }"
               >
               </v-btn>
             </template>
@@ -324,20 +324,20 @@
       persistent
       max-width="400"
   >
-    <v-card v-if="returnKey">
+    <v-card v-if="selectedNew">
       <template #append>
-        <v-btn density="compact" icon="mdi-close" color="red-darken-2" @click="modelConfirm = !modelConfirm"></v-btn>
+        <v-btn density="compact" icon="mdi-close" color="red-darken-2" @click="()=>{selectedNew=null; modelConfirm = !modelConfirm;}"></v-btn>
       </template>
       <v-card-title>
         <span class="text-h6 font-weight-bold ms-3 text-red-darken-2">
         <v-icon icon="mdi-shield-alert-outline"></v-icon> CẨN THẬN !!!</span>
       </v-card-title>
       <v-card-text class="ma-1">
-        Tạo Key mới sẽ làm bạn mất kết nối với những app khác. Vui lòng xác nhận!
+        Tạo mới sẽ làm bạn mất kết nối với những app khác. Vui lòng xác nhận!
       </v-card-text>
       <v-card-text>
-        <v-btn @click="newSecretKey" class="me-2" color="red-darken-2">Xác nhận</v-btn>
-        <v-btn @click="modelConfirm=!modelConfirm" class="ms-2" color="blue-grey-darken-1">Thoát</v-btn>
+        <v-btn @click="selectedNew==='key'?newSecretKey():newIdApp()" class="me-2" color="red-darken-2">Xác nhận</v-btn>
+        <v-btn @click="()=>{selectedNew=null; modelConfirm = !modelConfirm;}" class="ms-2" color="blue-grey-darken-1">Thoát</v-btn>
       </v-card-text>
     </v-card>
     <v-card v-else>
@@ -361,7 +361,6 @@
     </v-card>
   </v-dialog>
 
-
   <v-dialog
       v-model="modelColorPicker"
       max-width="350">
@@ -383,6 +382,7 @@ import axios from "@/axiosComfig";
 import timezone from "../../../utils/timezone-citys.json";
 import langLocales from "../../../utils/lang-locales.json";
 import fontList from "../../../utils/fontList.json";
+import CryptoJS from 'crypto-js';
 
 const siteStore = siteData();
 
@@ -404,6 +404,7 @@ const formGSIdApp = ref();
 const formGSKey = ref("Oh! Are you cheating?");
 const modelOpen = ref(false);
 const selectedUpload = ref();
+const selectedNew = ref();
 
 //
 const modelConfirm = ref(false);
@@ -463,6 +464,7 @@ const getSecretKey = async () => {
     console.log(e);
   } finally {
     modelConfirm.value = false;
+    inputConfirmPassword.value = null;
     siteStore.doneLoading();
   }
 };
@@ -477,6 +479,37 @@ const newSecretKey = async () => {
     console.log(e);
   } finally {
     modelConfirm.value = false;
+    siteStore.doneLoading();
+  }
+};
+
+const newIdApp = async () => {
+  siteStore.hasLoading();
+  try {
+    const res = await axios.get("newIdApp");
+    // if (res.data.encrypted) {
+    //   const key_base64 = 'y4XncAVnKZ+CMgzYgPsMeuwW5RIJMCzp4AfgPbGAqR0=';
+    //   const encrypted = res.data.data;
+    //   const encrypted_json = JSON.parse(atob(encrypted));
+    //   const key = CryptoJS.enc.Base64.parse(key_base64);
+    //   const iv = CryptoJS.enc.Base64.parse(encrypted_json.iv);
+    //   const value = CryptoJS.enc.Base64.parse(encrypted_json.value);
+    //   const decrypted = CryptoJS.AES.decrypt({ ciphertext: value }, key, { iv: iv });
+    //   const decrypted_str = decrypted.toString(CryptoJS.enc.Utf8).replace(/^i:|;$/g, '');
+    //   console.log(decrypted_str);
+    //   formGSIdApp.value = decrypted_str;
+    // } else {
+    //   formGSIdApp.value = res.data.data;
+    // }
+
+    formGSIdApp.value = res.data.data;
+    siteStore.hasRes(res);
+  } catch (e) {
+    siteStore.errorSystem();
+    console.log(e);
+  } finally {
+    modelConfirm.value = false;
+    selectedNew.value=null;
     siteStore.doneLoading();
   }
 };

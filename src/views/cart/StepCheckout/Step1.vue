@@ -116,7 +116,7 @@ const submitAdd = () => {
 const submitCreate = () => {
   refFormC.value?.validate().then(({valid: isValid}) => {
     if (isValid) {
-      addNewAddress()
+      addNewAddress();
       formCAddress.value = {};
     }
   });
@@ -139,8 +139,7 @@ onMounted(() => {
         <v-row class="ma-1">
           <v-col cols="12" md="6" v-for="(item,index) in userListAddress" :key="index">
             <v-card class="pa-2" @click="()=>{Object.assign(siteStore.cartInfo.infoAddress,item)}"
-                    :ripple="{ class: 'text-red' }"
-                    :class="check===item?'address-selected':null">
+                    :ripple="{ class: 'text-red' }">
               <v-card-title class="text-body-1 font-weight-bold">{{ item.name }} - {{ item.phone_number }}
                 <v-icon v-if="checkIndex===index" color="red-darken-2">mdi-check-circle</v-icon>
               </v-card-title>
@@ -228,9 +227,35 @@ onMounted(() => {
           Thông tin:
         </v-card-title>
         <v-card-item>
-          <v-card-subtitle>Địa chỉ giao hàng:</v-card-subtitle>
+          <v-card-subtitle>Giỏ hàng:</v-card-subtitle>
           <div>
             <v-card
+                v-if="siteStore.listCart.length"
+                class="pa-2"
+                elevation="0"
+            >
+              <v-row v-for="(product, index) in siteStore.listCart" :key="index">
+                <v-col cols="3">
+                  <div> <v-img class="ma-auto" max-width="80" aspect-ratio="3/4" cover :src="'http://localhost:8000/'+product.info.image" @error="siteStore.errorImage(60,80)" :alt="product.info.name"></v-img></div>
+                </v-col>
+                <v-col cols="9" class="d-flex flex-column justify-space-between">
+                  <v-card-title class="text-body-2 font-weight-bold" :title="product.info.name+' - '+product.info.name_variant">{{ product.info.name }}</v-card-title>
+
+                  <v-card-text v-if="product.info.name_variant.length>0" class="pa-0">
+                    <v-badge color="white" class="border rounded border-danger px-2 me-2"
+                             v-for="variation in product.info.name_variant"
+                             :key="variation" :content="variation" inline></v-badge>
+                  </v-card-text>
+                  <v-card-text v-if="product.info.name_variant.length>0" class="pa-0">
+                    {{product.quantity}} x {{ formatPrice(product.info.discount_price??product.info.sell_price) }}
+                  </v-card-text>
+                </v-col>
+              </v-row>
+            </v-card>
+          </div>
+          <v-card-subtitle>Địa chỉ giao hàng:</v-card-subtitle>
+          <div>
+            <v-card elevation="0"
                 v-if="siteStore.cartInfo.infoAddress.name"
                 class="pa-2"
                 @click="()=>{Object.assign(formAAddress , siteStore.cartInfo.infoAddress)}"
@@ -327,8 +352,8 @@ onMounted(() => {
                         prepend-inner-icon="mdi-map-marker"
                         autocomplete="off">
           </v-text-field>
-            <v-btn color="red-darken-2" class="ma-2" type="submit">Thêm mới</v-btn>
-            <v-btn @click="modelAddress = !modelAddress" color="blue-grey-darken-1" class="ma-2">Thoát</v-btn>
+          <v-btn color="red-darken-2" class="ma-2" type="submit">Thêm mới</v-btn>
+          <v-btn @click="modelAddress = !modelAddress" color="blue-grey-darken-1" class="ma-2">Thoát</v-btn>
         </v-form>
       </v-card-text>
     </v-card>
@@ -336,8 +361,5 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.address-selected {
-  border: 1px solid;
-  border-color: #dc3545 !important;
-}
+
 </style>

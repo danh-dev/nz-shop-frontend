@@ -106,7 +106,7 @@ const clickAction = (item , index)=>{
               stacked
           >
             <v-badge
-                :content="cartStore.totalUnit"
+                :content="siteStore.totalUnit"
                 color="pink-lighten-2"
             >
               <v-icon size="25">mdi-cart</v-icon>

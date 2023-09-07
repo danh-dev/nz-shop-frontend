@@ -1,28 +1,27 @@
 <script setup>
 import { useRoute } from "vue-router";
 import axios from "@/axiosComfig";
-import { onMounted, ref, watch } from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 import { camelCase, mapKeys } from "lodash";
 import ProductReviews from "../components/product/ProductReviews.vue";
 import ProductNews from "../components/product/ProductNews.vue";
-// import ProductGallery from "../components/product/ProductGallery.vue";
 import ProductSlider from "../components/product/ProductSlider.vue";
 import ProductThumbnailGroup from "../components/product/ProductThumbnailGroup.vue";
+import {siteData} from "@/stores/globals";
 
-const variantSelected = ref(0);
-
+//Danh
+const siteStore = siteData();
+const variantSelected = ref(null);
 const more = ref(false);
-
 const route = useRoute();
 const { xs } = useDisplay();
-
 const product = ref({});
 const posts = ref([]);
 const products = ref([]);
-// const userData = JSON.parse(localStorage.getItem("userData") || "null");
 const reviewModal = ref(false);
 
+const finalSKU = computed(()=> variantSelected.value === null || typeof variantSelected.value === undefined ? product.value.sku:product.value.sku+"-"+(variantSelected.value+1))
 // Create & fetch product reviews
 const review = ref("");
 const reviews = ref([]);
@@ -143,46 +142,15 @@ const fetchRandomProducts = async () => {
 	}
 };
 
-// const fetchFeedbacks = async comment => {
-// 	try {
-// 		const res = await axios.get(`comments/${comment.id}/feedbacks`);
-// 		if (res.status === 200) {
-// 			comment.feedbacks = res.data.data;
-// 		}
-// 	}
-// 	catch (e) {
-// 		console.log(e);
-// 	}
-// };
-
-// const fetchUserByComment = async comment => {
-// 	try {
-// 		const res = await axios.get(`comments/${comment.id}/users`);
-// 		if (res.status === 200) {
-// 			comment.user = res.data.data.name;
-// 		}
-// 	}
-// 	catch (e) {
-// 		console.log(e);
-// 	}
-// };
-
-// watch(comments, () => {
-// 	for (const comment of comments.value) {
-// 		fetchFeedbacks(comment);
-// 		fetchUserByComment(comment);
-// 	}
-// });
-
 watch(product, () => {
 	fetchReviews(product.value.id);
 	fetchComments(product.value.id);
 });
 
 onMounted(async () => {
-	fetchProduct();
-	fetchRandomProducts();
-	fetchRandomPosts();
+	await fetchProduct();
+	await fetchRandomProducts();
+	await fetchRandomPosts();
 });
 </script>
 
@@ -259,35 +227,28 @@ onMounted(async () => {
 							</v-card>
 						</div>
 					</v-sheet>
-
 					<!-- Buy now, Add to cart -->
-					<v-sheet class="d-flex mt-5">
+					<v-sheet class="d-flex mt-5"
+                   @click="siteStore.addProduct(finalSKU)">
 						<v-btn
 							rounded="0"
 							elevation="1"
-							@click="cartStore.add(product.id)"
 							href=""
 							stacked
-							color="red-accent-4"
-							class="text-white text-none text-caption w-75 rounded-s-lg"
-						>
-							<h3 class="text-uppercase">Mua ngay</h3>
-							<p class="text-caption text-center px-1">Giao nhanh trong 2 giờ hoặc nhận tại cửa hàng</p>
+              color="red-accent-4"
+							class="text-white text-none text-caption w-25 rounded-s-lg"
+						><v-icon size="35">mdi-cart-plus</v-icon>
 						</v-btn>
 						<v-btn
 							rounded="0"
 							elevation="1"
-							color="red-accent-4"
 							variant="outlined"
+              color="red-accent-4"
 							stacked
-							class="text-none w-25 rounded-e-lg"
-							@click="cartStore.add(product.id)"
+							class="text-none w-75 rounded-e-lg"
 						>
-							<v-icon size="small">mdi-cart-plus</v-icon>
-							<p
-								class="text-center"
-								style="font-size: 0.6rem;"
-							>Thêm giỏ hàng</p>
+              <h3 class="text-uppercase">Mua ngay</h3>
+              <p class="text-caption text-center px-1">Giao nhanh trong 2 giờ hoặc nhận tại cửa hàng</p>
 						</v-btn>
 					</v-sheet>
 				</v-sheet>
