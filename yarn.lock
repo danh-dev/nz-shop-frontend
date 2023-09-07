@@ -280,6 +280,13 @@
     "@babel/helper-validator-identifier" "^7.22.5"
     "to-fast-properties" "^2.0.0"
 
+"@ckeditor/ckeditor5-adapter-ckfinder@39.0.1":
+  version "39.0.1"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-adapter-ckfinder/-/ckeditor5-adapter-ckfinder-39.0.1.tgz"
+  integrity sha512-0pIL/EOO+u7O79H+OA0IXXnFjlishihnlKVpuc62OCYeRapukTN0yok9za2IF+DmL6SS8DOLeEgmpgaX2JLYtg==
+  dependencies:
+    ckeditor5 "39.0.1"
+
 "@ckeditor/ckeditor5-alignment@39.0.1":
   "integrity" "sha512-9p91+xF08uu0c29WIqxpA1MAGw1iDRAD20eABK0X0Yid7Uin2TZqSOZPF860jNkyND+phaVU0O+e7DmjoPUcqg=="
   "resolved" "https://registry.npmjs.org/@ckeditor/ckeditor5-alignment/-/ckeditor5-alignment-39.0.1.tgz"
@@ -307,6 +314,46 @@
   "version" "39.0.1"
   dependencies:
     "ckeditor5" "39.0.1"
+
+"@ckeditor/ckeditor5-build-classic@^39.0.1":
+  version "39.0.1"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-build-classic/-/ckeditor5-build-classic-39.0.1.tgz"
+  integrity sha512-/d9WGHlMEPymXToxnUldn7DGJp22UCH3f7CbFVMp9w5F+gt4q9eT9kX/1RNEEv6Rdeen1YEJCmh3ESLtDRHUTQ==
+  dependencies:
+    "@ckeditor/ckeditor5-adapter-ckfinder" "39.0.1"
+    "@ckeditor/ckeditor5-autoformat" "39.0.1"
+    "@ckeditor/ckeditor5-basic-styles" "39.0.1"
+    "@ckeditor/ckeditor5-block-quote" "39.0.1"
+    "@ckeditor/ckeditor5-ckbox" "39.0.1"
+    "@ckeditor/ckeditor5-ckfinder" "39.0.1"
+    "@ckeditor/ckeditor5-cloud-services" "39.0.1"
+    "@ckeditor/ckeditor5-easy-image" "39.0.1"
+    "@ckeditor/ckeditor5-editor-classic" "39.0.1"
+    "@ckeditor/ckeditor5-essentials" "39.0.1"
+    "@ckeditor/ckeditor5-heading" "39.0.1"
+    "@ckeditor/ckeditor5-image" "39.0.1"
+    "@ckeditor/ckeditor5-indent" "39.0.1"
+    "@ckeditor/ckeditor5-link" "39.0.1"
+    "@ckeditor/ckeditor5-list" "39.0.1"
+    "@ckeditor/ckeditor5-media-embed" "39.0.1"
+    "@ckeditor/ckeditor5-paragraph" "39.0.1"
+    "@ckeditor/ckeditor5-paste-from-office" "39.0.1"
+    "@ckeditor/ckeditor5-table" "39.0.1"
+    "@ckeditor/ckeditor5-typing" "39.0.1"
+
+"@ckeditor/ckeditor5-ckbox@39.0.1":
+  version "39.0.1"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-ckbox/-/ckeditor5-ckbox-39.0.1.tgz"
+  integrity sha512-XpzPnU6MDuknNR6BupYkStzPdz68pHMZJ5yfttOLzJqaFl/isj1TOA2k+5pAo/7/pqXMQhKvIUQK04xbeSr2yA==
+  dependencies:
+    ckeditor5 "39.0.1"
+
+"@ckeditor/ckeditor5-ckfinder@39.0.1":
+  version "39.0.1"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-ckfinder/-/ckeditor5-ckfinder-39.0.1.tgz"
+  integrity sha512-quk3bdw4hZP7OOiV8UwwEZkH/NAPyfTg4msAoZLVH7M0/NlWp0r/36x+Pw7G1bt/LYw2RqHfjLI/zhx7ZOL7Zw==
+  dependencies:
+    ckeditor5 "39.0.1"
 
 "@ckeditor/ckeditor5-clipboard@39.0.1":
   "integrity" "sha512-OIlIvsiz6YTZM8o1Y1zG9eW9rUx06Bs3rMbMv37kNN1vq145D9h0OQt0iPKw1eXAG387Sk+SWZhO+Um+/O3eGw=="
@@ -373,6 +420,21 @@
     "terser-webpack-plugin" "^4.2.3"
     "through2" "^3.0.1"
     "ts-loader" "^9.3.0"
+
+"@ckeditor/ckeditor5-easy-image@39.0.1":
+  version "39.0.1"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-easy-image/-/ckeditor5-easy-image-39.0.1.tgz"
+  integrity sha512-kzxE73/GFLWVZZGbAW9avjnAvRG1aYnIIot0E66uK7afe7WTnyQCvMzXmzqsXyTFT/AI4sBXNMVZoC3GvCeMxQ==
+  dependencies:
+    ckeditor5 "39.0.1"
+
+"@ckeditor/ckeditor5-editor-classic@39.0.1":
+  version "39.0.1"
+  resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-editor-classic/-/ckeditor5-editor-classic-39.0.1.tgz"
+  integrity sha512-d+mQk8MbL/lymnq+4MhWQm4eMBJ5JOKo8gOyFHNCkGvKKNpwHqjs2zmzdelNMTkXXQtCsevNJSLbRcV+XXwlqg==
+  dependencies:
+    ckeditor5 "39.0.1"
+    lodash-es "4.17.21"
 
 "@ckeditor/ckeditor5-editor-decoupled@39.0.1":
   "integrity" "sha512-WiyuUhpgDKEonAExAm18skAJdQfETrZMDj8kj2N9gFnBufkn8dWdanNCkJpc7fFQP7GIGHAEB2BwIGvmm0gyUA=="

@@ -1,11 +1,9 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import axios from "../../../axiosComfig";
+import axios from "axios";
 
-const comments = ref([]);
-const filteredComments = ref([]);
-const users = ref([]);
-const posts = ref([]);
+const feedbacks = ref([]);
+const filteredFeedbacks = ref([]);
 
 const status = ref(0);
 const statuses = [
@@ -23,25 +21,25 @@ const statuses = [
     }
 ];
 
-watch([status, comments], () => {
+watch([status, feedbacks], () => {
     switch (status.value) {
         case 0:
-            filteredComments.value = comments.value.filter(item => item.status === "pending");
+            filteredFeedbacks.value = feedbacks.value.filter(item => item.status === "pending");
             break;
         case 1:
-            filteredComments.value = comments.value.filter(item => item.status === "approved");
+            filteredFeedbacks.value = feedbacks.value.filter(item => item.status === "approved");
             break;
         case 2:
-            filteredComments.value = comments.value.filter(item => item.status === "deleted");
+            filteredFeedbacks.value = feedbacks.value.filter(item => item.status === "deleted");
             break;
     }
 });
 
-const fetchUsers = async () => {
+const fetchFeedbacks = async id => {
     try {
-        const res = await axios.get("users");
+        const res = await axios.get(`http://127.0.0.1:8000/api/product-comments/${id}/product-feedbacks`);
         if (res.status === 200) {
-            users.value = res.data.data;
+            feedbacks.value = res.data.data;
         }
         if (res.status === 204) {
             console.log("ko co gi");
@@ -50,46 +48,14 @@ const fetchUsers = async () => {
     catch (e) {
         console.log(e);
     }
-};
 
-const fetchPosts = async () => {
-    try {
-        const res = await axios.get("posts");
-        if (res.status === 200) {
-            posts.value = res.data.data;
-        }
-        if (res.status === 204) {
-            console.log("ko co gi");
-        }
-    }
-    catch (e) {
-        console.log(e);
-    }
 };
-
-const fetchComments = async () => {
-    try {
-        const res = await axios.get("post-comments");
-        if (res.status === 200) {
-            comments.value = res.data.data;
-        }
-        if (res.status === 204) {
-            console.log("ko co gi");
-        }
-    }
-    catch (e) {
-        console.log(e);
-    }
-};
-
-const getUserNameById = id => users.value.find(item => item.id === id)?.full_name;
-const getPostTitleById = id => posts.value.find(item => item.id === id)?.title;
 
 const handleCheckButton = async id => {
     try {
-        const res = await axios.put(`http://127.0.0.1:8000/api/post-comments/approve/${id}`);
+        const res = await axios.put(`http://127.0.0.1:8000/api/product-comments/approve/${id}`);
         if (res.status === 200) {
-            await fetchComments();
+            await fetchFeedbacks();
             console.log(res.data.message);
         }
     }
@@ -100,9 +66,9 @@ const handleCheckButton = async id => {
 
 const handleDeleteButton = async id => {
     try {
-        const res = await axios.put(`http://127.0.0.1:8000/api/post-comments/delete/${id}`);
+        const res = await axios.put(`http://127.0.0.1:8000/api/product-comments/delete/${id}`);
         if (res.status === 200) {
-            await fetchComments();
+            await fetchFeedbacks();
             console.log(res.data.message);
         }
     }
@@ -112,9 +78,7 @@ const handleDeleteButton = async id => {
 };
 
 onMounted(async () => {
-    await fetchComments();
-    await fetchUsers();
-    await fetchPosts();
+    await fetchFeedbacks();
 });
 </script>
 
@@ -144,7 +108,7 @@ onMounted(async () => {
                     class="text-left"
                     style="width: 25%;"
                 >
-                    Bài viết
+                    Sản phẩm
                 </th>
                 <th
                     class="text-left"
@@ -162,7 +126,7 @@ onMounted(async () => {
         </thead>
         <tbody>
             <tr
-                v-for="item in filteredComments"
+                v-for="item in filteredFeedbacks"
                 :key="item.name"
             >
                 <td>{{ getUserNameById(item.user_id) }}</td>
@@ -181,8 +145,8 @@ onMounted(async () => {
                             activator="parent"
                             location="top"
                             attach
-                        >{{ getPostTitleById(item.post_id) }}
-                        </v-tooltip>{{ getPostTitleById(item.post_id) }}</div>
+                        >{{ getProductsTitleById(item.product_id) }}
+                        </v-tooltip>{{ getProductsTitleById(item.product_id) }}</div>
                 </td>
                 <td>{{ item.updated_at.slice(0, 19) }}</td>
                 <td>
