@@ -10,7 +10,7 @@ const products = ref([]);
 const status = ref(0);
 const statuses = [
     {
-        title: "Chờ duyệt",
+        title: "Tất cả review",
         value: 0,
     },
     {
@@ -18,7 +18,7 @@ const statuses = [
         value: 1,
     },
     {
-        title: "Đã xóa",
+        title: "Chờ duyệt",
         value: 2,
     }
 ];
@@ -26,13 +26,13 @@ const statuses = [
 watch([status, reviews], () => {
     switch (status.value) {
         case 0:
-            filteredReviews.value = reviews.value.filter(item => item.status === "pending");
+            filteredReviews.value = reviews.value;
             break;
         case 1:
             filteredReviews.value = reviews.value.filter(item => item.status === "approved");
             break;
         case 2:
-            filteredReviews.value = reviews.value.filter(item => item.status === "deleted");
+            filteredReviews.value = reviews.value.filter(item => item.status === "pending");
             break;
     }
 });
@@ -163,6 +163,12 @@ onMounted(async () => {
                     class="text-left"
                     style="width: 10%;"
                 >
+                    Trạng Thái
+                </th>
+                <th
+                    class="text-left"
+                    style="width: 10%;"
+                >
                     Chức năng
                 </th>
             </tr>
@@ -195,8 +201,14 @@ onMounted(async () => {
                 </td>
                 <td>{{ item.updated_at }}</td>
                 <td>
+                    <v-chip variant="outlined">
+                        {{ item.status === "pending" ? "Chờ duyệt" : "Đã duyệt" }}
+                    </v-chip>
+
+                </td>
+                <td>
                     <v-btn
-                        v-if="status !== 1"
+                        v-if="item.status !== `approved`"
                         icon="mdi-check"
                         color="success"
                         variant="tonal"
@@ -204,7 +216,7 @@ onMounted(async () => {
                         @click="() => handleCheckButton(item.id)"
                     ></v-btn>
                     <v-btn
-                        v-if="status !== 2"
+                        v-if="status !== 3"
                         icon="mdi-trash-can-outline"
                         color="red-accent-4"
                         variant="tonal"
