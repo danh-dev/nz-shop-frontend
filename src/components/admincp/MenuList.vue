@@ -1,6 +1,6 @@
 <script setup>
 
-import { ref } from "vue";
+import {onMounted, ref} from "vue";
 
 const menus = ref([
   { icon: 'mdi-home-outline', text: 'Dashboard', route: 'dashboard' },

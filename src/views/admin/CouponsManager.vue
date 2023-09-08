@@ -165,6 +165,7 @@
             {{ customValue(item.raw) }}
           </template>
           <template #item.status="{ item }">
+            <router-link to></router-link>
             <v-switch
                 :model-value="item.raw.status==='active'||false"
                 @change="changeStatus(item.raw.id)"
@@ -207,7 +208,7 @@
       persistent
       max-width="650"
   >
-    <v-card>
+    <v-card >
       <template #append>
         <v-btn density="compact" icon="mdi-close" color="red-darken-2" @click="formOpen = !formOpen"></v-btn>
       </template>
@@ -298,18 +299,16 @@
                 </v-text-field>
               </v-col>
               <v-col cols="12" v-if="formTypeCoupon==='onproduct'">
+                {{formSelectProduct}}
                 <v-autocomplete
                     v-model="formSelectProduct"
                     v-model:search="formSearchProduct"
                     :items="formProductList"
                     density="compact"
                     item-title="name"
-                    item-value="id"
-                    chips
+                    item-value="name"
                     label="Sản phẩm"
-                    multiple
                     clearable
-                    closable-chips
                     variant="outlined"
                     autocomplete="off"
                 ></v-autocomplete>
@@ -890,7 +889,7 @@ const openForm = (index) => {
     formTypeCoupon.value = coupons.value[index].type_coupon;
     formDateStart.value = coupons.value[index].date_start;
     formDateEnd.value = coupons.value[index].date_end;
-    formSelectProduct.value = coupons.value[index].value.split("|")[1];
+    formSelectProduct.value = coupons.value[index].products_id;
     formLimitTime.value = coupons.value[index].limit_time;
     formStatus.value = coupons.value[index].status;
     setTimeout(() => formTypeValue.value = coupons.value[index].type_value, 1);
@@ -1024,13 +1023,13 @@ const onUpdate = (id) => {
     fetchCouponList(searchQuery.value, selectDateStart.value, selectDateEnd.value, selectedType.value, selectedStatus.value);
   });
 };
+watchEffect(() => {
+  fetchCouponList(searchQuery.value, selectDateStart.value, selectDateEnd.value, selectedType.value, selectedStatus.value);
+});
 // onMounted
 onMounted(() => {
   fetchCouponList();
   fetchRoleList();
-});
-watchEffect(() => {
-  fetchCouponList(searchQuery.value, selectDateStart.value, selectDateEnd.value, selectedType.value, selectedStatus.value);
 });
 
 siteStore.titleNow = "Coupons Management";

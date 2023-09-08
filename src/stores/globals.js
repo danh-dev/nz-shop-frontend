@@ -83,7 +83,18 @@ export const siteData = defineStore("siteData", () => {
                 return total + parseFloat(price) * product.quantity;
             }, 0);
         });
-
+        const priceShipping = computed(() => {
+            if (cartInfo.coupon && cartInfo.coupon.type_value === "free_shipping") {
+                return 0;
+            }
+            if (cartInfo.coupon && cartInfo.coupon.type_value === "reduce_shipping") {
+                let calculatePrice = cartInfo.value.shipping.value - cartInfo.coupon.value;
+                return calculatePrice>=0?calculatePrice:0;
+            }
+            if(cartInfo.value.shipping.value){
+                return cartInfo.value.shipping.value;
+            }
+        });
         // Function
         const addProduct = async (sku) => {
             if (cartInfo.value.cartList.hasOwnProperty(sku)) {
@@ -230,6 +241,7 @@ export const siteData = defineStore("siteData", () => {
             totalUnit,
             listCart,
             totalValue,
+            priceShipping,
             hasLoading,
             doneLoading,
             hasRes,

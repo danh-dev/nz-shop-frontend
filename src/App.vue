@@ -117,6 +117,31 @@ a {
   border: 1px solid rgb(211, 211, 211) !important;
 }
 
+
+.scrollbar::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3) !important;
+  border-radius: 10px !important;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3) !important;
+  border-radius: 10px !important;
+  background-color: #E57373 !important;
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #EF5350 !important;
+}
+
+.scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: #EF5350 #E57373 !important;
+}
+
 @media (min-width: 1920px) {
   .v-container {
     max-width: 1200px !important;

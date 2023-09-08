@@ -135,28 +135,4 @@ watch(model, (cur, pre) => {
 .position-fixed {
   position: fixed;
 }
-
-.scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scrollbar::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
-}
-
-.scrollbar::-webkit-scrollbar-thumb {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
-  border-radius: 10px;
-  background-color: #E57373;
-}
-
-.scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #EF5350;
-}
-
-.scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #EF5350 #E57373;
-}
 </style>

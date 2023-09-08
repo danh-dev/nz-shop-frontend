@@ -1,6 +1,6 @@
 <template>
   <v-card class="my-2" elevation="0">
-    <v-container id="productList">
+    <v-container id="productList" class="scrollbar">
       <v-row class="border-bottom my-3" v-for="(product, index) in siteStore.listCart" :key="index">
         <v-col cols="4">
          <div> <v-img class="ma-auto" max-width="150" aspect-ratio="1/1" cover :src="'http://localhost:8000/'+product.info.image" @error="siteStore.errorImage(150,150)" :alt="product.info.name"></v-img></div>
@@ -8,13 +8,13 @@
         <v-col cols="8" class="d-flex flex-column justify-space-around">
           <div class="productDetail">
             <h4><a class="titleProduct" :href="'san-pham/' + product.info.slug">{{ product.info.name }}</a></h4>
-            <div v-if="product.info.name_variant.length>0" class="listVariations py-1">
+            <div v-if="product.info.name_variant" class="listVariations py-1">
               <v-badge color="white" class="border rounded border-danger px-2 me-2"
                        v-for="variation in product.info.name_variant"
                        :key="variation" :content="variation" inline></v-badge>
             </div>
           </div>
-          <div class="d-flex justify-space-between">
+          <div class="d-flex justify-space-between ">
             <div class="productPrice py-1">
               <span v-if="product.info.discount_price" class="sale-price text-body-1 text-red-accent-4 font-weight-bold me-2">
                 {{ formatPrice(product.info.discount_price) }}

@@ -60,7 +60,7 @@
 
 <script setup>
 import MenuList from "../components/admincp/MenuList.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {siteData} from "@/stores/globals";
 
@@ -71,7 +71,9 @@ const drawer = ref(true);
 const route = useRoute();
 const router = useRouter();
 
-
+onMounted(()=>{
+  document.querySelector(".v-navigation-drawer__content").classList.add("scrollbar");
+})
 </script>
 
 <style scoped>

@@ -231,8 +231,9 @@ onMounted(() => {
           <div>
             <v-card
                 v-if="siteStore.listCart.length"
-                class="pa-2"
+                class="pa-2 scrollbar"
                 elevation="0"
+                style="max-height: 350px; overflow-y:auto"
             >
               <v-row v-for="(product, index) in siteStore.listCart" :key="index">
                 <v-col cols="3">
@@ -241,12 +242,12 @@ onMounted(() => {
                 <v-col cols="9" class="d-flex flex-column justify-space-between">
                   <v-card-title class="text-body-2 font-weight-bold" :title="product.info.name+' - '+product.info.name_variant">{{ product.info.name }}</v-card-title>
 
-                  <v-card-text v-if="product.info.name_variant.length>0" class="pa-0">
+                  <v-card-text v-if="product.info.name_variant" class="pa-0">
                     <v-badge color="white" class="border rounded border-danger px-2 me-2"
                              v-for="variation in product.info.name_variant"
                              :key="variation" :content="variation" inline></v-badge>
                   </v-card-text>
-                  <v-card-text v-if="product.info.name_variant.length>0" class="pa-0">
+                  <v-card-text v-if="product.info.name_variant" class="pa-0">
                     {{product.quantity}} x {{ formatPrice(product.info.discount_price??product.info.sell_price) }}
                   </v-card-text>
                 </v-col>

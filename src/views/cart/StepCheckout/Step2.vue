@@ -169,8 +169,9 @@ onMounted(async () => {
           <div>
             <v-card
                 v-if="siteStore.listCart.length"
-                class="pa-2"
+                class="pa-2 scrollbar"
                 elevation="0"
+                style="max-height: 350px; overflow-y:auto"
             >
               <v-row v-for="(product, index) in siteStore.listCart" :key="index">
                 <v-col cols="3">
@@ -185,24 +186,29 @@ onMounted(async () => {
                                 :title="product.info.name+' - '+product.info.name_variant">{{ product.info.name }}
                   </v-card-title>
 
-                  <v-card-text v-if="product.info.name_variant.length>0" class="pa-0">
+                  <v-card-text v-if="product.info.name_variant" class="pa-0">
                     <v-badge color="white" class="border rounded border-danger px-2 me-2"
                              v-for="variation in product.info.name_variant"
                              :key="variation" :content="variation" inline></v-badge>
                   </v-card-text>
-                  <v-card-text v-if="product.info.name_variant.length>0" class="pa-0">
+                  <v-card-text v-if="product.info.name_variant" class="pa-0">
                     {{ product.quantity }} x {{ formatPrice(product.info.discount_price ?? product.info.sell_price) }}
                   </v-card-text>
                 </v-col>
               </v-row>
             </v-card>
           </div>
-          <v-card-subtitle class="font-weight-bold text-black ms-2">Địa chỉ giao hàng:</v-card-subtitle>
           <div>
             <v-card elevation="0"
                     v-if="siteStore.cartInfo.infoAddress.name"
                     class="pa-2"
             >
+              <v-card-subtitle class="font-weight-bold text-black">Địa chỉ giao hàng:
+                <v-btn density="compact" size="25" color="red-darken-2"
+                       @click="siteStore.cartInfo.selectStep ='stepAddress'">
+                  <v-icon size="20">mdi-pencil-outline</v-icon>
+                </v-btn>
+              </v-card-subtitle>
               <v-card-title class="text-body-1 font-weight-bold">{{ siteStore.cartInfo.infoAddress.name }} -
                 {{ siteStore.cartInfo.infoAddress.phone_number }}
               </v-card-title>
@@ -243,11 +249,6 @@ onMounted(async () => {
               </v-card-text>
             </v-card>
           </div>
-        </v-card-item>
-        <v-card-item>
-          <v-card elevation="2" color="red" variant="tonal" rounded="5" class="ma-1">
-            <v-card-text class="d-flex justify-space-between"><span>Giỏ hàng:</span> {{formatPrice(siteStore.totalValue)}}</v-card-text>
-          </v-card>
         </v-card-item>
         <v-card-actions>
           <v-btn :disabled="!infoSelected.value"

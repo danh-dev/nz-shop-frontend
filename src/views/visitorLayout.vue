@@ -2,6 +2,7 @@
 import { useDisplay } from "vuetify";
 import { RouterView } from "vue-router";
 
+import Header from "@/components/globals/Header.vue"
 import TheHeader from "@/components/layouts/TheHeader.vue";
 import TheFooter from "@/components/layouts/TheFooter.vue";
 import FullscreenModal from "@/components/modals/FullscreenModal.vue";
@@ -12,7 +13,7 @@ const { lgAndUp } = useDisplay();
 
 <template>
   <v-layout>
-    <TheHeader />
+    <Header />
 
     <v-main
       style="position: relative"
