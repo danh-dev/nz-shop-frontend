@@ -28,7 +28,7 @@ const headers = [
     {
         title: "Bài viết",
         sortable: false,
-        key: "post",
+        key: "postTitle",
         align: "start"
     },
     {
@@ -37,14 +37,8 @@ const headers = [
         align: "start"
     },
     {
-        title: "Trạng thái",
+        title: "Đã duyệt/Chờ duyệt",
         key: "isApproved",
-        align: "start"
-    },
-    {
-        title: "Chức năng",
-        sortable: false,
-        key: "action",
         align: "start"
     },
     {
@@ -52,7 +46,14 @@ const headers = [
         sortable: false,
         key: "feedbackCount",
         align: "start"
+    },
+    {
+        title: "Chức năng",
+        sortable: false,
+        key: "action",
+        align: "start"
     }
+
 ];
 const headers1 = [
     {

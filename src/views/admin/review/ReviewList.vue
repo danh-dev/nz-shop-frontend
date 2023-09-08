@@ -226,6 +226,16 @@ onMounted(fetchReviews);
                                 @click="() => handleDeleteButton(item.raw.id)"
                             >
                             </v-btn>
+                            <v-btn
+                                v-if="item.raw.isApproved"
+                                size="small"
+                                variant="tonal"
+                                icon="mdi-information-variant"
+                                color="red-accent-4"
+                                :to="`/san-pham/${item.raw.slug}`"
+                            >
+                            </v-btn>
+
                         </div>
                     </template>
                     <template #bottom>

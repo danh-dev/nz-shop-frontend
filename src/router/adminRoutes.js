@@ -39,16 +39,6 @@ const routes = [
 		component: () => import("../views/admin/comment/CommentProductList.vue"),
 	},
 	{
-		path: "product-comment/:id/product-feedback",
-		name: "admin-product-feedback",
-		component: () => import("../views/admin/comment/FeedbackProductList.vue"),
-	},
-	{
-		path: "post-feedback",
-		name: "admin-post-feedback",
-		component: () => import("../views/admin/comment/FeedbackPostList.vue"),
-	},
-	{
 		path: "review",
 		name: "admin-review",
 		component: () => import("../views/admin/review/ReviewList.vue"),
