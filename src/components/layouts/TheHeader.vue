@@ -14,6 +14,10 @@ const userStore = userData();
 const router = useRouter();
 
 const searchInput = ref("");
+
+const submit = () => {
+	window.location.href = `/tim-kiem?name=${searchInput.value}`;
+};
 </script>
 
 <template>
@@ -37,12 +41,7 @@ const searchInput = ref("");
 
 			<v-row style="max-width: 380px; min-width: 250px">
 				<v-col cols="12">
-					<v-form @submit.prevent="router.push({
-						name: 'search',
-						query: {
-							name: searchInput
-						},
-					})">
+					<v-form @submit.prevent="submit">
 						<v-text-field
 							variant="solo"
 							hide-details

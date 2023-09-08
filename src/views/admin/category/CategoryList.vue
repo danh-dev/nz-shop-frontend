@@ -134,163 +134,165 @@ watch([currentPage, status, name], () => categoryStore.fetchCategories());
 </script>
 
 <template>
-  <v-container>
-    <v-row>
-      <v-col
-        cols="12"
-        class="d-flex align-center"
-      >
-        <h2>Danh sách danh mục</h2>
-        <v-btn
-          prepend-icon="mdi-plus"
-          class="ms-auto"
-          :to="{
-            name: 'admin-category-create',
-          }"
+  <v-card class="m-card">
+    <v-container>
+      <v-row>
+        <v-col
+          cols="12"
+          class="d-flex align-center"
         >
-          Thêm mới
-        </v-btn>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="6">
-        <v-select
-          color="red-accent-4"
-          density="compact"
-          label="Trạng thái"
-          :items="statuses"
-          v-model="status"
-          variant="outlined"
-          hide-details
-        ></v-select>
-      </v-col>
-      <v-col>
-        <v-text-field
-          color="red-accent-4"
-          v-model="searchInput"
-          density="compact"
-          append-inner-icon="mdi-magnify"
-          label="Tìm kiếm theo tên"
-          variant="outlined"
-          hide-details
-          clearable
-          @click:append-inner="search"
-          @keyup.enter="search"
-        ></v-text-field>
-      </v-col>
-    </v-row>
-    <v-row v-if="alert">
-      <v-col>
-        <v-alert
-          type="warning"
-          :text="alert"
-          :model-value="!!alert"
-          variant="tonal"
-        >
-          <template #append>
-            <v-btn
-              density="compact"
-              color="red-accent-4"
-              icon="mdi-window-close"
-              variant="flat"
-              class="mr-2"
-              @click="alert = ''"
-            ></v-btn>
-            <v-btn
-              density="compact"
-              color="success"
-              icon="mdi-check"
-              variant="flat"
-              @click="confirmAlert"
-            ></v-btn>
-          </template>
-        </v-alert>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-data-table
-          :items-per-page="rowsPerPage"
-          :page="currentPage"
-          :headers="headers"
-          :items="categoryStore.categories"
-          class="elevation-1"
-          item-value="name"
-          hover
-          no-data-text="Không có danh mục!"
-        >
-          <template #item.image="{ item }">
-            <v-img
-              :src="`${url}${item.columns.image}`"
-              width="60"
-            ></v-img>
-          </template>
-          <template #item.icon="{ item }">
-            <v-icon>
-              <v-img :src="item.columns.icon ? `${url}${item.columns.icon}` : ''"></v-img>
-            </v-icon>
-
-          </template>
-          <template #item.isDisabled="{ item }">
-
-            <v-switch
-              color="red-accent-4"
-              :model-value="!item.raw.isDisabled"
-              @update:modelValue=" item.raw.isDisabled ? () => handleEnableCategory(item.raw.id) : () => handleDisableCategory(item.raw.id)"
-              hide-details
-            ></v-switch>
-          </template>
-          <template #item.action="{ item }">
-            <div class="d-flex">
+          <h2>Danh sách danh mục</h2>
+          <v-btn
+            prepend-icon="mdi-plus"
+            class="ms-auto"
+            :to="{
+              name: 'admin-category-create',
+            }"
+          >
+            Thêm mới
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="6">
+          <v-select
+            color="red-accent-4"
+            density="compact"
+            label="Trạng thái"
+            :items="statuses"
+            v-model="status"
+            variant="outlined"
+            hide-details
+          ></v-select>
+        </v-col>
+        <v-col>
+          <v-text-field
+            color="red-accent-4"
+            v-model="searchInput"
+            density="compact"
+            append-inner-icon="mdi-magnify"
+            label="Tìm kiếm theo tên"
+            variant="outlined"
+            hide-details
+            clearable
+            @click:append-inner="search"
+            @keyup.enter="search"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row v-if="alert">
+        <v-col>
+          <v-alert
+            type="warning"
+            :text="alert"
+            :model-value="!!alert"
+            variant="tonal"
+          >
+            <template #append>
               <v-btn
-                size="x-small"
-                variant="tonal"
-                icon="mdi-pencil"
-                color="success"
-                :to="{
-                  name: 'admin-category-update',
-                  params: {
-                    id: item.raw.id,
-                  },
-                }"
-              >
-              </v-btn>
-              <v-btn
-                size="x-small"
-                variant="tonal"
-                icon="mdi-information-variant"
-                color="info"
-                :to="{
-                  name: 'admin-subcategory',
-                  params: {
-                    id: item.raw.id,
-                  },
-                }"
-              >
-              </v-btn>
-              <v-btn
-                v-if="item.raw.isDisabled"
-                size="x-small"
-                variant="tonal"
-                icon="mdi-trash-can-outline"
+                density="compact"
                 color="red-accent-4"
-                @click="() => handleDeleteButton(item.raw.id, item.raw.name)"
-              >
-              </v-btn>
-            </div>
-          </template>
-          <template #bottom>
-            <GlobalPagination
-              v-if="numberOfPages > 1"
-              :numberOfPages="numberOfPages"
-              :page="currentPage"
-              @update:page="updatePage"
-            ></GlobalPagination>
-          </template>
-        </v-data-table>
-      </v-col>
-    </v-row>
-  </v-container>
+                icon="mdi-window-close"
+                variant="flat"
+                class="mr-2"
+                @click="alert = ''"
+              ></v-btn>
+              <v-btn
+                density="compact"
+                color="success"
+                icon="mdi-check"
+                variant="flat"
+                @click="confirmAlert"
+              ></v-btn>
+            </template>
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-data-table
+            :items-per-page="rowsPerPage"
+            :page="currentPage"
+            :headers="headers"
+            :items="categoryStore.categories"
+            class="elevation-1"
+            item-value="name"
+            hover
+            no-data-text="Không có danh mục!"
+          >
+            <template #item.image="{ item }">
+              <v-img
+                :src="`${url}${item.columns.image}`"
+                width="60"
+              ></v-img>
+            </template>
+            <template #item.icon="{ item }">
+              <v-icon>
+                <v-img :src="item.columns.icon ? `${url}${item.columns.icon}` : ''"></v-img>
+              </v-icon>
+
+            </template>
+            <template #item.isDisabled="{ item }">
+
+              <v-switch
+                color="red-accent-4"
+                :model-value="!item.raw.isDisabled"
+                @update:modelValue=" item.raw.isDisabled ? () => handleEnableCategory(item.raw.id) : () => handleDisableCategory(item.raw.id)"
+                hide-details
+              ></v-switch>
+            </template>
+            <template #item.action="{ item }">
+              <div class="d-flex">
+                <v-btn
+                  size="x-small"
+                  variant="tonal"
+                  icon="mdi-pencil"
+                  color="success"
+                  :to="{
+                    name: 'admin-category-update',
+                    params: {
+                      id: item.raw.id,
+                    },
+                  }"
+                >
+                </v-btn>
+                <v-btn
+                  size="x-small"
+                  variant="tonal"
+                  icon="mdi-information-variant"
+                  color="info"
+                  :to="{
+                    name: 'admin-subcategory',
+                    params: {
+                      id: item.raw.id,
+                    },
+                  }"
+                >
+                </v-btn>
+                <v-btn
+                  v-if="item.raw.isDisabled"
+                  size="x-small"
+                  variant="tonal"
+                  icon="mdi-trash-can-outline"
+                  color="red-accent-4"
+                  @click="() => handleDeleteButton(item.raw.id, item.raw.name)"
+                >
+                </v-btn>
+              </div>
+            </template>
+            <template #bottom>
+              <GlobalPagination
+                v-if="numberOfPages > 1"
+                :numberOfPages="numberOfPages"
+                :page="currentPage"
+                @update:page="updatePage"
+              ></GlobalPagination>
+            </template>
+          </v-data-table>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-card>
 </template>
 <style>
 .more {

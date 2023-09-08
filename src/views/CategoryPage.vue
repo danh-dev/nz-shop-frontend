@@ -94,6 +94,7 @@ watch(() => categoryStore.categories, async () => {
   }
 
   else if (name) {
+    console.log(name);
     products.value = await fetchProductsByName();
   }
 
