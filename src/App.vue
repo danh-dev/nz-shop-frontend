@@ -43,6 +43,10 @@ a {
   text-decoration: none;
 }
 
+.border-left {
+  border-left: 2px solid #d50000;
+}
+
 .text-danger {
   color: #c50000;
 }

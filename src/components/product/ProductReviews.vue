@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
 // import LoginModal from "../modals/LoginModal.vue";
-
 const props = defineProps({
 	reviews: {
 		type: Array,
@@ -11,9 +10,7 @@ const props = defineProps({
 	},
 });
 
-
 const moreReview = ref(false);
-
 const averageRating = computed(() => {
 	let totalRating = 0;
 	for (const { rating } of props.reviews) {
@@ -87,7 +84,7 @@ const percentReviews = rating => {
 				</v-list-item>
 			</v-list>
 
-			<v-sheet align="center">
+			<v-sheet class="d-flex flex-column align-center">
 				<p class="text-subtitle-1">Bạn đánh giá sao sản phẩm này ?</p>
 				<!-- <LoginModal/> -->
 
@@ -100,45 +97,40 @@ const percentReviews = rating => {
 				</v-btn>
 			</v-sheet>
 
-			<!--Begin: Reviews sản phẩm -->
+			<!-- Display reviews -->
 			<v-container>
 				<v-sheet
 					v-for="review in reviews"
 					:key="review.id"
 				>
-					<v-sheet class="d-flex justify-space-between py-2">
-						<v-sheet class="d-flex align-center">
-							<p class="bg-secondary rounded pa-2">{{ review.full_name.slice(0, 1) }}</p>
-							<h5 class="px-2">{{ review.full_name }}</h5>
-						</v-sheet>
-						<p class="text-caption">{{ review.created_at.slice(0, 19) }}</p>
-					</v-sheet>
-
-					<v-sheet
-						class="pa-2 text-caption d-flex justify-center flex-column rounded"
-						style="background-color: rgb(247, 243, 243); margin-left: 5%"
-					>
-						<p class="d-flex align-center">
-							<b>Đánh giá:</b>
-							<v-rating
-								:model-value="review.rating"
-								color="yellow-darken-3"
-								readonly
-								density="compact"
-								size="small"
-								class="mx-2"
-							>
-							</v-rating>
-						</p>
-						<p class="more"><b>Nhận xét:</b> {{ review.comment }}</p>
-					</v-sheet>
+					<div class="border-left bg-grey-lighten-4 text-body-2 rounded-lg my-4">
+						<div class="d-flex justify-space-between pa-2">
+							<p><b>Username: </b>{{ review.full_name }}</p>
+							<p>{{ review.created_at.slice(0, 19) }}</p>
+						</div>
+						<div class="pa-2">
+							<div class="d-flex align-center">
+								<b>Đánh giá:</b>
+								<v-rating
+									:model-value="review.rating"
+									color="yellow-darken-3"
+									readonly
+									density="compact"
+									size="small"
+									class="mx-2"
+								>
+								</v-rating>
+							</div>
+							<p class="more"><b>Nhận xét:</b> {{ review.comment }}</p>
+						</div>
+					</div>
 				</v-sheet>
 			</v-container>
 
 			<v-sheet>
 				<div
 					class="mt-4"
-					v-if="!moreReview && reviews.length > 5"
+					v-if="!moreReview"
 				>
 					<v-btn
 						@click="moreReview = true"

@@ -4,6 +4,7 @@ import axios from "../../axiosComfig";
 import { useRoute } from "vue-router";
 import getSlugByName from "../../utils/getSlugByName.js";
 
+const userData = JSON.parse(localStorage.getItem("userData") || "null");
 const more = ref(false);
 // Post API
 const url = import.meta.env.VITE_PUBLIC_URL;
@@ -22,19 +23,12 @@ const comment = ref("");
 const comments = ref([]);
 const createPostComment = async () => {
   try {
-    const response = await axios.post("post-comments", {
-      // user_id: userData.id,
-      user_id: 1,
+    await axios.post("post-comments", {
+      user_id: userData.id,
       post_id: post.value.id,
       comment: comment.value,
     });
-    const commentId = response.data.data.id;
-    const commentDate = response.data.data.created_at;
-    comments.value.push({
-      id: commentId,
-      created_at: commentDate,
-      comment: comment.value,
-    });
+    fetchCommentsPost(post.value.id);
     alert("Bình luận thành công.");
   }
   catch (e) {
@@ -55,7 +49,6 @@ const fetchPost = async () => {
     console.log("Error: ", error);
   }
 };
-
 
 const fetchCommentsPost = async id => {
   try {
@@ -115,7 +108,7 @@ onMounted(async () => {
           <v-sheet>
             <p
               class="py-2"
-              :style="!more && [{ height: '60rem', overflow: 'hidden' }]"
+              :style="!more && [{ height: '40rem', overflow: 'hidden' }]"
               v-html="post.content"
             ></p>
             <div
@@ -150,7 +143,6 @@ onMounted(async () => {
 
           <!-- Comments -->
           <v-sheet
-            elevation="2"
             rounded="lg"
             class="my-3 order-last flex-md-fill"
           >
@@ -171,26 +163,23 @@ onMounted(async () => {
                   @click="createPostComment"
                 >Gửi</v-btn>
               </div>
-
+              <!-- Display comments -->
               <v-sheet
                 class="mt-4 mb-2"
                 v-for="item in comments"
                 :key="item.id"
               >
                 <v-sheet
-                  class="pa-4 text-body-2 rounded-lg"
-                  style="background-color: rgb(247, 243, 243); margin-left: 5%;"
+                  class="pa-4 text-body-2 rounded-lg border-left bg-grey-lighten-4"
                 >
-                  <div class="d-flex align-center justify-space-between">
-                    <p class="px-2"><b>Username: </b>{{ item.full_name }}</p>
+                  <div class="d-flex align-center justify-space-between py-1">
+                    <p class=""><b>Username: </b>{{ item.full_name }}</p>
                     <p class="text-caption">{{ item.created_at.slice(0, 19) }}</p>
                   </div>
-                  <div class="pa-2 more">
+                  <div class="more">
                     <p><b>Bình luận: </b>{{ item.comment }}</p>
                   </div>
                 </v-sheet>
-
-
               </v-sheet>
             </v-container>
           </v-sheet>

@@ -25,7 +25,7 @@ const moreDiscount = ref([
 const product = ref({});
 const posts = ref([]);
 const products = ref([]);
-// const userData = JSON.parse(localStorage.getItem("userData") || "null");
+const userData = JSON.parse(localStorage.getItem("userData") || "null");
 const reviewModal = ref(false);
 
 // Create & fetch product reviews
@@ -35,13 +35,13 @@ const rating = ref(null);
 const createReview = async () => {
 	try {
 		await axios.post("reviews", {
-			// user_id: userData.id,
-			user_id: 2,
+			user_id: userData.id,
 			product_id: product.value.id,
 			comment: review.value,
 			rating: rating.value,
 		});
-		// fetchReviews();
+		fetchReviews(product.value.id);
+		alert("Bình luận thành công.");
 	}
 	catch (e) {
 		console.log(e);
@@ -52,7 +52,7 @@ const fetchReviews = async id => {
 	try {
 		const res = await axios.get(`products/${id}/reviews`);
 		if (res.status === 200) {
-			comments.value = res.data.data.reverse();
+			reviews.value = res.data.data.reverse();
 		}
 	}
 	catch (e) {
@@ -65,20 +65,21 @@ const comments = ref([]);
 const comment = ref("");
 const createComment = async () => {
 	try {
-		const response = await axios.post("product-comments", {
-			// user_id: userData.id,
-			user_id: 2,
+		await axios.post("product-comments", {
+			user_id: userData.id,
 			product_id: product.value.id,
 			comment: comment.value,
 		});
-		const commentId = response.data.data.id;
-		const commentDate = response.data.data.created_at;
-		comments.value.push(
-			{
-				id: commentId,
-				created_at: commentDate,
-				comment: comment.value,
-			});
+		// const commentId = response.data.data.id;
+		// const commentDate = response.data.data.created_at;
+		// comments.value.unshift(
+		// 	{
+		// 		id: commentId,
+		// 		user_name: userData.full_name,
+		// 		created_at: commentDate,
+		// 		comment: comment.value,
+		// 	});
+		fetchComments(product.value.id);
 		alert("Bình luận thành công.");
 	}
 	catch (e) {
@@ -256,7 +257,24 @@ onMounted(async () => {
 					<!-- Product variants -->
 					<v-sheet>
 						<h3 class="text-center pb-4">Lựa chọn màu yêu thích</h3>
-						<div class="d-flex text-center">
+						<div class="d-flex">
+							<v-radio-group>
+								<v-radio
+									v-for="(item, index) in JSON.parse(product.variants || '[]')"
+									:key="item.sku"
+									:value="item.name"
+									@click="() => { variantSelected = index }"
+									:class="variantSelected === index ? 'selected' : null"
+								>
+									<div class="text-center text-body-2">
+										<h5>{{ String(item.name) }}</h5>
+										<p @click="cartStore.add(product.id)">{{ formatPrice(item.sellPrice) }}</p>
+									</div>
+								</v-radio>
+							</v-radio-group>
+						</div>
+
+						<!-- <div class="d-flex text-center">
 							<v-card
 								v-for="(item, index) in JSON.parse(product.variants || '[]')"
 								:key="item.sku"
@@ -267,11 +285,10 @@ onMounted(async () => {
 							>
 								<b>{{ String(item.name) }}</b>
 								<p
-									class="text-red-accent-4"
-									@click="cartStore.add(product.id)"
+									@click="cartStore.add(product.variants.sku)"
 								>{{ formatPrice(item.sellPrice) }}</p>
 							</v-card>
-						</div>
+						</div> -->
 					</v-sheet>
 
 					<!-- Buy now, Add to cart -->
@@ -378,10 +395,10 @@ onMounted(async () => {
 				lg="8"
 				md="12"
 			>
-				<!-- Product Reviews -->
+				<!-- Create and display review -->
 				<ProductReviews :reviews="reviews" />
 
-				<!-- Comments -->
+				<!-- Create and display comment -->
 				<v-sheet
 					elevation="3"
 					rounded="lg"
@@ -414,16 +431,13 @@ onMounted(async () => {
 								:key="item.id"
 							>
 								<v-sheet>
-									<div
-										class="pa-4 text-body-2 rounded-lg more"
-										style="background-color: rgb(247, 243, 243); margin-left: 5%;"
-									>
-										<div class="d-flex justify-space-between">
-											<p class="px-2"><b>Username: </b>{{ item.full_name }}</p>
+									<div class="pa-4 text-body-2 rounded-lg more border-left bg-grey-lighten-4">
+										<div class="d-flex justify-space-between py-1">
+											<p class=""><b>Username: </b>{{ item.full_name }}</p>
 											<p class="">{{ item.created_at.slice(0, 19) }}</p>
 										</div>
 
-										<div class="pa-2">
+										<div class="">
 											<p><b>Bình luận: </b>{{ item.comment }}</p>
 										</div>
 									</div>
@@ -460,7 +474,7 @@ onMounted(async () => {
 				</v-sheet>
 			</v-col>
 
-			<!-- News -->
+			<!-- Display random news -->
 			<v-col
 				:cols="12"
 				md="4"
@@ -542,7 +556,7 @@ onMounted(async () => {
 }
 
 .selected {
-	border: 1px solid #d50000 !important;
+	color: #d50000 !important;
 }
 
 @keyframes fadeIn {
