@@ -82,7 +82,7 @@ const fetchProducts = async () => {
   try {
     let url = `product-pagination/?page=${currentPage.value}&per_page=${rowsPerPage}`;
     if (status.value !== null) {
-      url += `&is_deleted=${status.value}`;
+      url += `&is_disabled=${status.value}`;
     }
     if (category.value !== null) {
       url += `&category_id=${category.value}`;
@@ -94,6 +94,7 @@ const fetchProducts = async () => {
     const res = await axios.get(url);
 
     if (res.status === 200) {
+      console.log(res.data.data.products);
       products.value = res.data.data.products.map(product => mapKeys(product, (value, key) => camelCase(key)));
       numberOfPages.value = res.data.data.numberOfPages;
     }

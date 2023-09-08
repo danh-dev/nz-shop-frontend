@@ -5,6 +5,8 @@ import { mapKeys, camelCase } from "lodash";
 import GlobalPagination from "../../../components/globals/GlobalPagination.vue";
 
 import { siteData } from "@/stores/globals.js";
+import getSlugByName from "@/utils/getSlugByName.js";
+
 const siteStore = siteData();
 
 const headers = [
@@ -34,7 +36,7 @@ const headers = [
     },
     {
         title: "Thời gian",
-        key: "updatedAt",
+        key: "createdAt",
         align: "start"
     },
     {
@@ -141,116 +143,111 @@ watch([currentPage, status], fetchReviews);
 onMounted(fetchReviews);
 </script>
 <template>
-    <v-container>
-        <v-row>
-            <v-col
-                cols="12"
-                class="d-flex align-center"
-            >
-                <h2>Danh sách đánh giá</h2>
-            </v-col>
-        </v-row>
-        <v-row>
-            <v-col
-                cols="6"
-                sm="4"
-            >
-                <v-select
-                    density="compact"
-                    label="Trạng thái"
-                    :items="statuses"
-                    v-model="status"
-                    variant="outlined"
-                    hide-details
-                ></v-select>
-            </v-col>
-        </v-row>
-        <v-row v-if="alert">
-            <v-col>
-                <v-alert
-                    type="warning"
-                    :text="alert"
-                    :model-value="!!alert"
-                    variant="tonal"
+    <v-card>
+        <v-container>
+            <v-row>
+                <v-col
+                    cols="12"
+                    class="d-flex align-center"
                 >
-                    <template #append>
-                        <v-btn
-                            density="compact"
-                            color="red-accent-4"
-                            icon="mdi-window-close"
-                            variant="flat"
-                            class="mr-2"
-                            @click="alert = ''"
-                        ></v-btn>
-                        <v-btn
-                            density="compact"
-                            color="success"
-                            icon="mdi-check"
-                            variant="flat"
-                            @click="confirmAlert"
-                        ></v-btn>
-                    </template>
-                </v-alert>
-            </v-col>
-        </v-row>
-
-        <v-row>
-            <v-col>
-                <v-data-table
-                    :items-per-page="rowsPerPage"
-                    :page="currentPage"
-                    :headers="headers"
-                    :items="reviews"
-                    class="elevation-1"
-                    item-value="review"
-                    hover
-                    no-data-text="Không có bình luận!"
+                    <h2>Danh sách đánh giá</h2>
+                </v-col>
+            </v-row>
+            <v-row>
+                <v-col
+                    cols="6"
+                    sm="4"
                 >
-                    <template #item.isApproved="{ item }">
-                        <v-switch
-                            color="red-accent-4"
-                            :model-value="!item.raw.isApproved"
-                            @update:modelValue="() => handleToggleButton(item.raw.id)"
-                            hide-details
-                        ></v-switch>
-                    </template>
-
-                    <template #item.action="{ item }">
-                        <div class="d-flex align-center">
+                    <v-select
+                        density="compact"
+                        label="Trạng thái"
+                        :items="statuses"
+                        v-model="status"
+                        variant="outlined"
+                        hide-details
+                    ></v-select>
+                </v-col>
+            </v-row>
+            <v-row v-if="alert">
+                <v-col>
+                    <v-alert
+                        type="warning"
+                        :text="alert"
+                        :model-value="!!alert"
+                        variant="tonal"
+                    >
+                        <template #append>
                             <v-btn
-                                v-if="item.raw.isApproved"
-                                size="small"
-                                variant="tonal"
-                                icon="mdi-trash-can-outline"
+                                density="compact"
                                 color="red-accent-4"
-                                @click="() => handleDeleteButton(item.raw.id)"
-                            >
-                            </v-btn>
+                                icon="mdi-window-close"
+                                variant="flat"
+                                class="mr-2"
+                                @click="alert = ''"
+                            ></v-btn>
                             <v-btn
-                                v-if="item.raw.isApproved"
-                                size="small"
-                                variant="tonal"
-                                icon="mdi-information-variant"
+                                density="compact"
+                                color="success"
+                                icon="mdi-check"
+                                variant="flat"
+                                @click="confirmAlert"
+                            ></v-btn>
+                        </template>
+                    </v-alert>
+                </v-col>
+            </v-row>
+
+            <v-row>
+                <v-col>
+                    <v-data-table
+                        :items-per-page="rowsPerPage"
+                        :page="currentPage"
+                        :headers="headers"
+                        :items="reviews"
+                        class="elevation-1"
+                        item-value="review"
+                        hover
+                        no-data-text="Không có bình luận!"
+                    >
+                        <template #item.name="{ item }">
+                            <router-link :to="`/san-pham/${getSlugByName(item.raw.name)}`">{{ item.raw.name }}</router-link>
+                        </template>
+                        <template #item.isApproved="{ item }">
+                            <v-switch
                                 color="red-accent-4"
-                                :to="`/san-pham/${item.raw.slug}`"
-                            >
-                            </v-btn>
+                                :model-value="!item.raw.isApproved"
+                                @update:modelValue="() => handleToggleButton(item.raw.id)"
+                                hide-details
+                            ></v-switch>
+                        </template>
 
-                        </div>
-                    </template>
-                    <template #bottom>
-                        <GlobalPagination
-                            v-if="numberOfPages > 1"
-                            :numberOfPages="numberOfPages"
-                            :page="currentPage"
-                            @update:page="updatePage"
-                        ></GlobalPagination>
-                    </template>
-                </v-data-table>
-            </v-col>
-        </v-row>
+                        <template #item.action="{ item }">
+                            <div class="d-flex align-center">
+                                <v-btn
+                                    v-if="item.raw.isApproved"
+                                    size="small"
+                                    variant="tonal"
+                                    icon="mdi-trash-can-outline"
+                                    color="red-accent-4"
+                                    @click="() => handleDeleteButton(item.raw.id)"
+                                >
+                                </v-btn>
+                            </div>
+                        </template>
+                        <template #bottom>
+                            <GlobalPagination
+                                v-if="numberOfPages > 1"
+                                :numberOfPages="numberOfPages"
+                                :page="currentPage"
+                                @update:page="updatePage"
+                            ></GlobalPagination>
+                        </template>
+                    </v-data-table>
+                </v-col>
+            </v-row>
 
-    </v-container>
+        </v-container>
+    </v-card>
 </template>
 
 <style>
