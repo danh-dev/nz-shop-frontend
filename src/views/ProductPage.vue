@@ -12,7 +12,7 @@ import ProductThumbnailGroup from "../components/product/ProductThumbnailGroup.v
 
 const variantSelected = ref(0);
 const readMore = ref(false);
-const moreComment = ref(false);
+
 const route = useRoute();
 const { xs } = useDisplay();
 const moreDiscount = ref([
@@ -25,25 +25,33 @@ const moreDiscount = ref([
 const product = ref({});
 const posts = ref([]);
 const products = ref([]);
-const userData = JSON.parse(localStorage.getItem("userData") || "null");
+
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
+
 const reviewModal = ref(false);
 
 // Create & fetch product reviews
 const review = ref("");
 const reviews = ref([]);
 const rating = ref(null);
+const showMoreReviews = ref(false);
+
 const createReview = async () => {
 	try {
 		await axios.post("reviews", {
-			user_id: userData.id,
+			user_id: siteStore.userInfo.user_id,
 			product_id: product.value.id,
 			comment: review.value,
 			rating: rating.value,
 		});
 		fetchReviews(product.value.id);
-		alert("Bình luận thành công.");
+		siteStore.hasRes({ data: { status: "ok", message: "Bình luận thành công." } });
+		reviewModal.value = false;
+
 	}
 	catch (e) {
+		siteStore.hasRes({ data: { status: "error", message: "Xảy ra lỗi. Vui lòng đăng nhập để thực hiện thao tác." } });
 		console.log(e);
 	}
 };
@@ -63,26 +71,27 @@ const fetchReviews = async id => {
 // Create & fetch product comments
 const comments = ref([]);
 const comment = ref("");
+// const visibleComments = ref(3)
+const showMoreComments = ref(false);
+const validate = ref([
+	comment => {
+		if (comment.length > 2) { return true; }
+		return "Bình luận tối thiểu 2 ký tự.";
+	},
+]);
+
 const createComment = async () => {
 	try {
 		await axios.post("product-comments", {
-			user_id: userData.id,
+			user_id: siteStore.userInfo.user_id,
 			product_id: product.value.id,
 			comment: comment.value,
 		});
-		// const commentId = response.data.data.id;
-		// const commentDate = response.data.data.created_at;
-		// comments.value.unshift(
-		// 	{
-		// 		id: commentId,
-		// 		user_name: userData.full_name,
-		// 		created_at: commentDate,
-		// 		comment: comment.value,
-		// 	});
 		fetchComments(product.value.id);
-		alert("Bình luận thành công.");
+		siteStore.hasRes({ data: { status: "ok", message: "Bình luận thành công." } });
 	}
 	catch (e) {
+		siteStore.hasRes({ data: { status: "error", message: "Xảy ra lỗi. Bình luận thất bại." } });
 		console.log(e);
 	}
 };
@@ -98,11 +107,14 @@ const fetchComments = async id => {
 		console.log(e);
 	}
 };
-
-const done = () => {
-	// nhiu tac vu khac
-	reviewModal.value = false;
+const visibleComments = () => {
+	if (showMoreComments.value) {
+		return reviews.value;// Hiển thị tất cả đánh giá nếu showMoreReview = true
+	}
+	return reviews.value.slice(0, 3);// Hiển thị tối đa 3 đánh giá nếu showMoreReview = false
 };
+
+const feedback = ref(false);
 
 // Product photos Slider
 const model = ref(0);
@@ -405,20 +417,21 @@ onMounted(async () => {
 					class="my-5 flex-md-fill"
 				>
 					<h4 class="px-4 py-2">Bình luận:</h4>
-					<v-container class="d-flex flex-column px-3">
+					<v-container class="d-flex flex-column">
 						<!-- Create a comment -->
 						<v-sheet>
 							<v-textarea
 								v-model="comment"
-								variant="filled"
+								variant="outlined"
 								auto-grow
+								label="Bình luận"
 								background="white"
-								placeholder="Bình luận:"
+								:rules="validate"
 							></v-textarea>
 							<v-btn
 								prepend-icon="mdi-send-circle"
 								color="red-accent-4"
-								class="text-white"
+								class="text-white my-2"
 								@click="createComment"
 							>Gửi</v-btn>
 						</v-sheet>
@@ -432,44 +445,57 @@ onMounted(async () => {
 							>
 								<v-sheet>
 									<div class="pa-4 text-body-2 rounded-lg more border-left bg-grey-lighten-4">
-										<div class="d-flex justify-space-between py-1">
-											<p class=""><b>Username: </b>{{ item.full_name }}</p>
+										<div class="text-uppercase d-flex justify-space-between pb-2">
+											<p class="text-uppercase font-weight-bold">
+												<b class="text-h6 rounded-b-pill bg-amber pa-2"> {{ item.full_name.slice(0, 1) }} </b> {{
+													item.full_name }}
+											</p>
 											<p class="">{{ item.created_at.slice(0, 19) }}</p>
 										</div>
 
-										<div class="">
+										<div class="d-flex justify-space-between">
 											<p><b>Bình luận: </b>{{ item.comment }}</p>
 										</div>
 									</div>
 								</v-sheet>
+								<v-dialog id="feedback">
+									<v-card>
+										<v-textarea
+											v-model="feedback"
+											variant="outlined"
+											auto-grow
+											label="Bình luận"
+											background="white"
+											:rules="validate"
+										></v-textarea>
+										<v-btn
+											prepend-icon="mdi-send-circle"
+											color="red-accent-4"
+											class="text-white my-2"
+											@click="createFeedback"
+										>Gửi</v-btn>
+									</v-card>
+								</v-dialog>
 							</v-sheet>
 						</div>
 
-						<!-- <v-sheet class="d-flex justify-center">
-							<div
-								v-if="!moreComment"
-								class="mt-4"
+						<v-sheet class="d-flex justify-center">
+							<v-btn
+								v-if="comments.length > visibleComments.length && !showMoreComments"
+								@click="showMoreComments = true"
+								color="#d50000"
 							>
-								<v-btn
-									@click="moreComment = true"
-									color="#d50000"
-								>
-									Xem thêm bình luận
-								</v-btn>
-							</div>
+								Xem thêm bình luận
+							</v-btn>
 
-							<div
-								v-if="moreComment"
-								class="mt-4"
+							<v-btn
+								v-if="showMoreComments"
+								@click="showMoreComments = false"
+								color="#d50000"
 							>
-								<v-btn
-									@click="moreComment = false"
-									color="#d50000"
-								>
-									Thu gọn
-								</v-btn>
-							</div>
-						</v-sheet> -->
+								Thu gọn
+							</v-btn>
+						</v-sheet>
 					</v-container>
 				</v-sheet>
 			</v-col>
@@ -509,8 +535,8 @@ onMounted(async () => {
 				v-model="review"
 				class="ma-2"
 				rounded="lg"
-				cols="30"
-				rows="5"
+				variant="outlined"
+				:rules="validate"
 				placeholder="Xin mời chia sẻ cảm nhận về sản phẩm"
 			>
 			</v-textarea>
@@ -539,7 +565,7 @@ onMounted(async () => {
 					color="red-accent-4"
 					variant="elevated"
 					class="ms-1 w-50 text-white rounded-xl"
-					@click="done"
+					@click="reviewModal = false"
 				>
 					Đóng
 				</v-btn>

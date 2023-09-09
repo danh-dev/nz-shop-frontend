@@ -54,11 +54,13 @@ import {ref, watch} from "vue";
 import axios from "../axiosComfig";
 import {Checkbox} from "vue-recaptcha";
 import {useRoute, useRouter} from "vue-router";
+
 import {siteData} from "@/stores/globals";
+const siteStore = siteData();
+
 import {useRecaptchaProvider} from "vue-recaptcha";
 useRecaptchaProvider();
 
-const siteStore = siteData();
 const route = useRoute();
 const router = useRouter();
 const dataForm = ref();

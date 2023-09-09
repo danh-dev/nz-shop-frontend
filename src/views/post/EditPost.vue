@@ -65,6 +65,9 @@ const fetchPost = async () => {
   }
 };
 
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
+
 async function updatePost() {
   try {
     const response = await axios.put(`posts/edit/${post.value.id}`, {
@@ -77,8 +80,10 @@ async function updatePost() {
     });
     if (response.data.status === 200) {
       router.push("/admincp/post");
+      siteStore.hasRes({ data: { status: "ok", message: "Cập nhật thành công." } });
     }
   } catch (e) {
+    siteStore.hasRes({ data: { status: "error", message: "Cập nhật thất bại." } });
     console.log("error", e);
   }
 };

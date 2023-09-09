@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed } from "vue";
-// import LoginModal from "../modals/LoginModal.vue";
 const props = defineProps({
 	reviews: {
 		type: Array,
@@ -10,23 +9,24 @@ const props = defineProps({
 	},
 });
 
-const review = ref({
-	comment: "",
-	rating: "",
-});
-
 const moreReview = ref(false);
 const averageRating = computed(() => {
 	let totalRating = 0;
 	for (const { rating } of props.reviews) {
 		totalRating += rating;
 	}
-	return (totalRating / props.reviews.length).toFixed(1) || 0;
+	return totalRating / props.reviews.length.toFixed(1) || 0;
 });
 
 const percentReviews = rating => {
 	return props.reviews.filter(review => review.rating === rating).length;
 };
+
+// import { siteData } from "@/stores/globals";
+// const siteStore = siteData();
+// const alert = async () => {
+// 	siteStore.hasRes({ data: { status: "error", message: "Xảy ra lỗi. Vui lòng đăng nhập để thực hiện thao tác." } });
+// };
 </script>
 
 <template>
@@ -56,7 +56,7 @@ const percentReviews = rating => {
 				<div class="px-3">{{ reviews.length }} đánh giá</div>
 			</div>
 
-			<v-list
+			<!-- <v-list
 				bg-color="transparent"
 				class="d-flex flex-column-reverse"
 				density="compact"
@@ -88,11 +88,11 @@ const percentReviews = rating => {
 						</div>
 					</template>
 				</v-list-item>
-			</v-list>
+			</v-list> -->
 
-			<v-sheet class="d-flex flex-column align-center">
+			<v-sheet class="d-flex flex-column align-center mt-2">
 				<p class="text-subtitle-1">Bạn đánh giá sao sản phẩm này ?</p>
-				<!-- <LoginModal/> -->
+				<LoginModal />
 
 				<v-btn
 					id="reviewModalButton"
@@ -110,8 +110,11 @@ const percentReviews = rating => {
 					:key="review.id"
 				>
 					<div class="border-left bg-grey-lighten-4 text-body-2 rounded-lg my-4">
-						<div class="d-flex justify-space-between pa-2">
-							<p><b>Username: </b>{{ review.full_name }}</p>
+						<div class="text-uppercase d-flex justify-space-between pa-2">
+							<p class="text-uppercase font-weight-bold">
+								<b class="text-h6 rounded-b-pill bg-amber pa-2"> {{ review.full_name.slice(0, 1) }}</b> {{
+									review.full_name }}
+							</p>
 							<p>{{ review.created_at.slice(0, 19) }}</p>
 						</div>
 						<div class="pa-2">

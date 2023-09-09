@@ -3,8 +3,9 @@ import { ref, onMounted, watch } from "vue";
 import axios from "../../axiosComfig";
 import { useRoute } from "vue-router";
 import getSlugByName from "../../utils/getSlugByName.js";
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
 
-const userData = JSON.parse(localStorage.getItem("userData") || "null");
 const more = ref(false);
 // Post API
 const url = import.meta.env.VITE_PUBLIC_URL;
@@ -21,17 +22,24 @@ const post = ref({
 
 const comment = ref("");
 const comments = ref([]);
+const validate = ref([
+  comment => {
+    if (comment.length > 2) { return true; }
+    return "Bình luận tối thiểu 2 ký tự.";
+  },
+]);
 const createPostComment = async () => {
   try {
     await axios.post("post-comments", {
-      user_id: userData.id,
+      user_id: siteStore.userInfo.user_id,
       post_id: post.value.id,
       comment: comment.value,
     });
     fetchCommentsPost(post.value.id);
-    alert("Bình luận thành công.");
+    siteStore.hasRes({ data: { status: "ok", message: "Bình luận thành công." } });
   }
   catch (e) {
+    siteStore.hasRes({ data: { status: "error", message: "Xảy ra lỗi. Bình luận thất bại." } });
     console.log(e);
   }
 };
@@ -154,12 +162,13 @@ onMounted(async () => {
                   variant="filled"
                   auto-grow
                   background="white"
+                  :rules="validate"
                   placeholder="Bình luận:"
                 ></v-textarea>
                 <v-btn
                   prepend-icon="mdi-send-circle"
                   color="red-accent-4"
-                  class="text-white"
+                  class="text-white my-2"
                   @click="createPostComment"
                 >Gửi</v-btn>
               </div>
@@ -169,11 +178,12 @@ onMounted(async () => {
                 v-for="item in comments"
                 :key="item.id"
               >
-                <v-sheet
-                  class="pa-4 text-body-2 rounded-lg border-left bg-grey-lighten-4"
-                >
-                  <div class="d-flex align-center justify-space-between py-1">
-                    <p class=""><b>Username: </b>{{ item.full_name }}</p>
+                <v-sheet class="pa-4 text-body-2 rounded-lg border-left bg-grey-lighten-4">
+                  <div class="text-uppercase d-flex align-center justify-space-between pb-2">
+                    <p class="font-weight-bold">
+                      <b class="text-h6 rounded-b-pill bg-amber pa-2">{{ item.full_name.slice(0, 1) }} </b> {{
+                        item.full_name }}
+                    </p>
                     <p class="text-caption">{{ item.created_at.slice(0, 19) }}</p>
                   </div>
                   <div class="more">

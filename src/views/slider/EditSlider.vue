@@ -57,6 +57,9 @@ const fetchSlider = async () => {
   }
 };
 
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
+
 async function updateSlider() {
   try {
     const response = await axios.put(`sliders/edit/${slider.value.id}`, {
@@ -66,8 +69,10 @@ async function updateSlider() {
     });
     if (response.data.status === 200) {
       router.push("/admincp/slider");
+      siteStore.hasRes({ data: { status: "ok", message: "Cập nhật thành công." } });
     }
   } catch (e) {
+    siteStore.hasRes({ data: { status: "error", message: "Cập nhật thất bại." } });
     console.log("error", e);
   }
 };

@@ -5,7 +5,7 @@ import { useRouter, useRoute } from "vue-router";
 import ContentEditor from "../../components/globals/ContentEditor.vue";
 
 // Post API
-const url = import.meta.env.VITE_PUBLIC_URL;
+// const url = import.meta.env.VITE_PUBLIC_URL;
 
 const router = useRouter();
 const route = useRoute();
@@ -20,7 +20,7 @@ const page = ref({
 
 const fetchPage = async () => {
   try {
-    const response = await axios.get(`pages`);
+    const response = await axios.get("pages");
     if (response.data.status === 200) {
       pages.value = response.data.data;
       page.value = pages.value.find(item => {
@@ -34,6 +34,9 @@ const fetchPage = async () => {
     console.log("Error: ", error);
   }
 };
+
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
 
 async function updatePage() {
   const formData = new FormData();
@@ -52,8 +55,10 @@ async function updatePage() {
     const response = await axios.post(`pages/edit/${page.value.id}`, formData);
     if (response.data.status === 200) {
       router.push("/admincp/page");
+      siteStore.hasRes({ data: { status: "ok", message: "Cập nhật thành công." } });
     }
   } catch (e) {
+    siteStore.hasRes({ data: { status: "error", message: "Cập nhật thất bại." } });
     console.log("Error", e);
   }
 };
@@ -109,7 +114,7 @@ onBeforeMount(fetchPage);
           cols="12"
           md="12"
         >
-        <v-label class="text-caption">Nội dung trang:</v-label>
+          <v-label class="text-caption">Nội dung trang:</v-label>
           <ContentEditor
             :rules="[v => !!v || 'Vui lòng không để trống.']"
             :editorContent="page.content"
