@@ -23,7 +23,7 @@ const category = ref(null);
 const products = ref([]);
 const newProducts = ref([]);
 const filterArray = ref([]);
-const switchCard = ref([]);
+const switchCard = ref([false, false]);
 const chips = ref([]);
 const breadCrumbsItems = ref([{
   title: "Trang chủ",
@@ -36,8 +36,8 @@ const selected = ref([]);
 const bottomSelected = ref(undefined);
 const sort = ref(undefined);
 
-const max = 30000000;
-const priceRange = ref([0, max]);
+const max = ref(30000000);
+const priceRange = ref([0, max.value]);
 const step = 1000;
 
 
@@ -94,65 +94,71 @@ watch(() => categoryStore.categories, async () => {
   }
 
   else if (name) {
-    console.log(name);
     products.value = await fetchProductsByName();
   }
 
   newProducts.value = products.value;
 
-  const propertiesDuplicateArr = products.value.reduce((pre, cur) => {
-    if (pre === "") {
-      return pre + cur.properties;
-    }
-    return pre + ", " + cur.properties;
-  }, "").split(", ");
-
-  const propertiesArr = [...new Set(propertiesDuplicateArr)].sort((a, b) => a > b ? 1 : -1);
-  const filterArr = propertiesArr.reduce((pre, cur) => {
-    const [key, value] = cur.split("-");
-    if (pre.length > 0 && pre[pre.length - 1].enName === key) {
-      pre[pre.length - 1].items.push(value);
-    }
-    else {
-      pre.push({
-        enName: key,
-        items: [value],
-        choices: [],
-      });
-      switch (key) {
-        case "cpu":
-          pre[pre.length - 1].name = "Chíp xử lý";
-          pre[pre.length - 1].icon = "mdi-memory";
-          break;
-        case "screen":
-          pre[pre.length - 1].name = "Kích thước màn hình";
-          pre[pre.length - 1].icon = "mdi-overscan";
-          break;
-        case "Rom":
-          pre[pre.length - 1].name = "Bộ nhớ trong";
-          pre[pre.length - 1].icon = "mdi-harddisk";
-          break;
-        case "Ram":
-          pre[pre.length - 1].name = "Dung lượng ram";
-          pre[pre.length - 1].icon = "mdi-harddisk";
-          break;
-        default:
-          break;
-      }
-    }
-    return pre;
-  }, []);
-  filterArr.forEach(item => {
-    item.items.sort((a, b) => {
-      if (a.charAt(0) < 10 && b.charAt(0) < 10) {
-        return parseInt(a) > parseInt(b) ? 1 : -1;
-      }
-
-      return a > b ? 1 : -1;
-    });
+  const sortedArray = newProducts.value.sort(function (a, b) {
+    return b.sellPrice - a.sellPrice;
   });
-  filterArray.value = filterArr;
-  switchCard.value = [false, ...filterArr.map(() => false), false];
+  if (sortedArray.length > 0) {
+    max.value = sortedArray[0].sellPrice;
+  }
+
+  // const propertiesDuplicateArr = products.value.reduce((pre, cur) => {
+  //   if (pre === "") {
+  //     return pre + cur.properties;
+  //   }
+  //   return pre + ", " + cur.properties;
+  // }, "").split(", ");
+
+  // const propertiesArr = [...new Set(propertiesDuplicateArr)].sort((a, b) => a > b ? 1 : -1);
+  // const filterArr = propertiesArr.reduce((pre, cur) => {
+  //   const [key, value] = cur.split("-");
+  //   if (pre.length > 0 && pre[pre.length - 1].enName === key) {
+  //     pre[pre.length - 1].items.push(value);
+  //   }
+  //   else {
+  //     pre.push({
+  //       enName: key,
+  //       items: [value],
+  //       choices: [],
+  //     });
+  //     switch (key) {
+  //       case "cpu":
+  //         pre[pre.length - 1].name = "Chíp xử lý";
+  //         pre[pre.length - 1].icon = "mdi-memory";
+  //         break;
+  //       case "screen":
+  //         pre[pre.length - 1].name = "Kích thước màn hình";
+  //         pre[pre.length - 1].icon = "mdi-overscan";
+  //         break;
+  //       case "Rom":
+  //         pre[pre.length - 1].name = "Bộ nhớ trong";
+  //         pre[pre.length - 1].icon = "mdi-harddisk";
+  //         break;
+  //       case "Ram":
+  //         pre[pre.length - 1].name = "Dung lượng ram";
+  //         pre[pre.length - 1].icon = "mdi-harddisk";
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //   }
+  //   return pre;
+  // }, []);
+  // filterArr.forEach(item => {
+  //   item.items.sort((a, b) => {
+  //     if (a.charAt(0) < 10 && b.charAt(0) < 10) {
+  //       return parseInt(a) > parseInt(b) ? 1 : -1;
+  //     }
+
+  //     return a > b ? 1 : -1;
+  //   });
+  // });
+  // filterArray.value = filterArr;
+  switchCard.value = [false, false];
   chips.value = switchCard.value.map(() => null);
 });
 
@@ -166,8 +172,8 @@ const changePrice = up => {
   if (priceRange.value[0] < 0) {
     priceRange.value[0] = 0;
   }
-  if (priceRange.value[1] > max) {
-    priceRange.value[1] = max;
+  if (priceRange.value[1] > max.value) {
+    priceRange.value[1] = max.value;
   }
 };
 
@@ -184,7 +190,7 @@ const checkLastChip = () => {
   if (selected.value.length > 0) {
     const lastSelected = selected.value[selected.value.length - 1];
     if (lastSelected === 0) {
-      if (priceRange.value[0] === 0 && priceRange.value[1] === max) {
+      if (priceRange.value[0] === 0 && priceRange.value[1] === max.value) {
         selected.value.pop();
       }
     }
@@ -212,7 +218,7 @@ const updateSelected = event => {
     checkLastChip();
 
     if (popValue === 0) {
-      if (priceRange.value[0] !== 0 || priceRange.value[1] !== max) {
+      if (priceRange.value[0] !== 0 || priceRange.value[1] !== max.value) {
         selected.value.push(popValue);
       }
     }
@@ -229,18 +235,8 @@ const updateSelected = event => {
 };
 
 const handleSearchClick = () => {
-  // lastFiltered.value = filterArray.value.reduce((obj, item) => {
-  //   if (item.choices.length > 0) {
-  //     obj[getSlugByName(item.name)] = item.choices.map(i => getSlugByName(item.items[i])).join(",");
-  //   }
-  //   return obj;
-  // }, {});
-
-  // if (priceRange.value[0] > 0 || priceRange.value[1] < max) {
-  //   lastFiltered.value["price"] = `${priceRange.value[0]}-${priceRange.value[1]}`;
-  // }
   newProducts.value = products.value;
-  if (priceRange.value[0] !== 0 || priceRange.value[1] !== max) {
+  if (priceRange.value[0] !== 0 || priceRange.value[1] !== max.value) {
     newProducts.value = products.value.filter(item => ((item.discountPrice || item.sellPrice) >= priceRange.value[0]) && ((item.discountPrice || item.sellPrice) <= priceRange.value[1]));
   }
   const filterArray2 = filterArray.value.map(item => item.choices.map(choice => item.enName + "-" + item.items[choice])).filter(item => item.length !== 0);
@@ -258,10 +254,6 @@ const handleSearchClick = () => {
     }, true);
 
   });
-  // router.push({
-  //   name: "categories",
-  //   query: lastFiltered.value,
-  // });
 };
 
 const updatePage = (event) => {
@@ -301,6 +293,10 @@ watch(newProducts, () => {
   }
 });
 
+watch(max, (newMax) => {
+  priceRange.value[1] = newMax;
+});
+
 const fetchRecursiveCategoryProducts = async (id, numbers) => {
   let result = [];
   try {
@@ -311,6 +307,7 @@ const fetchRecursiveCategoryProducts = async (id, numbers) => {
   }
   catch (e) {
     //push
+    console.log(e);
   }
   return result;
 };
@@ -353,6 +350,7 @@ const fetchProductsByName = async () => {
             #card
             v-if="switchCard[0]"
           >
+
             <FilterCard
               width="25rem"
               @click="clickChips(0)"
@@ -371,7 +369,7 @@ const fetchProductsByName = async () => {
           </template>
 
         </FilterChip>
-        <FilterChip
+        <!-- <FilterChip
           v-for="(filter, index) in filterArray"
           :key="filter.id"
           :prepend-icon="filter.icon"
@@ -410,7 +408,7 @@ const fetchProductsByName = async () => {
               </template>
             </FilterCard>
           </template>
-        </FilterChip>
+        </FilterChip> -->
         <FilterChip
           prepend-icon="mdi-sort"
           append-icon="mdi-chevron-down"
@@ -459,7 +457,7 @@ const fetchProductsByName = async () => {
       >Search</v-btn>
     </v-sheet>
 
-    <v-chip-group
+    <!-- <v-chip-group
       style="overflow: visible;"
       v-model="bottomSelected"
     >
@@ -469,7 +467,7 @@ const fetchProductsByName = async () => {
       <FilterChip prepend-icon="mdi-eye-outline">
         <template #text>Xem nhiều</template>
       </FilterChip>
-    </v-chip-group>
+    </v-chip-group> -->
 
   </v-sheet>
   <ProductList

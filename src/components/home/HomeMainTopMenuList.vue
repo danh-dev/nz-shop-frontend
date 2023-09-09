@@ -48,7 +48,7 @@ const url = import.meta.env.VITE_PUBLIC_URL;
         </div>
       </v-list-item>
     </v-hover>
-    <v-hover #default="{ isHovering, props }">
+    <!-- <v-hover #default="{ isHovering, props }">
       <v-list-item
         :class="[isHovering ? 'text-red-accent-4' : '']"
         v-bind="props"
@@ -71,7 +71,7 @@ const url = import.meta.env.VITE_PUBLIC_URL;
           />
         </div>
       </v-list-item>
-    </v-hover>
+    </v-hover> -->
 
     <v-hover #default="{ isHovering, props }">
       <v-list-item

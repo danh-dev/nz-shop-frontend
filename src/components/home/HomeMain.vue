@@ -156,12 +156,29 @@ watch(() => categoryStore.categories, async () => {
 	}
 });
 
+const fetchAverageReview = async product1 => {
+	try {
+		const res = await axios.get(`average-review/${product1.id}`);
+		if (res.status === 200) {
+			product1.review = mapKeys(res.data.data, (value, key) => camelCase(key));
+			console.log(product1.review);
+		}
+	}
+	catch (e) {
+		//push
+		console.log(e);
+	}
+};
+
 const fetchRecursiveCategoryProducts = async (id, numbers) => {
 	let result = [];
 	try {
 		const res = await axios.get(`recursive-categories/${id}/products/${numbers ?? ""}`);
 		if (res.status === 200) {
 			result = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
+			for (const item of result) {
+				fetchAverageReview(item);
+			}
 		}
 	}
 	catch (e) {
@@ -244,7 +261,7 @@ onMounted(() => {
 		</HomeMainProductLayout>
 	</template>
 
-	<HomeMainProductLayout>
+	<!-- <HomeMainProductLayout>
 		<template #title>Phụ kiện</template>
 		<template #content>
 			<v-sheet class="d-flex flex-wrap">
@@ -267,7 +284,7 @@ onMounted(() => {
 				</ButtonBackground>
 			</v-sheet>
 		</template>
-	</HomeMainProductLayout>
+	</HomeMainProductLayout> -->
 
 	<HomeMainProductLayout>
 		<template #title>Tin công nghệ</template>

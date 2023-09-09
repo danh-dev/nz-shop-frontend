@@ -26,7 +26,7 @@ const headers = [
     width: "15%",
   },
   {
-    title: "Giá gốc",
+    title: "Giá",
     key: "price",
     align: "start",
     width: "10%"
@@ -106,7 +106,6 @@ const fetchProducts = async () => {
     const res = await axios.get(url);
 
     if (res.status === 200) {
-      console.log(res.data.data.products);
       products.value = res.data.data.products.map(product => mapKeys(product, (value, key) => camelCase(key)));
       numberOfPages.value = res.data.data.numberOfPages;
     }
@@ -285,17 +284,15 @@ onMounted(fetchProducts);
           >
             <template #item.price="{ item }">
               <div>
-                {{ item.raw.sellPrice }}
+                {{ formatPrice(item.raw.discountPrice || item.raw.discountPrice) }}
+
                 <v-tooltip
                   activator="parent"
                   location="right"
-                  class]7="d-flex flex-column"
+                  class="d-flex flex-column"
                 >
                   <p>
-                    Giá bán: {{ item.raw.originPrice }}
-                  </p>
-                  <p>
-                    {{ item.raw.discountPrice ? `Giá khuyến mãi: ${item.raw.discountPrice}` : '' }}
+                    Giá gốc: {{ formatPrice(item.raw.originPrice) }}
                   </p>
 
                 </v-tooltip>

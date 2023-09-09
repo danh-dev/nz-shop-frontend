@@ -3,7 +3,8 @@ import { useDisplay } from "vuetify";
 import { useCartStore } from "@/stores/cart";
 import { userData } from "@/stores/userData";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import axios from "axios";
 
 import HeaderButton from "../HeaderButton.vue";
 import HeaderLogo from "../HeaderLogo.vue";
@@ -12,11 +13,28 @@ const { lgAndUp, mdAndUp } = useDisplay();
 const cartStore = useCartStore();
 const userStore = userData();
 const router = useRouter();
+const url = import.meta.env.VITE_PUBLIC_URL;
 
 const searchInput = ref("");
+const searchOutput = ref([]);
 
 const submit = () => {
 	window.location.href = `/tim-kiem?name=${searchInput.value}`;
+};
+
+watch(searchInput, () => {
+	fetchSearchOutput();
+});
+
+const fetchSearchOutput = async () => {
+	if (searchInput.value && searchInput.value.length >= 3) {
+		try {
+			const res = await axios.get(`search-output/${searchInput.value}`);
+			searchOutput.value = res.data.data;
+		} catch (e) {
+			console.log(e);
+		}
+	}
 };
 </script>
 
@@ -42,15 +60,42 @@ const submit = () => {
 			<v-row style="max-width: 380px; min-width: 250px">
 				<v-col cols="12">
 					<v-form @submit.prevent="submit">
-						<v-text-field
+
+						<v-autocomplete
 							variant="solo"
 							hide-details
 							prepend-inner-icon="mdi-magnify"
 							label="Bạn cần tìm gì?"
 							single-line
 							density="compact"
-							v-model="searchInput"
-						/>
+							v-model:search="searchInput"
+							:items="searchOutput"
+							item-title="name"
+							hide-no-data
+							menu-icon=""
+						>
+							<template #item="{ item }">
+								<v-list-item
+									:href="`san-pham/${item?.raw?.slug}`"
+									density="compact"
+								>
+									<template #prepend>
+										<v-img
+											width="30"
+											height="40"
+											:src="`${url}${item?.raw?.image}`"
+										></v-img>
+									</template>
+									<template #title>
+										<div class="ms-3">{{ item?.raw?.name }}</div>
+									</template>
+									<template #subtitle>
+										<div class="ms-3">{{ formatPrice(item?.raw?.sell_price) }}</div>
+									</template>
+								</v-list-item>
+							</template>
+						</v-autocomplete>
+
 					</v-form>
 				</v-col>
 			</v-row>

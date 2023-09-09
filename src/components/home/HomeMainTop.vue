@@ -16,7 +16,7 @@ defineProps({
 
 const categoryStore = useCategoryStore();
 const { parentCategories } = storeToRefs(categoryStore);
-const { findBrandsOfParentCategory } = categoryStore;
+const { findBrandsOfParentCategory, findOtherCategory } = categoryStore;
 
 const { mdAndUp, name } = useDisplay();
 const buttonGroupLength = computed(() => {
@@ -97,23 +97,6 @@ watch(model, (cur, pre) => {
           />
         </v-sheet>
       </v-sheet>
-
-      <!-- <v-sheet
-        width="15.5rem"
-        class="d-none d-md-flex flex-column justify-space-between bg-transparent ms-3"
-        height="100%"
-      >
-        <v-card
-          v-for="(banner, index) in rightBanners"
-          :key="banner.id"
-          :class="index !== 3 ? 'mb-2' : ''"
-          class="d-flex rounded-lg elevation-3 flex-0-1"
-          :href="getSlugByName(banner.image)"
-        >
-          <v-img :src="`./src/assets/images/${banner.image}`" />
-        </v-card>
-      </v-sheet> -->
-
     </v-sheet>
   </v-sheet>
 
@@ -122,6 +105,7 @@ watch(model, (cur, pre) => {
     :key="category.id"
     :activator="`.${getSlugByName(category.name)}-activator`"
     :brands="findBrandsOfParentCategory(category.id)"
+    :others="findOtherCategory(category.id)"
     location-strategy="static"
     attach="#parent-item"
     width="100%"
