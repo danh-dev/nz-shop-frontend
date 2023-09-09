@@ -10,13 +10,18 @@ const props = defineProps({
 	},
 });
 
+const review = ref({
+	comment: "",
+	rating: "",
+});
+
 const moreReview = ref(false);
 const averageRating = computed(() => {
 	let totalRating = 0;
 	for (const { rating } of props.reviews) {
 		totalRating += rating;
 	}
-	return totalRating / props.reviews.length || 0;
+	return (totalRating / props.reviews.length).toFixed(1) || 0;
 });
 
 const percentReviews = rating => {
@@ -45,6 +50,7 @@ const percentReviews = rating => {
 					color="yellow-darken-3"
 					size="large"
 					readonly
+					:half-increments="true"
 					density="compact"
 				></v-rating>
 				<div class="px-3">{{ reviews.length }} đánh giá</div>
@@ -78,7 +84,7 @@ const percentReviews = rating => {
 
 					<template v-slot:append>
 						<div class="rating-values">
-							<span class="d-flex justify-end text-body-2"> {{ reviews.length }} đánh giá </span>
+							<span class="d-flex justify-end text-body-2"> {{ review.rating }} đánh giá </span>
 						</div>
 					</template>
 				</v-list-item>
@@ -130,7 +136,7 @@ const percentReviews = rating => {
 			<v-sheet>
 				<div
 					class="mt-4"
-					v-if="!moreReview"
+					v-if="reviews.length > 3 && !moreReview"
 				>
 					<v-btn
 						@click="moreReview = true"
@@ -149,7 +155,6 @@ const percentReviews = rating => {
 				>
 					<v-btn
 						@click="moreReview = false"
-						href=""
 						location="center"
 						color="red-accent-4"
 						class="text-white"
