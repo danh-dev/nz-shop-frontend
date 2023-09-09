@@ -1,20 +1,18 @@
 <script setup>
 import {useDisplay} from "vuetify";
-import {useCartStore} from "@/stores/cart";
 import {siteData} from "@/stores/globals";
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 
 const router = useRouter();
 const {lgAndUp, mdAndUp} = useDisplay();
-const cartStore = useCartStore();
 const siteStore = siteData();
 
 const miniLogo = import.meta.env.VITE_PUBLIC_URL + siteStore.siteSetings.logo_mini;
 const menus = ref([
   { icon: 'mdi-card-account-details', text: 'Tài khoản', route: 'user' },
   { icon: 'mdi-truck-fast-outline', text: 'Lịch sử đơn hàng', route: 'coupons' },
-  { icon: 'mdi-account-outline', text: 'User Manager', route: 'users' },
+  { icon: 'mdi-account-outline', text: 'User Manager', route: 'users', role:'admin'},
   { icon: 'mdi-logout', text: 'Đăng xuất', route: 'logout' },
 ]);
 
@@ -121,7 +119,8 @@ const clickAction = (item , index)=>{
               @click="siteStore.userInfo.full_name ? null : $router.push('/login')"
           >
             <v-menu activator="parent" v-if="siteStore.userInfo.full_name">
-              <v-list>
+              <v-list> <v-list-item prepend-icon="mdi-shield-crown-outline" v-if="siteStore.isAdmin" @click="router.push('/admincp')">Admin CP</v-list-item>
+
                 <v-list-item
                     v-for="(item, index) in menus"
                     :key="index"
@@ -130,7 +129,7 @@ const clickAction = (item , index)=>{
                 >
                   <v-list-item-title>{{ item.text }}</v-list-item-title>
                 </v-list-item>
-              </v-list>
+                </v-list>
             </v-menu>
             <span v-if="mdAndUp" class="m-ellipsis">{{
                 siteStore.userInfo.full_name ? siteStore.userInfo.full_name : "Đăng nhập"

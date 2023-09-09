@@ -1,9 +1,7 @@
 <script setup>
 import CartList from "../../components/cart/CartList.vue";
-import {useCartStore} from "@/stores/cart";
 import {siteData} from "@/stores/globals";
 
-const cartStore = useCartStore();
 const siteStore = siteData();
 
 </script>
@@ -30,7 +28,7 @@ const siteStore = siteData();
               </div>
             </div>
             <v-btn block="" variant="flat" size="large" class="w-75 bg-red-accent-4"
-                   @click="$router.push('/checkout')">
+                   @click="()=>{siteStore.cartInfo.selectStep = 'stepAddress';$router.push('/checkout')}">
               Tiến hành đặt hàng
             </v-btn>
           </v-card>

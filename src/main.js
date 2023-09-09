@@ -38,7 +38,6 @@ app.use(head);
 app.use(VueRecaptchaPlugin, {
 	v2SiteKey: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
 });
-
 app.config.globalProperties.formatPrice = value => {
 	return parseFloat(value).toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 };

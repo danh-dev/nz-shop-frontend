@@ -8,7 +8,7 @@ export const siteData = defineStore("siteData", () => {
         const apiMessages = ref([]);
         const isLogin = ref();
         const isAdmin = ref();
-        const useGuest = ref(false);
+        const useGuest = ref("");
         const siteSetings = ref({
             setting_ver: "",
             site_name: "",
@@ -32,7 +32,7 @@ export const siteData = defineStore("siteData", () => {
             main_color: "",
         });
         const userInfo = ref({
-            user_id: 0,
+            user_id: null,
             full_name: "",
             role: "",
             phone_number: "",
@@ -54,6 +54,9 @@ export const siteData = defineStore("siteData", () => {
             shipping: {},
             selectStep: "stepAddress"
         });
+        const emailBuyer = computed(() => {
+            return userInfo.value.email ? userInfo.value.email : useGuest.value;
+        });
         const totalUnit = computed(() => {
             return Object.keys(cartInfo.value.cartList).reduce(
                 (total, sku) => total + cartInfo.value.cartList[sku].quantity,
@@ -63,35 +66,39 @@ export const siteData = defineStore("siteData", () => {
         const listCart = computed(() => {
             return Object.values(cartInfo.value.cartList);
         });
-        const valueDiscount = computed(()=>{
-            if(cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon==='totalcart' && cartInfo.value.coupon.type_value==='number_value'){
-                return cartInfo.value.coupon.value
+
+        const valueDiscount = computed(() => {
+            if (cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon === "totalcart" && cartInfo.value.coupon.type_value === "number_value") {
+                return cartInfo.value.coupon.value;
             }
-            if(cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon==='totalcart' && cartInfo.value.coupon.type_value==='percent_value'){
-                return (totalValue.value/100) * cartInfo.value.coupon.value;
+            if (cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon === "totalcart" && cartInfo.value.coupon.type_value === "percent_value") {
+                return (totalValue.value / 100) * cartInfo.value.coupon.value;
             }
-            if(cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon==='totalcart' && cartInfo.value.coupon.type_value==='number_value'){
-                return (totalValue.value/100) * cartInfo.value.coupon.value;
-            }
-            if(cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon==='totalcart' && cartInfo.value.coupon.type_value==='percent_value'){
-                return (totalValue.value/100) * cartInfo.value.coupon.value;
-            }
-        })
+            return 0;
+            // if (cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon === "totalcart" && cartInfo.value.coupon.type_value === "number_value") {
+            //     return (totalValue.value / 100) * cartInfo.value.coupon.value;
+            // }
+            // if (cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon === "totalcart" && cartInfo.value.coupon.type_value === "percent_value") {
+            //     return (totalValue.value / 100) * cartInfo.value.coupon.value;
+            // }
+        });
         const totalValue = computed(() => {
-            return listCart.value.reduce((total, product) => {
+            return  listCart.value.reduce((total, product) => {
                 const price = product.info.discount_price ? product.info.discount_price : product.info.sell_price;
                 return total + parseFloat(price) * product.quantity;
             }, 0);
         });
+
+
         const priceShipping = computed(() => {
             if (cartInfo.coupon && cartInfo.coupon.type_value === "free_shipping") {
                 return 0;
             }
             if (cartInfo.coupon && cartInfo.coupon.type_value === "reduce_shipping") {
                 let calculatePrice = cartInfo.value.shipping.value - cartInfo.coupon.value;
-                return calculatePrice>=0?calculatePrice:0;
+                return calculatePrice >= 0 ? calculatePrice : 0;
             }
-            if(cartInfo.value.shipping.value){
+            if (cartInfo.value.shipping.value) {
                 return cartInfo.value.shipping.value;
             }
         });
@@ -108,6 +115,8 @@ export const siteData = defineStore("siteData", () => {
                 };
             }
         };
+
+        const totalCart = computed(()=>{ return totalValue.value + priceShipping.value - valueDiscount.value });
         const fetchProduct = async (sku) => {
             const res = await axios.post("products/sku", {
                 sku: sku
@@ -192,9 +201,6 @@ export const siteData = defineStore("siteData", () => {
         const doneLoading = () => {
             isLoading.value = false;
         };
-        const configGuest = () => {
-            useGuest.value = true;
-        };
         const hasRes = (res) => {
             if (res.status === 401) {
                 hadDisable();
@@ -222,17 +228,20 @@ export const siteData = defineStore("siteData", () => {
             }, 5000);
         };
 
-        const errorImage = (w,h) => {
+        const errorImage = (w, h) => {
             // console.log("hit")
             // console.log(event.srcElement)
-            event.srcElement.setAttribute('src', `https://dummyimage.com/${w}x${h}/dc3545/FFF.png&text=Not%20Found`);
+            event.srcElement.setAttribute("src", `https://dummyimage.com/${w}x${h}/dc3545/FFF.png&text=Not%20Found`);
         };
 
         return {
             titleNow,
             isLoading,
+            valueDiscount,
+            totalCart,
             apiMessages,
             useGuest,
+            emailBuyer,
             isLogin,
             isAdmin,
             siteSetings,
@@ -247,7 +256,6 @@ export const siteData = defineStore("siteData", () => {
             hasRes,
             errorSystem,
             setUserInfo,
-            configGuest,
             logout,
             fetchSettingSite,
             hadDisable,

@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {siteData} from "@/stores/globals";
 import Step1 from "@/views/cart/StepCheckout/Step1.vue";
 import Step2 from "@/views/cart/StepCheckout/Step2.vue";
@@ -9,12 +9,12 @@ import {useRouter} from "vue-router";
 
 const router = useRouter();
 const siteStore = siteData();
-
+const inputEmail = ref("");
 const stepList = ref([
   {icon: "mdi-card-account-details-outline", text: "Thông tin đặt hàng", tabAction: "stepAddress"},
   {icon: "mdi-truck-fast-outline", text: "Giao hàng & Giảm giá", tabAction: "stepShipping"},
-  {icon: "mdi-cash-register", text: "Thanh toán", tabAction: "stepPayment"},
-  {icon: "mdi-package-variant-closed-check", text: "Hoàn tất đặt hàng", tabAction: "stepCompleted"},
+  {icon: "mdi-cash-register", text: "Đặt hàng", tabAction: "stepPayment"},
+  {icon: "mdi-package-variant-closed-check", text: "Hoàn tất thanh toán", tabAction: "stepCompleted"},
 ]);
 
 const checkIndex =computed(()=>{ return stepList.value.findIndex(item => item.tabAction === siteStore.cartInfo.selectStep) })
@@ -22,17 +22,17 @@ const checkIndex =computed(()=>{ return stepList.value.findIndex(item => item.ta
 const modelLogin = ref(false);
 
 
-// onMounted(()=>{
-//   if(siteStore.cartInfo.cartList.length<=0){
-//     router.push("/cart")
-//   }
-// })
+onMounted(()=>{
+  if(siteStore.listCart.length<=0){
+    router.push("/cart")
+  }
+})
 </script>
 
 <template>
   <div style="min-height: inherit;">
     <v-btn @click="()=>{siteStore.isLogin = !siteStore.isLogin;}">isLogin:{{ siteStore.isLogin }}</v-btn>
-    <v-btn @click="()=>{siteStore.useGuest = !siteStore.useGuest;}">isGuest:{{ siteStore.useGuest }}</v-btn>
+    <v-btn @click="()=>{siteStore.useGuest = '';}">isGuest:{{ siteStore.useGuest }}</v-btn>
     <v-sheet v-if="siteStore.isLogin||siteStore.useGuest" style="min-height: inherit;">
       <v-card class="pa-5" style="min-height: inherit;">
         <v-row>
@@ -54,8 +54,8 @@ const modelLogin = ref(false);
         </v-row>
         <Step1 v-if="siteStore.cartInfo.selectStep==='stepAddress'||siteStore.cartInfo.selectStep===null"/>
         <Step2 v-if="siteStore.cartInfo.selectStep==='stepShipping'"/>
-        <Step3 v-if="siteStore.cartInfo.selectStep==='stepPayment'"/>
         <Step4 v-if="siteStore.cartInfo.selectStep==='stepCompleted'"/>
+        <Step3 v-if="siteStore.cartInfo.selectStep==='stepPayment'"/>
       </v-card>
     </v-sheet>
     <v-sheet v-else>
@@ -66,7 +66,10 @@ const modelLogin = ref(false);
               <v-btn @click="modelLogin = !modelLogin">Đăng nhập</v-btn>
             </v-col>
             <v-col cols="12" md="6" class="d-flex justify-center">
-              <v-btn @click="siteStore.configGuest()">Thanh toán nhanh</v-btn>
+
+              <v-text-field density="compact" variant="outlined" label="Email tiếp nhận" v-model="inputEmail"
+                            persistent-hint hint="Email nhận thông báo tình trạng đơn hàng" autocomplete="off"></v-text-field>
+              <v-btn @click="()=>{siteStore.useGuest= inputEmail}">Thanh toán nhanh</v-btn>
             </v-col>
           </v-row>
         </v-container>

@@ -3,7 +3,6 @@ import { useDisplay } from "vuetify";
 import { RouterView } from "vue-router";
 
 import Header from "@/components/globals/Header.vue"
-import TheHeader from "@/components/layouts/TheHeader.vue";
 import TheFooter from "@/components/layouts/TheFooter.vue";
 import FullscreenModal from "@/components/modals/FullscreenModal.vue";
 import MenuModal from "@/components/modals/MenuModal.vue";

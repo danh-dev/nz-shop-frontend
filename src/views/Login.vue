@@ -85,7 +85,7 @@ const login = async () => {
       await siteStore.setUserInfo(res.data.user_id);
       localStorage.setItem("accessToken", res.data.token);
       siteStore.isLogin =true;
-      siteStore.useGuest = false;
+      siteStore.useGuest = "";
       setTimeout(() => {
         router.replace(route.query.to ? String(route.query.to) : "/");
       }, 100);

@@ -42,10 +42,37 @@
       </v-list-item>
     </v-list>
   </v-card>
+  <v-btn @click="vnpay">VNPAY</v-btn>
+  <a :href="url">zxczxc</a>
 </template>
 
 <script setup>
-import {computed, ref, watchEffect} from "vue";
+import {computed, onMounted, ref, watchEffect} from "vue";
+import axios from "@/axiosComfig";
+
+const url= ref();
+const getLink = async () => {
+  try {
+    const res = await axios.get('vnpay',{
+    });
+    url.value = res.data.data
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const run = async () => {
+  try {
+    const res = await axios.get(url.value);
+    console.log(res);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+onMounted(()=>{
+  getLink();
+})
 
 const listCreate = ref([]);
 const bienthe = ref([]);

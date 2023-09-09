@@ -512,7 +512,7 @@
                           clearable
                           variant="outlined"
                           color="red-accent-2"
-                          aria-autocomplete="none"
+                          autocomplete="off"
                       />
                     </v-col>
                   </v-row>
@@ -699,12 +699,12 @@ const typeCoupon = [
     text: "Giảm giá tính vào tổng đơn hàng",
     value: "totalcart"
   },
-  {
-    icon: "mdi-package-variant-closed-check",
-    name: "Theo sản phẩm",
-    text: "Giảm giá tính theo từng sản phẩm",
-    value: "onproduct"
-  },
+  // {
+  //   icon: "mdi-package-variant-closed-check",
+  //   name: "Theo sản phẩm",
+  //   text: "Giảm giá tính theo từng sản phẩm",
+  //   value: "onproduct"
+  // },
 ];
 const couponStatus = [
   {

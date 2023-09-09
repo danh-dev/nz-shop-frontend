@@ -233,7 +233,7 @@ onMounted(() => {
                 v-if="siteStore.listCart.length"
                 class="pa-2 scrollbar"
                 elevation="0"
-                style="max-height: 350px; overflow-y:auto"
+                style="max-height: 350px; min-height: 250px; overflow-y:auto"
             >
               <v-row v-for="(product, index) in siteStore.listCart" :key="index">
                 <v-col cols="3">

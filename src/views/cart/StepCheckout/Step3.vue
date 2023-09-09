@@ -1,7 +1,51 @@
 <script setup>
 import {siteData} from "@/stores/globals";
+import axios from "@/axiosComfig";
 
 const siteStore = siteData();
+
+const createOrder = async () => {
+  try {
+    siteStore.isLoading = true;
+    let res = await axios.post("createOrder", {
+      emailBuyer: siteStore.emailBuyer,
+      phoneNumberTracking: siteStore.cartInfo.infoAddress.phone_number,
+      items: siteStore.listCart,
+      addressShipping: siteStore.cartInfo.infoAddress,
+      delivery: siteStore.cartInfo.shipping,
+      coupon: siteStore.cartInfo.coupon.code,
+    });
+    siteStore.hasRes(res);
+  } catch (e) {
+    siteStore.errorSystem();
+    console.log(e);
+  } finally {
+    siteStore.isLoading = false;
+  }
+};
+
+const onSubmit = async () => {
+  let errors = 0;
+  if (!siteStore.emailBuyer) {
+    siteStore.hasRes({data: {status: "error", message: "Thiếu dữ liệu email tiếp nhận đơn hàng"}});
+    errors++;
+  }
+  if (!siteStore.cartInfo.infoAddress.phone_number) {
+    siteStore.hasRes({data: {status: "error", message: "Thiếu dữ liệu số điện thoại nhận hàng"}});
+    errors++;
+  }
+  if (siteStore.listCart <= 0) {
+    siteStore.hasRes({data: {status: "error", message: "Giỏ hàng trống???"}});
+    errors++;
+  }
+  if (Object.keys(siteStore.cartInfo.shipping).length === 0) {
+    siteStore.hasRes({data: {status: "error", message: "Thiếu dữ liệu hình thức vận chuyển"}});
+    errors++;
+  }
+  if (errors === 0) {
+    await createOrder();
+  }
+};
 
 </script>
 
@@ -84,11 +128,12 @@ const siteStore = siteData();
                 <v-card-text class="d-flex justify-space-between py-2 text-blue-grey-darken-2 font-weight-black"><span>Phí ship:</span>
                   {{ formatPrice(siteStore.priceShipping) }}
                 </v-card-text>
-                <v-card-text class="d-flex justify-space-between py-2 text-blue-grey-darken-2 font-weight-black"><span>Giảm giá:</span>
-                  {{ formatPrice(siteStore.totalValue) }}
+                <v-card-text v-if="siteStore.valueDiscount" class="d-flex justify-space-between py-2 text-blue-grey-darken-2 font-weight-black"><span>Giảm giá:</span>
+                  {{ formatPrice(siteStore.valueDiscount) }}
                 </v-card-text>
-                <v-card-text class="d-flex justify-space-between text-blue-grey-darken-3 text-h6 font-weight-bold"><span>Tổng đơn hàng:</span>
-                  {{ formatPrice(siteStore.totalValue) }}
+                <v-card-text class="d-flex justify-space-between text-blue-grey-darken-3 text-h6 font-weight-bold">
+                  <span>Tổng đơn hàng:</span>
+                  {{ formatPrice(siteStore.totalCart) }}
                 </v-card-text>
               </v-card>
             </div>
@@ -96,14 +141,10 @@ const siteStore = siteData();
         </v-row>
       </v-card>
     </v-col>
-    <v-col cols="12">
-      <v-card elevation="1" class="ma-1 pa-2">
-
-        <v-card-title class="font-weight-bold">
-          Chọn phương thức thanh toán:
-        </v-card-title>
-
-      </v-card>
+  </v-row>
+  <v-row class="d-flex justify-center">
+    <v-col cols="12" lg="3">
+      <v-btn block color="red-darken-2  " @click="onSubmit">Xác nhận</v-btn>
     </v-col>
   </v-row>
 </template>
