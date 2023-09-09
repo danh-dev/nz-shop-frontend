@@ -92,7 +92,7 @@ const percentReviews = rating => {
 
 			<v-sheet class="d-flex flex-column align-center mt-2">
 				<p class="text-subtitle-1">Bạn đánh giá sao sản phẩm này ?</p>
-				<LoginModal />
+				<!-- <LoginModal /> -->
 
 				<v-btn
 					id="reviewModalButton"

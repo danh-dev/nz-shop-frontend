@@ -270,20 +270,22 @@ onMounted(async () => {
 					<v-sheet>
 						<h3 class="text-center pb-4">Lựa chọn màu yêu thích</h3>
 						<div class="d-flex">
-							<v-radio-group>
+							<v-radio-group
+								v-for="(item, index) in JSON.parse(product.variants || '[]')"
+								:key="item.sku"
+							>
 								<v-radio
-									v-for="(item, index) in JSON.parse(product.variants || '[]')"
-									:key="item.sku"
 									:value="item.name"
+									:label="String(item.name)"
 									@click="() => { variantSelected = index }"
 									:class="variantSelected === index ? 'selected' : null"
 								>
-									<div class="text-center text-body-2">
-										<h5>{{ String(item.name) }}</h5>
-										<p @click="cartStore.add(product.id)">{{ formatPrice(item.sellPrice) }}</p>
-									</div>
 								</v-radio>
+								<div>
+									<p class="ps-10">{{ formatPrice(item.sellPrice) }}</p>
+								</div>
 							</v-radio-group>
+
 						</div>
 
 						<!-- <div class="d-flex text-center">
