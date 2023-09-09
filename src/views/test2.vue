@@ -1,42 +1,24 @@
 <template>
-  <input
-    type="file"
-    id="image"
-    ref="fileInput"
-    @change="getUploadedImage"
-  >
-  <Cropper
-    ref="cropperArea"
-    :src="uploadedImage"
-    :stencil-props="{
-      aspectRatio: 1,
-    }"
+  <input type="file" id="image" ref="fileInput" @change="getUploadedImage">
+  <Cropper ref="cropperArea"
+           :src="uploadedImage"
+           :stencil-props="{
+            aspectRatio: 1,
+            }"
   />
   <br>
   Du lieu gui di: {{ croppedImageData }}
-  <v-img
-    :src="croppedImageData"
-    width="500px"
-  ></v-img>
-  <button
-    v-if="uploadedImage"
-    @click="crop"
-    type="button"
-  >
+  <v-img :src="croppedImageData.imageUrl" width="500px"></v-img>
+  <button v-if="uploadedImage" @click="crop" type="button">
     Crop Image
   </button>
-  <button
-    v-if="croppedImageData"
-    @click="done"
-    type="button"
-  >
+  <button v-if="croppedImageData" @click="done" type="button">
     Xac nhan gui du lieu
   </button>
 </template>
-
 <script setup>
-import { Cropper } from "vue-advanced-cropper";
-import { ref } from "vue";
+import {Cropper} from "vue-advanced-cropper";
+import {ref} from "vue";
 import "vue-advanced-cropper/dist/style.css";
 
 const fileInput = ref(null);
@@ -49,7 +31,7 @@ const getUploadedImage = (e) => {
   uploadedImage.value = URL.createObjectURL(file);
 };
 const crop = () => {
-  const { canvas } = cropperArea.value.getResult();
+  const {canvas} = cropperArea.value.getResult();
   croppedImageData.value = canvas.toDataURL();
 };
 const done = () => {
@@ -62,6 +44,6 @@ const done = () => {
 // }"
 // :canvas="{
 // width:180,
-//     height:53
+// height:53
 // }"
 </script>

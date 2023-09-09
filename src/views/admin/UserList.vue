@@ -170,9 +170,9 @@
               {{ item.raw.isVerify }}
             </v-chip>
           </template>
-          <template #item.isSuspended="{ item }">
+          <template #item.status="{ item }">
             <v-switch
-                :model-value="item.raw.isSuspended==='active'||false"
+                :model-value="item.raw.status==='active'||false"
                 @change="changeStatus(item.raw.id)"
                 density="compact"
                 color="light-blue-lighten-3"
@@ -402,7 +402,7 @@ const headers = [
   },
   {
     title: "Trạng thái",
-    key: "isSuspended",
+    key: "status",
     align: "center",
     sortable: false,
   },
@@ -439,7 +439,7 @@ const userListMeta = computed(() => [
     icon: "mdi-account-cancel",
     color: "error",
     title: "Tài khoản bị khoá",
-    stats: userStats.value.suspended,
+    stats: userStats.value.status,
     percentage: "",
   },
 ]);

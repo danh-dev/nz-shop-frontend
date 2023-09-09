@@ -28,9 +28,11 @@ import axios from "../axiosComfig";
 import { Checkbox } from 'vue-recaptcha';
 import {rule_email} from "@/validators";
 import {siteData} from "@/stores/globals";
-
+import {useRecaptchaProvider} from "vue-recaptcha";
+useRecaptchaProvider();
 
 const siteStore = siteData();
+
 const dataForm = ref();
 const email = ref("");
 const v2_captcha = ref(null);
@@ -44,16 +46,12 @@ const forgot = async () => {
     const res = await axios.post('forgot-password', {
       email: email.value,
     });
-    if(res.data.success){
-      siteStore.hasSuccess(res.data.message);
-    }
-    if(!res.data.success){
-      siteStore.hasError(res.data.message);
-    }
-  } catch (error) {
-    console.error(error);
+    siteStore.hasRes(res);
+  } catch (e) {
+    siteStore.errorSystem();
+    console.log(e);
   } finally {
-    siteStore.doneLoading()
+    siteStore.doneLoading();
   }
 }
 const onSubmit = () => {

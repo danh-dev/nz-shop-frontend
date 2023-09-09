@@ -12,6 +12,11 @@ const routes = [
 		component: () => import("../views/HomePage.vue"),
 	},
 	{
+		name: "page-404",
+		path: "/404",
+		component: () => import("../views/404.vue")
+	},
+	{
 		name: "categories",
 		path: "/danh-muc/:slugs+",
 		component: () => import("../views/CategoryPage.vue"),
@@ -42,13 +47,14 @@ const routes = [
 	{
 		path: "checkout",
 		name: "checkout-page",
-		meta: { auth: "login" },
 		component: () => import("../views/cart/CheckOut.vue"),
 	},
 	{
 		name: "404",
 		path: ":pathMatch(.*)*",
-		component: () => import("../views/404.vue"),
+		redirect: () => {
+			return { name: "page-404" };
+		},
 	},
 	{
 		name: "user",
@@ -132,7 +138,6 @@ const routes = [
 	{
 		path: "reset-password",
 		name: "reset-password-page",
-		meta: { auth: "true" },
 		component: () => import("../views/ResetPassword.vue"),
 	},
 	{

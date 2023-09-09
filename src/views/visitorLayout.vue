@@ -1,55 +1,64 @@
 <script setup>
-import { useDisplay } from "vuetify";
-import { RouterView } from "vue-router";
+import {useDisplay} from "vuetify";
+import {RouterView, useRoute} from "vue-router";
 
-import TheHeader from "@/components/layouts/TheHeader.vue";
+const route = useRoute();
+
 import TheFooter from "@/components/layouts/TheFooter.vue";
 import FullscreenModal from "@/components/modals/FullscreenModal.vue";
 import MenuModal from "@/components/modals/MenuModal.vue";
+import Header from "@/components/globals/Header.vue";
 
-const { lgAndUp } = useDisplay();
+const {lgAndUp} = useDisplay();
+
 </script>
 
 <template>
   <v-layout>
-    <TheHeader />
+    <Header/>
 
     <v-main
-      style="position: relative"
-      id="modal-container"
+        style="position: relative"
+        id="modal-container"
     >
       <v-container :fluid="!lgAndUp">
-        <RouterView />
+        <main>
+          <router-view/>
+        </main>
       </v-container>
     </v-main>
 
-    <TheFooter />
+    <TheFooter/>
 
     <FullscreenModal
-      location-strategy="static"
-      scroll-strategy="close"
-      :scrim="false"
-      transition="dialog-bottom-transition"
-      activator="#category"
-      absolute
-      content-class="position-fixed"
-      attach="#modal-container"
-      width="100%"
-      height="calc(100vh - 56px)"
+        location-strategy="static"
+        scroll-strategy="close"
+        :scrim="false"
+        transition="dialog-bottom-transition"
+        activator="#category"
+        absolute
+        content-class="position-fixed"
+        attach="#modal-container"
+        width="100%"
+        height="calc(100vh - 56px)"
     />
 
     <MenuModal
-      style="top: 64px"
-      location-strategy="static"
-      scroll-strategy="none"
-      activator="#categories"
-      attach="#modal-container"
-      transition="fade-transition"
-      width="100%"
-      absolute
-      content-class="position-fixed"
+        style="top: 64px"
+        location-strategy="static"
+        scroll-strategy="none"
+        activator="#categories"
+        attach="#modal-container"
+        transition="fade-transition"
+        width="100%"
+        absolute
+        content-class="position-fixed"
     />
   </v-layout>
 </template>
 
-<style></style>
+<style scoped>
+main {
+  min-height: 83vh;
+}
+</style>

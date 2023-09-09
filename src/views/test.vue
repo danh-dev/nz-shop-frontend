@@ -1,108 +1,101 @@
 <template>
-  <template>
-    <div>
-      <v-row
-          justify="center"
-      >
-        <v-btn
-            color="primary"
-            class="ma-2"
-            @click="dialog = true"
-        >
-          Open Dialog 1
-        </v-btn>
-        <v-dialog
-            v-model="dialog"
-            width="auto"
-        >
-          <v-card>
-            <v-card-title>
-              Dialog 1
-            </v-card-title>
-            <v-card-text>
-              <v-btn
-                  color="primary"
-                  class="ma-2"
-                  @click="dialog2 = true"
-              >
-                Open Dialog 2
-              </v-btn>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn
-                  color="primary"
-                  variant="text"
-                  @click="dialog = false"
-              >
-                Close
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+  <v-card elevation="3" class="ma-5">
+    <v-btn @click="addCreate()">
+      Thêm biến thể
+    </v-btn>
+    <v-list>
+      <v-list-item v-for="(item,index) in listCreate" :key="index">
+        <v-row>
+          <v-col cols="3">
+            <v-text-field v-model="item.name"></v-text-field>
+          </v-col>
+          <v-col cols="9">
+            <v-combobox
+                chips
+                multiple
+                v-model="item.giatri"
+                label="List"
+            ></v-combobox>
+          </v-col>
+        </v-row>
+      </v-list-item>
+    </v-list>
+    Giá trị: {{ listCreate }}<br>
+    In:{{ printNhanh }}
+    Giá trị: {{ bienthe }}<br>
 
-        <v-dialog
-            v-model="dialog2"
-            width="auto"
-        >
-          <v-card>
-            <v-card-title>
-              Dialog 2
-            </v-card-title>
-            <v-card-text>
-              <v-btn
-                  color="primary"
-                  @click="dialog3 = !dialog3"
-              >
-                Open Dialog 3
-              </v-btn>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn
-                  color="primary"
-                  variant="text"
-                  @click="dialog2 = false"
-              >
-                Close
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-
-        <v-dialog
-            v-model="dialog3"
-            width="auto"
-        >
-          <v-card>
-            <v-card-title>
-              <span>Dialog 3</span>
-            </v-card-title>
-            <v-card-actions>
-              <v-btn
-                  color="primary"
-                  variant="text"
-                  @click="dialog3 = false"
-              >
-                Close
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-row>
-    </div>
-  </template>
+  </v-card>
+  <v-card elevation="3" class="ma-5">
+    <v-btn @click="addBienthe()">
+      Magic Button
+    </v-btn>
+    <v-btn @click="addOneMore()">One</v-btn>
+    <v-list>
+      <v-list-item v-for="(item,index) in bienthe" :key="index">
+        <v-combobox
+            chips
+            multiple
+            v-model="item.name"
+            label="List"
+        ></v-combobox>
+        {{ index }}
+      </v-list-item>
+    </v-list>
+  </v-card>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      drawer: false, // Initialize drawer as closed
-    };
-  },
-  methods: {
-    closeDrawer() {
-      this.drawer = false;
-    },
-  },
+<script setup>
+import {computed, ref, watchEffect} from "vue";
+
+const listCreate = ref([]);
+const bienthe = ref([]);
+const addCreate = () => {
+  listCreate.value.push({
+    name: "",
+    giatri: []
+  });
 };
+
+function generateCombinations(array) {
+  let result = [];
+
+  const firstProperty = array[0].name;
+  const firstValues = array[0].giatri;
+
+  if (array.length === 1) {
+    for (let value of firstValues) {
+      result.push({ name: [`${firstProperty}:${value}`], gia: "" });
+    }
+  } else {
+    const remainingArray = array.slice(1);
+    const combinations = generateCombinations(remainingArray);
+
+    for (let value of firstValues) {
+      for (let combination of combinations) {
+        result.push({ name: [`${firstProperty}:${value}`, ...combination.name], gia: "" });
+      }
+    }
+  }
+
+  return result;
+}
+
+
+const printNhanh = computed(() => {
+  if (listCreate.value[0]) {
+    return listCreate.value[0].giatri.length;
+  }
+});
+
+
+const addOneMore = () => {
+  bienthe.value.push(
+      {name: [], gia: ""});
+};
+const addBienthe = () => {
+  bienthe.value = generateCombinations(listCreate.value);
+};
+watchEffect(() => {
+  console.log(bienthe.value);
+});
 </script>
