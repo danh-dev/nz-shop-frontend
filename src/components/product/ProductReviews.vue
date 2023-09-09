@@ -1,7 +1,5 @@
 <script setup>
 import { ref, computed } from "vue";
-import LoginModal from "../modals/LoginModal.vue";
-
 const props = defineProps({
 	reviews: {
 		type: Array,
@@ -11,38 +9,37 @@ const props = defineProps({
 	},
 });
 
-const form = ref({
-	rating: null,
-	comment: "",
-});
-
-const more = ref(false);
-
+const moreReview = ref(false);
 const averageRating = computed(() => {
 	let totalRating = 0;
 	for (const { rating } of props.reviews) {
 		totalRating += rating;
 	}
-	return totalRating / props.reviews.length || 0;
+	return totalRating / props.reviews.length.toFixed(1) || 0;
 });
 
 const percentReviews = rating => {
 	return props.reviews.filter(review => review.rating === rating).length;
 };
 
+// import { siteData } from "@/stores/globals";
+// const siteStore = siteData();
+// const alert = async () => {
+// 	siteStore.hasRes({ data: { status: "error", message: "Xảy ra lỗi. Vui lòng đăng nhập để thực hiện thao tác." } });
+// };
 </script>
 
 <template>
 	<v-sheet>
 		<v-sheet
-			class="my-4 d-flex flex-column py-3 v-rating"
+			class="my-2 d-flex flex-column v-rating"
 			elevation="3"
 			width="100%"
 			rounded="lg"
 		>
 
 			<div class="d-flex align-center flex-column">
-				<h4 class="d-flex justify-center">Đánh giá & nhận xét</h4>
+				<h3 class="pt-5 d-flex justify-center text-uppercase">Đánh giá & nhận xét</h3>
 				<div class="text-h2 mt-3">
 					{{ averageRating }}
 					<span class="text-h6 ml-n3">/5</span>
@@ -53,19 +50,20 @@ const percentReviews = rating => {
 					color="yellow-darken-3"
 					size="large"
 					readonly
+					:half-increments="true"
 					density="compact"
 				></v-rating>
-				<div class="px-3">{{ reviews.length }}</div>
+				<div class="px-3">{{ reviews.length }} đánh giá</div>
 			</div>
 
-			<v-list
+			<!-- <v-list
 				bg-color="transparent"
 				class="d-flex flex-column-reverse"
 				density="compact"
 			>
 				<v-list-item
-					v-for="(rating, i) in 5"
-					:key="i"
+					v-for="(rating, index) in 5"
+					:key="index"
 				>
 					<v-progress-linear
 						:model-value="percentReviews(rating) / reviews.length * 100"
@@ -74,6 +72,7 @@ const percentReviews = rating => {
 						height="8"
 						rounded
 					></v-progress-linear>
+
 					<template v-slot:prepend>
 						<span>{{ rating }}</span>
 						<v-icon
@@ -85,64 +84,90 @@ const percentReviews = rating => {
 
 					<template v-slot:append>
 						<div class="rating-values">
-							<span class="d-flex justify-end text-body-2"> {{ reviews.length }} đánh giá </span>
+							<span class="d-flex justify-end text-body-2"> {{ review.rating }} đánh giá </span>
 						</div>
 					</template>
 				</v-list-item>
-			</v-list>
+			</v-list> -->
 
-			<v-sheet align="center">
+			<v-sheet class="d-flex flex-column align-center mt-2">
 				<p class="text-subtitle-1">Bạn đánh giá sao sản phẩm này ?</p>
-				<LoginModal />
+				<!-- <LoginModal /> -->
+
+				<v-btn
+					id="reviewModalButton"
+					color="#d50000"
+					class="mt-2"
+				>
+					Đánh giá ngay
+				</v-btn>
 			</v-sheet>
 
-			<v-container
-				v-for="review in (more ? reviews : reviews.slice(0, 3))"
-				:key="review.id"
-			>
-				<v-sheet class="d-flex justify-space-between py-2">
-					<v-sheet class="d-flex align-center">
-						<p class="bg-secondary rounded pa-2">{{ review.user.slice(0, 1) }}</p>
-						<h5 class="px-2">{{ review.user }}</h5>
-					</v-sheet>
-					<p class="text-caption">{{ review.created_at.slice(0, 10) }}</p>
-				</v-sheet>
-
+			<!-- Display reviews -->
+			<v-container>
 				<v-sheet
-					class="pa-2 text-caption d-flex justify-center flex-column rounded"
-					style="background-color: rgb(247, 243, 243); margin-left: 5%"
+					v-for="review in reviews"
+					:key="review.id"
 				>
-					<p class="d-flex align-center">
-						<b>Đánh giá:</b>
-						<v-rating
-							:model-value="form.rating"
-							color="yellow-darken-3"
-							readonly
-							density="compact"
-							size="small"
-							class="mx-2"
-						>
-						</v-rating>
-					</p>
-					<p class="more"><b>Nhận xét:</b> {{ form.comment }}</p>
+					<div class="border-left bg-grey-lighten-4 text-body-2 rounded-lg my-4">
+						<div class="text-uppercase d-flex justify-space-between pa-2">
+							<p class="text-uppercase font-weight-bold">
+								<b class="text-h6 rounded-b-pill bg-amber pa-2"> {{ review.full_name.slice(0, 1) }}</b> {{
+									review.full_name }}
+							</p>
+							<p>{{ review.created_at.slice(0, 19) }}</p>
+						</div>
+						<div class="pa-2">
+							<div class="d-flex align-center">
+								<b>Đánh giá:</b>
+								<v-rating
+									:model-value="review.rating"
+									color="yellow-darken-3"
+									readonly
+									density="compact"
+									size="small"
+									class="mx-2"
+								>
+								</v-rating>
+							</div>
+							<p class="more"><b>Nhận xét:</b> {{ review.comment }}</p>
+						</div>
+					</div>
 				</v-sheet>
 			</v-container>
 
-			<v-sheet
-				class="mt-4"
-				v-if="!more"
-			>
-				<v-btn
-					@click="more = true"
-					href=""
-					location="center"
-					color="red-accent-4"
-					class="text-white"
-					append-icon="mdi-chevron-down"
+			<v-sheet>
+				<div
+					class="mt-4"
+					v-if="reviews.length > 3 && !moreReview"
 				>
-					Xem tất cả đánh giá
-				</v-btn>
+					<v-btn
+						@click="moreReview = true"
+						location="center"
+						color="red-accent-4"
+						class="text-white"
+						append-icon="mdi-chevron-down"
+					>
+						Xem thêm đánh giá
+					</v-btn>
+				</div>
+
+				<div
+					class="mt-4"
+					v-if="moreReview"
+				>
+					<v-btn
+						@click="moreReview = false"
+						location="center"
+						color="red-accent-4"
+						class="text-white"
+						append-icon="mdi-chevron-down"
+					>
+						Thu gọn
+					</v-btn>
+				</div>
 			</v-sheet>
+
 		</v-sheet>
 	</v-sheet>
 </template>

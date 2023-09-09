@@ -14,7 +14,7 @@ function removeAscent(str) {
     return str;
 }
 
-const rule_required = value => !!String(value).trim().length || "Mục này không được để trống";
+const rule_required = value => !!String(value).trim().length || "Dữ liệu này không được để trống";
 const rule_email = value => {
     if (!String(value).length) {
         return "Email không được để trống";
@@ -68,6 +68,10 @@ const ruleTypeCoupon = value => {
     const Regex = /^(shipping|totalcart|onproduct)$/;
     return Regex.test(String(value)) || "Không đúng kiểu dữ liệu";
 };
+const ruleShipping = value => {
+    const Regex = /^(0|50000|150000)$/;
+    return Regex.test(String(value)) || "Xin chọn phương thức giao hàng";
+};
 
 
 export {
@@ -78,5 +82,6 @@ export {
     rule_phone,
     rule_coupon,
     rule_name_utf8,
-    ruleTypeCoupon
+    ruleTypeCoupon,
+    ruleShipping
 };

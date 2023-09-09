@@ -5,7 +5,7 @@ import { useRouter, useRoute } from "vue-router";
 import ContentEditor from "../../components/globals/ContentEditor.vue";
 
 // Post API
-const url = import.meta.env.VITE_PUBLIC_URL;
+// const url = import.meta.env.VITE_PUBLIC_URL;
 
 const router = useRouter();
 const route = useRoute();
@@ -20,7 +20,7 @@ const page = ref({
 
 const fetchPage = async () => {
   try {
-    const response = await axios.get(`pages`);
+    const response = await axios.get("pages");
     if (response.data.status === 200) {
       pages.value = response.data.data;
       page.value = pages.value.find(item => {
@@ -34,6 +34,9 @@ const fetchPage = async () => {
     console.log("Error: ", error);
   }
 };
+
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
 
 async function updatePage() {
   const formData = new FormData();
@@ -52,8 +55,10 @@ async function updatePage() {
     const response = await axios.post(`pages/edit/${page.value.id}`, formData);
     if (response.data.status === 200) {
       router.push("/admincp/page");
+      siteStore.hasRes({ data: { status: "ok", message: "Cập nhật thành công." } });
     }
   } catch (e) {
+    siteStore.hasRes({ data: { status: "error", message: "Cập nhật thất bại." } });
     console.log("Error", e);
   }
 };
@@ -84,10 +89,9 @@ onBeforeMount(fetchPage);
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="page.name"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
-            :counter="20"
             label="Tên trang:"
           ></v-text-field>
         </v-col>
@@ -98,53 +102,42 @@ onBeforeMount(fetchPage);
           md="12"
         >
           <v-text-field
-            variant="underlined"
+            variant="outlined"
             v-model="page.author"
             :rules="[v => !!v || 'Vui lòng không để trống.']"
-            :counter="20"
             label="Tác giả:"
           ></v-text-field>
         </v-col>
       </v-row>
-    <v-row>
-      <v-col
-        cols="12"
-        md="12"
-      >
-        <v-textarea
-          name="editor"
-          variant="underlined"
-          v-model="page.content"
-          :rules="[v => !!v || 'Vui lòng không để trống & không vượt quá 10000 ký tự..']"
-          :counter="10000"
-          label="Nội dung trang:"
+      <v-row>
+        <v-col
+          cols="12"
+          md="12"
         >
-        </v-textarea>
-        <ContentEditor
-          :editorContent="page.content"
-          @editContent="editContent"
-        />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col
-        cols="12"
-        md="12"
-      >
-        <v-btn
-          class="me-2"
-          type="submit"
-          color="info"
-          variant="tonal"
-        >Chỉnh sửa</v-btn>
-        <v-btn
-          :to="`/admincp/page`"
-          href=""
-          type="reset"
-          color="text-darken-3"
-          variant="tonal"
-        >Hủy bỏ</v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
-</v-form></template>
+          <v-label class="text-caption">Nội dung trang:</v-label>
+          <ContentEditor
+            :rules="[v => !!v || 'Vui lòng không để trống.']"
+            :editorContent="page.content"
+            @editContent="editContent"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <v-btn
+            class="me-2"
+            type="submit"
+          >Hoàn tất</v-btn>
+          <v-btn
+            :to="`/admincp/page`"
+            href=""
+            type="reset"
+          >Hủy bỏ</v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-form>
+</template>

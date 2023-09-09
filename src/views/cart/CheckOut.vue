@@ -1,96 +1,101 @@
 <script setup>
-import { computed, ref } from "vue";
-import CartList from "../../components/cart/CartList.vue";
-import { useCartStore } from "@/stores/cart";
-import { rule_coupon } from "@/validators";
+import {computed, ref} from "vue";
+import {siteData} from "@/stores/globals";
+import Step1 from "@/views/cart/StepCheckout/Step1.vue";
+import Step2 from "@/views/cart/StepCheckout/Step2.vue";
+import Step3 from "@/views/cart/StepCheckout/Step3.vue";
+import Step4 from "@/views/cart/StepCheckout/Step4.vue";
+import {useRouter} from "vue-router";
 
-const cartStore = useCartStore();
-const couponInput = ref("");
-const dataForm = ref();
-const readOnly = ref(false);
+const router = useRouter();
+const siteStore = siteData();
 
-couponInput.value = cartStore.coupon || "";
+const stepList = ref([
+  {icon: "mdi-card-account-details-outline", text: "Thông tin đặt hàng", tabAction: "stepAddress"},
+  {icon: "mdi-truck-fast-outline", text: "Giao hàng & Giảm giá", tabAction: "stepShipping"},
+  {icon: "mdi-cash-register", text: "Thanh toán", tabAction: "stepPayment"},
+  {icon: "mdi-package-variant-closed-check", text: "Hoàn tất đặt hàng", tabAction: "stepCompleted"},
+]);
 
-if (cartStore.coupon) {
-  readOnly.value = true;
-}
+const checkIndex =computed(()=>{ return stepList.value.findIndex(item => item.tabAction === siteStore.cartInfo.selectStep) })
 
-const onSubmit = () => {
-  if (couponInput.value.length) {
-    dataForm.value?.validate().then(({ valid: isValid }) => {
-      if (isValid)
-        cartStore.addCoupon(couponInput.value);
-      readOnly.value = true
-    })
-  }
-}
-const onClear = () => { cartStore.removeCoupon(); readOnly.value = false; couponInput.value = ""; }
+const modelLogin = ref(false);
+
+
+// onMounted(()=>{
+//   if(siteStore.cartInfo.cartList.length<=0){
+//     router.push("/cart")
+//   }
+// })
 </script>
 
 <template>
-  <v-app>
-    <v-container>
-      <v-sheet v-if="cartStore.listCart.length" class="mx-auto mt-8 rounded pa-3" elevation="3">
-        <v-row class="ma-3" no-gutters>
-          <v-col cols="8" class="rounded pa-3">
-            <v-sheet>
-              <h4 class="font-weight-bold text-red-accent-4">Giỏ hàng</h4>
-              <CartList :mini="true" />
-            </v-sheet>
-          </v-col>
-          <v-col cols="4" class="rounded pa-3">
-            <h4>Tạm tính:</h4>
-            <v-card class="my-2 pa-3">
-              <div class="order-summary-inner">
-                <ul class="summary-list py-2">
-                  <li class="d-flex justify-space-between font-weight-medium py-2">
-                    <span class="summary-list-title">Tổng giá trị :</span>
-                    <span class="summary-list-text">{{ formatPrice(cartStore.totalValue) }}</span>
-                  </li>
-                  <li class="d-flex justify-space-between font-weight-medium py-2">
-                    <span class="summary-list-title">Giảm giá :</span>
-                    <span class="summary-list-text">-{{ formatPrice(cartStore.couponValue) }}</span>
-                  </li>
-                  <li class="d-flex justify-space-between font-weight-medium py-2">
-                    <span class="summary-list-title">Giao hàng :</span>
-                    <span class="summary-list-text">{{ cartStore.shippingValue ? formatPrice(cartStore.shippingValue) : " Free
-                    " }}</span>
-                  </li>
-                </ul>
-                <span class="font-weight-medium">Mã giảm giá</span>
-                <v-card-text>
-                  <v-form ref="dataForm" @submit.prevent="onSubmit">
-                    <v-text-field label="Mã giảm giá" v-model="couponInput" :rules="[rule_coupon]" clearable
-                      persistent-clear :readonly="readOnly" @click:clear="onClear"
-                      prepend-inner-icon="mdi-ticket-percent-outline"></v-text-field>
-                    <v-btn type="submit" class="d-none"></v-btn>
-                  </v-form>
-                </v-card-text>
-                <div class="d-flex justify-space-between text-h6 font-weight-bold py-2">
-                  <span class="summary-list-title">Tổng tiền :</span>
-                  <span class="summary-list-text">{{ formatPrice(cartStore.totalCart) }}</span>
-                </div>
-              </div>
-              <v-btn block="" variant="flat" size="large" class="w-75 bg-red-accent-4" @click="$router.push('/checkout')">
-                Tiến hành đặt hàng
-              </v-btn>
-            </v-card>
+  <div style="min-height: inherit;">
+    <v-btn @click="()=>{siteStore.isLogin = !siteStore.isLogin;}">isLogin:{{ siteStore.isLogin }}</v-btn>
+    <v-btn @click="()=>{siteStore.useGuest = !siteStore.useGuest;}">isGuest:{{ siteStore.useGuest }}</v-btn>
+    <v-sheet v-if="siteStore.isLogin||siteStore.useGuest" style="min-height: inherit;">
+      <v-card class="pa-5" style="min-height: inherit;">
+        <v-row>
+          <v-col cols="12">
+            <v-list class="d-flex flex-wrap justify-md-space-around">
+              <v-list-item v-for="(item,index) in stepList" :prepend-icon="item.icon"
+                           @click="()=>{
+                             if(index<=checkIndex){
+                               siteStore.cartInfo.selectStep = item.tabAction
+                             }
+                           }"
+                           :class="index<=checkIndex?'bg-red-darken-2':'tab-disable'"
+                           color="white" rounded="xl" :active="siteStore.cartInfo.selectStep === item.tabAction">
+
+                <v-list-item-title class="text-menu text-body-2 font-weight-bold">{{ item.text }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
           </v-col>
         </v-row>
-      </v-sheet>
-      <v-sheet v-else class="rounded pa-3 d-flex flex-column justify-center align-center" elevation="0">
-        <div>
-          <iframe width="300" height="300" frameBorder="0"
-            src="https://lottie.host/?file=95af846f-f62b-4bc5-b422-26c7cabda6eb/65kwV7npxO.json">
-          </iframe>
-        </div>
-        <div class="ma-3">
-          <p>Không có sản phẩm nào trong giỏ hàng, vui lòng quay lại</p>
-        </div>
-        <v-btn class="ma-3" density="default" color="red-accent-4" @click="$router.go(-1)">Quay lại</v-btn>
-      </v-sheet>
-    </v-container>
-  </v-app>
+        <Step1 v-if="siteStore.cartInfo.selectStep==='stepAddress'||siteStore.cartInfo.selectStep===null"/>
+        <Step2 v-if="siteStore.cartInfo.selectStep==='stepShipping'"/>
+        <Step3 v-if="siteStore.cartInfo.selectStep==='stepPayment'"/>
+        <Step4 v-if="siteStore.cartInfo.selectStep==='stepCompleted'"/>
+      </v-card>
+    </v-sheet>
+    <v-sheet v-else>
+      <v-card>
+        <v-container>
+          <v-row>
+            <v-col cols="12" md="6" class="d-flex justify-center">
+              <v-btn @click="modelLogin = !modelLogin">Đăng nhập</v-btn>
+            </v-col>
+            <v-col cols="12" md="6" class="d-flex justify-center">
+              <v-btn @click="siteStore.configGuest()">Thanh toán nhanh</v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card>
+    </v-sheet>
+  </div>
+  <v-dialog
+      v-model="modelLogin"
+      max-width="400"
+  >
+    <v-card>
+      <template #append>
+        <v-btn density="compact" icon="mdi-close" color="red-darken-2" @click="modelLogin = !modelLogin"></v-btn>
+      </template>
+      <v-card-title>
+        <span class="text-h6 font-weight-bold ms-3">Vui lòng xác nhận mật khẩu</span>
+      </v-card-title>
+      <v-card-text class="ma-1">
+        Vì lý do bảo mật<br> bạn phải nhập lại mật khẩu để tiếp tục.
+      </v-card-text>
+      <v-card-text>
+        <v-form @submit.prevent="getSecretKey()">
+          <v-text-field density="compact" variant="outlined" label="Xác nhận mật khẩu" v-model="inputConfirmPassword"
+                        type="password" autocomplete="off"></v-text-field>
+          <v-btn type="submmit" class="me-2" color="red-darken-2">Gửi</v-btn>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <style scoped></style>

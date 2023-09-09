@@ -3,7 +3,6 @@
     <v-card class="mx-auto pa-12 pb-8" elevation="8" max-width="448" rounded="lg">
       <v-form @submit.prevent="onSubmit" ref="dataForm">
         <h2 class="text-center mb-4">Đặt lại Mật khẩu</h2>
-        Email:{{email}}
         <v-text-field class="my-3" v-model="password" :rules="[rule_password]"
                       :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" :type="visible ? 'text' : 'password'" density="compact"
                       label="Password" prepend-inner-icon="mdi-lock-outline" variant="outlined"
@@ -29,22 +28,23 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import axios from "../axiosComfig";
-import { userData } from "@/stores/userData";
 import { Checkbox } from 'vue-recaptcha';
 import { rule_password } from '@/validators'
 import {useRoute, useRouter} from "vue-router";
+import {siteData} from "@/stores/globals";
+import {useRecaptchaProvider} from "vue-recaptcha";
+useRecaptchaProvider();
 
+const siteStore = siteData();
 
 const route = useRoute()
 const router = useRouter()
 
 
-
 const dataForm = ref();
-const email = ref('');
 const password = ref('');
 const password_cf = ref('');
-const token = ref();
+const key = ref();
 const visible = ref(false);
 const visible_cf = ref(false);
 const v2_captcha = ref(null);
@@ -54,33 +54,28 @@ const Success = ref("");
 const errors = ref();
 const hasError = ref(false);
 
-email.value = route.query.email;
-token.value = route.query.token;
+key.value = route.query.key;
 
 const rule_repass = computed(() => password.value === password_cf.value ? "" : "Re-Password và Password không trùng khớp")
 
 watch(v2_captcha, () => errors_captcha.value = v2_captcha.value ? null : "Mã xác thực đã hết hạn.")
 const resetPassword = async () => {
+  siteStore.hasLoading();
   try {
     let res = await axios.post('reset-password', {
-      email: email.value,
-      token: token.value,
+      key: key.value,
       password: password.value
     });
-    if(res.data.success){
-      isSuccess.value = res.data.success;
-      Success.value = res.data.message;
+    siteStore.hasRes(res);
+    if(res.data.isSuccess){
       setTimeout(() => {
         router.replace('login')
-      }, 1000);
+      }, 500);
     }
-    if(!res.data.success){
-      hasError.value = !res.data.success;
-      errors.value = res.data.message;
-    }
+    siteStore.doneLoading();
   } catch (e) {
-    errors.value = 'Có lỗi xảy ra ';
-    hasError.value = true;
+    siteStore.errorSystem();
+    console.log(e);
   }
 };
 

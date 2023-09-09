@@ -1045,7 +1045,7 @@ onMounted(fetchOneProductById);
         <v-col cols="12">
           <v-btn
             type="submit"
-            class="mt-2"
+            class="mt-2 me-2"
           >
             Submit
           </v-btn>

@@ -13,7 +13,7 @@ const url = "http://127.0.0.1:8000/";
 		rounded="lg"
 		class="d-none d-md-none d-lg-block"
 	>
-		<v-table class="news text-medium my-3 py-2">
+		<v-table class="news text-medium my-2 py-2">
 			<thead>
 				<tr>
 					<th colspan="2">

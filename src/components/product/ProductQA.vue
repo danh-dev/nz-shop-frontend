@@ -4,6 +4,7 @@
 defineProps({
 	comments: Array,
 });
+
 </script>
 
 <template>
@@ -16,8 +17,6 @@ defineProps({
 		<v-container class="d-flex flex-column px-3">
 			<div>
 				<v-textarea
-					name=""
-					class=""
 					variant="filled"
 					auto-grow
 					background="white"

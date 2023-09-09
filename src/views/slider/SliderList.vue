@@ -3,7 +3,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import axios from "../../axiosComfig";
 import { useRouter } from "vue-router";
 // import getSlugByName from "../../utils/getSlugByName.js";
-import GlobalPagination from "../../components/globals/GlobalPagination.vue";
+import GlobalPagination from "@/components/globals/GlobalPagination.vue";
 // Slider API
 const url = import.meta.env.VITE_PUBLIC_URL;
 const sliders = ref([]);
@@ -21,7 +21,7 @@ watch(selected, () => {
 
 const fetchSlider = async () => {
   try {
-    const response = await axios.get(`sliders`);
+    const response = await axios.get("sliders");
     if (response.data.status === 200) {
       sliders.value = response.data.data.reverse();
       filteredSliders.value = sliders.value;
@@ -35,7 +35,7 @@ const fetchSlider = async () => {
 async function deleteSlider(id) {
   try {
     await axios
-      .delete(`http://127.0.0.1:8000/api/sliders/delete/${id}`);
+      .delete(`${url}/api/sliders/delete/${id}`);
     fetchSlider();
   } catch (error) {
     console.log("Error delete slider: ", error);
@@ -49,7 +49,7 @@ onMounted(fetchSlider);
 
 // pagination
 const page = ref(1);
-const rowsPerPage = 8;
+const rowsPerPage = 5;
 const numberOfPage = computed(() => {
   return Math.ceil(sliders.value.length / rowsPerPage);
 });
@@ -65,60 +65,58 @@ const updatePage = (event) => {
       cols="12"
       md="12"
     >
-      <div>
-        <div class="d-flex justify-space-between my-5">
-          <h3 class="da">Danh sách Slider</h3>
+      <v-card class="m-card">
+        <div class="d-flex justify-space-between ma-5">
+          <h2 class="da">Danh sách Slider</h2>
+          <v-btn
+            :to="`/admincp/slider/add`"
+            prepend-icon="mdi-plus"
+          >Thêm mới</v-btn>
+        </div>
+        <div class="d-flex align-cente justify-end ma-5">
           <v-select
             v-model="selected"
+            prepend-inner-icon="mdi-list-box-outline"
             label="Tình trạng"
             variant="outlined"
             :items="[{
               title: 'Hoạt động', value: 0
-            }, { title: 'Đã xóa', value: 1, }]"
+            }, { title: 'Tạm dừng', value: 1, }]"
             density="compact"
-            style="margin: 0 10%;"
+            style="max-width: 500px;"
           >
           </v-select>
-          <v-btn
-            :to="`/admincp/slider/add`"
-            color="info"
-            variant="tonal"
-            class="text-none"
-          >Thêm mới</v-btn>
         </div>
         <v-table
           hover
-          class="text-body-2 m-card my-3"
           v-if="sliders.length > 0"
         >
           <thead>
             <tr>
               <th
-                class="font-weight-bold text-center"
-                style="width: 20%;"
+                style="width: 22.5%;"
               >
                 Tên
               </th>
               <th
-                class="font-weight-bold text-center"
-                style="width: 23.5%;"
+                style="width: 22.5%;"
               >
                 Tiêu đề
               </th>
               <th
-                class="font-weight-bold text-center"
-                style="width: 10%"
+                style="width: 15%"
               >
                 Hình ảnh
               </th>
               <th
-                class="font-weight-bold text-center"
                 style="width: 15%;"
               >
                 Ngày tạo
               </th>
-              <th class="font-weight-bold text-center">Tình trạng</th>
-              <th class="font-weight-bold text-center">
+              <th
+                style="width: 15%;"
+              >Tình trạng</th>
+              <th class="font-weight-bold">
                 Chức năng
               </th>
             </tr>
@@ -130,68 +128,71 @@ const updatePage = (event) => {
               :key="item.id"
             >
               <td>
-                <div class="more text-uppercase text-left">{{ item.name }}</div>
+                <div class="more text-uppercase">{{ item.name }}</div>
               </td>
-              <td class="text-center">{{ item.title }} </td>
+              <td>{{ item.title }} </td>
               <td>
                 <img
                   :src="url + item.image"
-                width="80"
-                class="rounded-lg d-flex align-center justify-center"
-                :alt="item.name"
-              />
-            </td>
-            <td class="text-center">{{ item.created_at.slice(0, 10) }}</td>
-            <td class="text-center">{{ item.isDeleted ? 'Đã xóa' : 'Hoạt động' }}</td>
-            <td>
-              <div class="d-flex align-center justify-center">
-                <v-btn
-                  @click="editSlider(item.id)"
-                  size="x-small"
-                  variant="tonal"
-                  icon="mdi-pencil"
-                  color="success"
-                  class="text-none"
-                  :to="`/admincp/slider/edit/${item.id}`"
-                >
-                </v-btn>
-                <v-btn
-                  @click="deleteSlider(item.id)"
-                  size="x-small"
-                  variant="tonal"
-                  icon="mdi-trash-can-outline"
-                  color="red-accent-4"
-                  class="text-none"
-                  onclick="return confirm('Bạn muốn xóa slider này ?')"
-                >
-                </v-btn>
-                <v-btn
-                  size="x-small"
-                  variant="text"
-                  icon="mdi-dots-vertical"
-                  color=""
-                  class="text-none"
-                >
-                </v-btn>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
-      <!-- phân trang -->
-      <GlobalPagination
-        v-if="sliders.length > rowsPerPage"
-        :page="page"
-        :numberOfPages="numberOfPage"
-        @update:page="updatePage"
-        class="mt-2"
-      />
-    </div>
-  </v-col>
-</v-row></template>
-<style>.more {
+                  width="80"
+                  class="rounded-lg d-flex align-center justify-center"
+                  :alt="item.name"
+                />
+              </td>
+              <td>{{ item.created_at.slice(0, 10) }}</td>
+              <td>{{ item.isDeleted ? 'Tạm dừng' : 'Hoạt động' }}</td>
+              <td>
+                <div class="d-flex align-center justify-center">
+                  <v-btn
+                    @click="editSlider(item.id)"
+                    size="x-small"
+                    variant="tonal"
+                    icon="mdi-pencil"
+                    color="success"
+                    class="text-none"
+                    :to="`/admincp/slider/edit/${item.id}`"
+                  >
+                  </v-btn>
+                  <v-btn
+                    @click="deleteSlider(item.id)"
+                    size="x-small"
+                    variant="tonal"
+                    icon="mdi-trash-can-outline"
+                    color="red-accent-4"
+                    class="text-none"
+                    onclick="return confirm('Bạn muốn xóa slider này ?')"
+                  >
+                  </v-btn>
+                  <v-btn
+                    size="x-small"
+                    variant="text"
+                    icon="mdi-dots-vertical"
+                    color=""
+                    class="text-none"
+                  >
+                  </v-btn>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </v-table>
+        <!-- phân trang -->
+        <GlobalPagination
+          v-if="sliders.length > rowsPerPage"
+          :page="page"
+          :numberOfPages="numberOfPage"
+          @update:page="updatePage"
+          class="mt-2"
+        />
+      </v-card>
+    </v-col>
+  </v-row>
+</template>
+<style>
+.more {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
-}</style>
+}
+</style>

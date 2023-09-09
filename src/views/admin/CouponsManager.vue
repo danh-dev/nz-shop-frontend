@@ -338,7 +338,7 @@
             <v-row>
               <v-col cols="12" md="6">
                 <v-text-field v-model="formLimitTime"
-                              :rules="[(value) => /^(undefined|null||\d*[1-9]\d*)$/.test(value) || 'Dữ liệu không đúng']"
+                              :rules="[(value) => /^(undefined|null||\d*[0-9]\d*)$/.test(value) || 'Dữ liệu không đúng']"
                               density="compact"
                               label="Số lần sử dụng"
                               prepend-inner-icon="mdi-timer-check-outline"
@@ -482,8 +482,8 @@
                           autocomplete="off"
                           persistent-hint
                           density="compact"
-                          multiple
                           chips
+                          clearable
                           hint="Tìm tài khoản theo email"
                       >
                       </v-autocomplete>
@@ -831,7 +831,7 @@ const fetchCouponList = async (q, ds, de, t, s) => {
   try {
     const res = await axios.get("getListCoupon");
     coupons.value = res.data.filter(data => (
-        (data.name.toLowerCase().includes(queryString) || data.code.includes(queryString)) &&
+        (data.name.toLowerCase().includes(queryString) || data.code.toLowerCase().includes(queryString)) &&
         (!queryDateStart || data.date_start >= queryDateStart || !data.date_start) &&
         (!queryDateEnd || data.date_end <= queryDateEnd || !data.date_end) &&
         (!queryType || data.type_coupon.toLowerCase() === queryType) &&
@@ -922,7 +922,6 @@ const createCoupon = async () => {
   formSelectProduct.value = formSelectProduct.value || [10, 23, 4];
   try {
     siteStore.isLoading = true;
-    console.log(formCouponRequests.value)
     let res = await axios.post("createCoupon", {
       name: formName.value,
       code: formCode.value,

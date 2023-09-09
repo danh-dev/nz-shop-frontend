@@ -6,7 +6,7 @@ const router = useRouter();
 const props = defineProps({
     user: Object,
     orders: Array
-});;
+});
 const spend = computed(() => {
     return props.orders.reduce((result, item) => {
         if (item.status === "Đã giao") {

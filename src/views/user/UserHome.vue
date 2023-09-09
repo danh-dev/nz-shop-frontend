@@ -1,7 +1,6 @@
 <script setup>
 import UserCard from "@/components/user/UserCard.vue";
 import UserCarousel from "@/components/user/UserCarousel.vue";
-import UserCardItem from "@/components/user/UserCardItem.vue";
 defineProps({ user: Object });
 </script>
 
