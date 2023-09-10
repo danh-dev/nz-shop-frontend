@@ -150,25 +150,11 @@ const postsNumber = computed(() => {
 	}
 });
 
-watch(() => categoryStore.categories, async () => {
-	for (const category of categoryStore.parentCategories) {
+watch(() => categoryStore.parentCategories, async (newVal) => {
+	for (const category of newVal) {
 		products.value[category.id] = await fetchRecursiveCategoryProducts(category.id, 8);
 	}
 });
-
-const fetchAverageReview = async product1 => {
-	try {
-		const res = await axios.get(`average-review/${product1.id}`);
-		if (res.status === 200) {
-			product1.review = mapKeys(res.data.data, (value, key) => camelCase(key));
-			console.log(product1.review);
-		}
-	}
-	catch (e) {
-		//push
-		console.log(e);
-	}
-};
 
 const fetchRecursiveCategoryProducts = async (id, numbers) => {
 	let result = [];
@@ -176,9 +162,6 @@ const fetchRecursiveCategoryProducts = async (id, numbers) => {
 		const res = await axios.get(`recursive-categories/${id}/products/${numbers ?? ""}`);
 		if (res.status === 200) {
 			result = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
-			for (const item of result) {
-				fetchAverageReview(item);
-			}
 		}
 	}
 	catch (e) {

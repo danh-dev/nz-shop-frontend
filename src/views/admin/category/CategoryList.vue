@@ -1,14 +1,13 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import axios from "../../../axiosComfig";
+import { mapKeys, camelCase } from "lodash";
 import GlobalPagination from "../../../components/globals/GlobalPagination.vue";
-import useCategoryStore from "@/stores/category";
 
 import { siteData } from "@/stores/globals.js";
 const siteStore = siteData();
 
 const url = import.meta.env.VITE_PUBLIC_URL;
-const categoryStore = useCategoryStore();
 
 const headers = [
   {
@@ -47,6 +46,7 @@ const headers = [
   },
 ];
 
+const categories = ref([]);
 const rowsPerPage = 7;
 const numberOfPages = ref(0);
 const currentPage = ref(1);
@@ -73,6 +73,31 @@ const statuses = [
 const searchInput = ref("");
 const name = ref(null);
 
+const fetchCategories = async () => {
+  try {
+    let url = `category-pagination/?page=${currentPage.value}&per_page=${rowsPerPage}`;
+    if (status.value !== null) {
+      url += `&is_disabled=${status.value}`;
+    }
+    if (name.value !== null) {
+      url += `&name=${name.value}`;
+    }
+    siteStore.hasLoading();
+    const res = await axios.get(url);
+
+    if (res.status === 200) {
+      categories.value = res.data.data.categories.map(category => mapKeys(category, (value, key) => camelCase(key)));
+      numberOfPages.value = res.data.data.numberOfPages;
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+  finally {
+    siteStore.doneLoading();
+  }
+};
+
 const updatePage = event => {
   currentPage.value = event;
 };
@@ -82,7 +107,7 @@ const confirmAlert = async () => {
     const res = await axios.delete(`categories/delete/${tempId.value}`);
 
     if (res.status === 200) {
-      categoryStore.fetchCategories();
+      fetchCategories();
     }
   }
   catch (e) {
@@ -96,7 +121,7 @@ const handleEnableCategory = async id => {
     const res = await axios.put(`categories/enable/${id}`);
 
     if (res.status === 200) {
-      categoryStore.fetchCategories();
+      fetchCategories();
     }
   }
   catch (e) {
@@ -109,7 +134,7 @@ const handleDisableCategory = async id => {
     const res = await axios.put(`categories/disable/${id}`);
 
     if (res.status === 200) {
-      categoryStore.fetchCategories();
+      fetchCategories();
     }
   }
   catch (e) {
@@ -129,8 +154,10 @@ const search = () => {
 watch([status, name], () => {
   currentPage.value = 1;
 });
-watch([currentPage, status, name], () => categoryStore.fetchCategories());
 
+watch([currentPage, status, name], fetchCategories);
+
+onMounted(fetchCategories);
 </script>
 
 <template>
@@ -214,7 +241,7 @@ watch([currentPage, status, name], () => categoryStore.fetchCategories());
             :items-per-page="rowsPerPage"
             :page="currentPage"
             :headers="headers"
-            :items="categoryStore.categories"
+            :items="categories"
             class="elevation-1"
             item-value="name"
             hover
@@ -233,11 +260,10 @@ watch([currentPage, status, name], () => categoryStore.fetchCategories());
 
             </template>
             <template #item.isDisabled="{ item }">
-
               <v-switch
                 color="red-accent-4"
                 :model-value="!item.raw.isDisabled"
-                @update:modelValue=" item.raw.isDisabled ? () => handleEnableCategory(item.raw.id) : () => handleDisableCategory(item.raw.id)"
+                @update:modelValue="item.raw.isDisabled ? handleEnableCategory(item.raw.id) : handleDisableCategory(item.raw.id)"
                 hide-details
               ></v-switch>
             </template>
@@ -250,19 +276,6 @@ watch([currentPage, status, name], () => categoryStore.fetchCategories());
                   color="success"
                   :to="{
                     name: 'admin-category-update',
-                    params: {
-                      id: item.raw.id,
-                    },
-                  }"
-                >
-                </v-btn>
-                <v-btn
-                  size="x-small"
-                  variant="tonal"
-                  icon="mdi-information-variant"
-                  color="info"
-                  :to="{
-                    name: 'admin-subcategory',
                     params: {
                       id: item.raw.id,
                     },

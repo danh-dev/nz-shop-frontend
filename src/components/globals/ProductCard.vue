@@ -41,49 +41,55 @@ const love = ref(true);
     position="relative"
     height="350px"
   >
-    <v-sheet>
-      <v-sheet class="d-flex">
-        <v-img
-          v-if="product.image"
-          :src="`${url}${product.image}`"
-          :max-width="`${productImageWidth}rem`"
-          class="mx-auto"
-          cover
-        />
-        <slot
-          v-else
-          name="image"
-          :maxWidth="`${productImageWidth}rem`"
-          :height="`${productImageWidth * 4 / 3}rem`"
-        ></slot>
+    <v-sheet class="d-flex">
+      <v-img
+        v-if="product.image"
+        :src="`${url}${product.image}`"
+        :max-width="`${productImageWidth}rem`"
+        :height="`${productImageWidth * 4 / 3}rem`"
+        class="mx-auto"
+        cover
+      />
+      <slot
+        v-else
+        name="image"
+        :maxWidth="`${productImageWidth}rem`"
+        :height="`${productImageWidth * 4 / 3}rem`"
+      ></slot>
 
-        <v-btn
-          class="ma-1"
-          rounded="circle"
-          style="position: absolute; top: 0; right: 0;"
-          color="red-accent-3"
-          variant="text"
-          @click.prevent.stop="love = !love"
+      <v-btn
+        class="ma-1"
+        rounded="circle"
+        style="position: absolute; top: 0; right: 0;"
+        color="red-accent-3"
+        variant="text"
+        @click.prevent.stop="love = !love"
+        size="20"
+      >
+        <v-icon
+          :icon="love ? 'mdi-heart-outline' : 'mdi-heart'"
           size="20"
+        ></v-icon>
+      </v-btn>
+
+    </v-sheet>
+    <v-card-item>
+      <v-card-title>
+        <v-sheet
+          class="text-subtitle-2 text-md-body-2 font-weight-bold text-wrap clamp-2 mb-2"
+          height="3.3rem"
+          style="line-height: 1.74rem;"
         >
-          <v-icon
-            :icon="love ? 'mdi-heart-outline' : 'mdi-heart'"
-            size="20"
-          ></v-icon>
-        </v-btn>
+          {{ product.name }}
+        </v-sheet>
+      </v-card-title>
+    </v-card-item>
 
-      </v-sheet>
-      <v-card-item>
-        <v-card-title>
-          <v-sheet
-            class="text-subtitle-2 text-md-body-2 font-weight-bold text-wrap clamp-2 mb-2"
-            height="3.3rem"
-            style="line-height: 1.74rem;"
-          >
-            {{ product.name }}
-          </v-sheet>
-        </v-card-title>
-
+    <v-card-actions
+      style="position: absolute; bottom: 0;"
+      class="flex-column align-start px-3"
+    >
+      <v-sheet>
         <v-sheet class="d-flex align-center">
           <v-sheet class="me-2 text-body-2  text-red-accent-4 font-weight-bold">
             {{ +product.discountPrice ? formatPrice(+product.discountPrice) :
@@ -96,20 +102,23 @@ const love = ref(true);
             {{ +product.sellPrice ? formatPrice(+product.sellPrice) : "" }}
           </v-sheet>
         </v-sheet>
-      </v-card-item>
-
-      <v-card-text class="pb-0">
+      </v-sheet>
+      <div
+        v-if="product?.rating"
+        class="py-0 d-flex align-center"
+      >
         <v-rating
-          :model-value="3.5"
+          :model-value="product?.rating"
           color="amber"
-          density="compact"
           half-increments
           readonly
+          density="compact"
           size="small"
         >
         </v-rating>
-      </v-card-text>
-    </v-sheet>
+        <div class="text-caption">{{ product?.ratingCount }}</div>
+      </div>
+    </v-card-actions>
     <v-sheet
       v-if="+product.sellPrice > +product.discountPrice && +product.discountPrice"
       position="absolute"

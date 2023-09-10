@@ -42,6 +42,7 @@ const useCategoryStore = defineStore("category", () => {
       }
     }
     catch (e) {
+      console.log(e);
       //push
     }
   };

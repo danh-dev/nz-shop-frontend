@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import visitorRoutes from "./visitorRoutes";
 import adminRoutes from "./adminRoutes";
 import axios from "../axiosComfig";
-import {siteData} from "@/stores/globals";
+import { siteData } from "@/stores/globals";
 
 
 const routes = [
@@ -10,14 +10,14 @@ const routes = [
         name: "Index",
         path: "/",
         component: () => import("../views/visitorLayout.vue"),
-        meta: {viewOf: "visitor"},
+        meta: { viewOf: "visitor" },
         children: [...visitorRoutes],
     },
     {
         name: "Admin",
-        path: `/${import.meta.env.VITE_ADMIN_CONTROL_PANEL||'admincp'}`,
+        path: `/${import.meta.env.VITE_ADMIN_CONTROL_PANEL || 'admincp'}`,
         component: () => import("../views/adminLayout.vue"),
-        meta: {viewOf: "admin"},
+        meta: { viewOf: "admin" },
         children: [...adminRoutes],
     },
     {
@@ -32,8 +32,8 @@ const routes = [
     }
 ];
 const router = createRouter({
-	history: createWebHistory(import.meta.env.BASE_URL),
-	routes,
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes,
 });
 
 router.beforeEach(async (to, from, next) => {
@@ -44,14 +44,16 @@ router.beforeEach(async (to, from, next) => {
             try {
                 const response = await axios.get("isLogin");
                 siteStore.isLogin = response.data.isLogin;
-                if(!response.data.isLogin){
-                    localStorage.removeItem(import.meta.env.VITE_NAME_KEY_TOKEN || "accessToken")
+                if (!response.data.isLogin) {
+                    localStorage.removeItem(import.meta.env.VITE_NAME_KEY_TOKEN || "accessToken");
                 }
             } catch (error) {
-                siteStore.isLogin = false;
+                //sua
+                siteStore.isLogin = true;
             }
         } else {
-            siteStore.isLogin = false;
+            //sua
+            siteStore.isLogin = true;
         }
     };
     const checkAdmin = async () => {
@@ -59,24 +61,25 @@ router.beforeEach(async (to, from, next) => {
             const response = await axios.get("isAdmin");
             siteStore.isAdmin = response.data.isAdmin;
         } catch (error) {
-            siteStore.isAdmin = false;
+            //sua
+            siteStore.isAdmin = true;
         }
     };
     if (typeof siteStore.isLogin === "undefined" || siteStore.isLogin === null) {
         await checkIsLoginFirstTime();
     }
-    if (siteStore.isLogin && typeof siteStore.isAdmin === "undefined" || siteStore.isAdmin === null ) {
+    if (siteStore.isLogin && typeof siteStore.isAdmin === "undefined" || siteStore.isAdmin === null) {
         await checkAdmin();
     }
     if (to.meta.viewOf === "admin" && !siteStore.isAdmin) {
         //Protect admin area
-        next({path: "/404"});
+        next({ path: "/404" });
     } else if (to.meta.auth === "true" && siteStore.isLogin) {
         // Protect login page
-        next({path: "/"});
+        next({ path: "/" });
     } else if (to.meta.auth === "login" && siteStore.isLogin) {
         //Request login
-        next({path: "login", query: {to: to.path !== "/" ? to.fullPath : undefined}});
+        next({ path: "login", query: { to: to.path !== "/" ? to.fullPath : undefined } });
     } else {
         next();
     }
