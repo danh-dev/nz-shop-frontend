@@ -68,10 +68,10 @@ export const siteData = defineStore("siteData", () => {
         });
 
         const valueDiscount = computed(() => {
-            if (cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon === "totalcart" && cartInfo.value.coupon.type_value === "number_value") {
+            if (cartInfo.value.coupon && cartInfo.value.coupon.type_coupon === "totalcart" && cartInfo.value.coupon.type_value === "number_value") {
                 return cartInfo.value.coupon.value;
             }
-            if (cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon === "totalcart" && cartInfo.value.coupon.type_value === "percent_value") {
+            if (cartInfo.value.coupon && cartInfo.value.coupon.type_coupon === "totalcart" && cartInfo.value.coupon.type_value === "percent_value") {
                 return (totalValue.value / 100) * cartInfo.value.coupon.value;
             }
             return 0;
@@ -116,7 +116,7 @@ export const siteData = defineStore("siteData", () => {
             }
         };
 
-        const totalCart = computed(()=>{ return totalValue.value + priceShipping.value - valueDiscount.value });
+        const totalCart = computed(()=>{ return +totalValue.value + +priceShipping.value - +valueDiscount.value });
         const fetchProduct = async (sku) => {
             const res = await axios.post("products/sku", {
                 sku: sku

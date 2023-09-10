@@ -176,9 +176,6 @@ const fetchRecursiveCategoryProducts = async (id, numbers) => {
 		const res = await axios.get(`recursive-categories/${id}/products/${numbers ?? ""}`);
 		if (res.status === 200) {
 			result = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
-			for (const item of result) {
-				fetchAverageReview(item);
-			}
 		}
 	}
 	catch (e) {

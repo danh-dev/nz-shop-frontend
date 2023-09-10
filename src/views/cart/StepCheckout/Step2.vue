@@ -87,7 +87,7 @@ const getValueCoupon = async () => {
   siteStore.hasLoading();
   try {
     let res = await axios.post("getValueByCode", {
-      code: inputCoupon.value,
+      coupon: inputCoupon.value,
     });
     siteStore.hasRes(res);
     if (res.data.data) {
