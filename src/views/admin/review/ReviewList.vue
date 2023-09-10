@@ -67,11 +67,11 @@ const statuses = [
     },
     {
         title: "Đã duyệt",
-        value: false,
+        value: true,
     },
     {
         title: "Chờ duyệt",
-        value: true,
+        value: false,
     }
 ];
 
@@ -215,7 +215,7 @@ onMounted(fetchReviews);
                         <template #item.isApproved="{ item }">
                             <v-switch
                                 color="red-accent-4"
-                                :model-value="!item.raw.isApproved"
+                                :model-value="item.raw.isApproved === 1 ? true : false"
                                 @update:modelValue="() => handleToggleButton(item.raw.id)"
                                 hide-details
                             ></v-switch>
@@ -224,7 +224,7 @@ onMounted(fetchReviews);
                         <template #item.action="{ item }">
                             <div class="d-flex align-center">
                                 <v-btn
-                                    v-if="item.raw.isApproved"
+                                    v-if="!item.raw.isApproved"
                                     size="small"
                                     variant="tonal"
                                     icon="mdi-trash-can-outline"

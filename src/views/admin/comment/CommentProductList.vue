@@ -110,11 +110,11 @@ const statuses = [
     },
     {
         title: "Đã duyệt",
-        value: false,
+        value: true,
     },
     {
         title: "Chờ duyệt",
-        value: true,
+        value: false,
     }
 ];
 
@@ -143,9 +143,9 @@ const fetchComments = async () => {
 const fetchFeedbacks = async id => {
     saveId.value = id;
     try {
-        let url = `product-comment-pagination/${id}/feedback?page=${currentPage.value}&per_page=${rowsPerPage}`;
-        if (status1.value !== null) {
-            url += `&is_approved=${status1.value}`;
+        let url = `product-comment-pagination/${id}/feedback?page=${currentPage1.value}&per_page=${rowsPerPage}`;
+        if (status.value !== null) {
+            url += `&is_approved=${status.value}`;
         }
         siteStore.hasLoading();
         const res = await axios.get(url);
@@ -165,6 +165,9 @@ const fetchFeedbacks = async id => {
 
 const updatePage = event => {
     currentPage.value = event;
+};
+const updatePage1 = event => {
+    currentPage1.value = event;
 };
 
 const handleDeleteButton = async (id) => {
@@ -242,6 +245,12 @@ watch(status, () => {
 watch([currentPage, status], fetchComments);
 
 onMounted(fetchComments);
+watch(status1, () => {
+    currentPage1.value = 1;
+});
+
+watch([currentPage1, status1], () => fetchFeedbacks(saveId.value));
+
 </script>
 
 <template>
@@ -396,7 +405,7 @@ onMounted(fetchComments);
                                                         <template #item.action="{ item }">
                                                             <div class="d-flex align-center">
                                                                 <v-btn
-                                                                    v-if="item.raw.isApproved"
+                                                                    v-if="!item.raw.isApproved"
                                                                     size="small"
                                                                     variant="tonal"
                                                                     icon="mdi-trash-can-outline"
@@ -408,10 +417,10 @@ onMounted(fetchComments);
                                                         </template>
                                                         <template #bottom>
                                                             <GlobalPagination
-                                                                v-if="numberOfPages > 1"
-                                                                :numberOfPages="numberOfPages"
-                                                                :page="currentPage"
-                                                                @update:page="updatePage"
+                                                                v-if="numberOfPages1 > 1"
+                                                                :numberOfPages="numberOfPages1"
+                                                                :page="currentPage1"
+                                                                @update:page="updatePage1"
                                                             ></GlobalPagination>
                                                         </template>
                                                     </v-data-table>
@@ -434,7 +443,7 @@ onMounted(fetchComments);
                                     </v-badge>
                                 </v-btn>
                                 <v-btn
-                                    v-if="item.raw.isApproved"
+                                    v-if="!item.raw.isApproved"
                                     size="small"
                                     variant="tonal"
                                     icon="mdi-trash-can-outline"
