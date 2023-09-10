@@ -17,6 +17,10 @@ const useCategoryStore = defineStore("category", () => {
     return categories.value.filter(item => item.isBrand && item.parentCategoryId === id);
   };
 
+  const findOtherCategory = id => {
+    return categories.value.filter(item => !item.isBrand && item.parentCategoryId === id);
+  };
+
   const findRecursiveCategorySlug = category => {
     const slug = getSlugByName(category.name);
     if (!category.parentCategoryId) {
@@ -38,6 +42,7 @@ const useCategoryStore = defineStore("category", () => {
       }
     }
     catch (e) {
+      console.log(e);
       //push
     }
   };
@@ -51,7 +56,8 @@ const useCategoryStore = defineStore("category", () => {
     findBrandsOfParentCategory,
     findRecursiveCategorySlug,
     findCategoryBySlug,
-    fetchCategories
+    fetchCategories,
+    findOtherCategory,
   };
 });
 

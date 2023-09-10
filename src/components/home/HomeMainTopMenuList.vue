@@ -24,7 +24,7 @@ const url = import.meta.env.VITE_PUBLIC_URL;
       #default="{ isHovering, props }"
     >
       <v-list-item
-        :class="[`${getSlugByName(category.name)}-activator${modal} flex-1-1`, isHovering ? 'text-red-accent-4' : '']"
+        :class="[`${getSlugByName(category.name)}-activator${modal}`, isHovering ? 'text-red-accent-4' : '']"
         v-bind="props"
         :value="category.name"
         :href="`/danh-muc/${getSlugByName(category.name)}`"
@@ -48,9 +48,9 @@ const url = import.meta.env.VITE_PUBLIC_URL;
         </div>
       </v-list-item>
     </v-hover>
-    <v-hover #default="{ isHovering, props }">
+    <!-- <v-hover #default="{ isHovering, props }">
       <v-list-item
-        :class="[`flex-1-1`, isHovering ? 'text-red-accent-4' : '']"
+        :class="[isHovering ? 'text-red-accent-4' : '']"
         v-bind="props"
         value="Khuyến mãi"
         density="compact"
@@ -71,11 +71,11 @@ const url = import.meta.env.VITE_PUBLIC_URL;
           />
         </div>
       </v-list-item>
-    </v-hover>
+    </v-hover> -->
 
     <v-hover #default="{ isHovering, props }">
       <v-list-item
-        :class="[`flex-1-1`, isHovering ? 'text-red-accent-4' : '']"
+        :class="[isHovering ? 'text-red-accent-4' : '']"
         v-bind="props"
         value="Tin tức"
         density="compact"

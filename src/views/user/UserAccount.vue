@@ -43,7 +43,6 @@ const newUser = ref(
     }
 );
 
-const show = ref(false);
 
 </script>
 

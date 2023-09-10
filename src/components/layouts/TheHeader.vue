@@ -1,19 +1,59 @@
 <script setup>
 import { useDisplay } from "vuetify";
 import { useCartStore } from "@/stores/cart";
-import { userData } from "@/stores/userData";
+import { siteData } from "@/stores/globals";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import axios from "axios";
 
 import HeaderButton from "../HeaderButton.vue";
 import HeaderLogo from "../HeaderLogo.vue";
 
+const siteData1 = siteData();
+const miniLogo = import.meta.env.VITE_PUBLIC_URL + siteData1.siteSetings.logo_mini;
+const menus = ref([
+	{ icon: 'mdi-card-account-details', text: 'Tài khoản', route: 'user' },
+	{ icon: 'mdi-truck-fast-outline', text: 'Lịch sử đơn hàng', route: 'coupons' },
+	{ icon: 'mdi-account-outline', text: 'User Manager', route: 'users' },
+	{ icon: 'mdi-logout', text: 'Đăng xuất', route: 'logout' },
+]);
+
 const { lgAndUp, mdAndUp } = useDisplay();
 const cartStore = useCartStore();
-const userStore = userData();
+
 const router = useRouter();
+const url = import.meta.env.VITE_PUBLIC_URL;
 
 const searchInput = ref("");
+const searchOutput = ref([]);
+
+const submit = () => {
+	window.location.href = `/tim-kiem?name=${searchInput.value}`;
+};
+
+watch(searchInput, () => {
+	fetchSearchOutput();
+});
+
+const fetchSearchOutput = async () => {
+	if (searchInput.value && searchInput.value.length >= 3) {
+		try {
+			const res = await axios.get(`search-output/${searchInput.value}`);
+			searchOutput.value = res.data.data;
+		} catch (e) {
+			console.log(e);
+		}
+	}
+};
+
+const clickAction = (item, index) => {
+	console.log(item);
+	if (index === menus.value.length - 1) {
+		siteStore.logout();
+	} else {
+		router.push(`/${item.route}`);
+	}
+};
 </script>
 
 <template>
@@ -37,21 +77,43 @@ const searchInput = ref("");
 
 			<v-row style="max-width: 380px; min-width: 250px">
 				<v-col cols="12">
-					<v-form @submit.prevent="router.push({
-						name: 'search',
-						query: {
-							name: searchInput
-						},
-					})">
-						<v-text-field
+					<v-form @submit.prevent="submit">
+
+						<v-autocomplete
 							variant="solo"
 							hide-details
 							prepend-inner-icon="mdi-magnify"
 							label="Bạn cần tìm gì?"
 							single-line
 							density="compact"
-							v-model="searchInput"
-						/>
+							v-model:search="searchInput"
+							:items="searchOutput"
+							item-title="name"
+							hide-no-data
+							menu-icon=""
+						>
+							<template #item="{ item }">
+								<v-list-item
+									:href="`san-pham/${item?.raw?.slug}`"
+									density="compact"
+								>
+									<template #prepend>
+										<v-img
+											width="30"
+											height="40"
+											:src="`${url}${item?.raw?.image}`"
+										></v-img>
+									</template>
+									<template #title>
+										<div class="ms-3">{{ item?.raw?.name }}</div>
+									</template>
+									<template #subtitle>
+										<div class="ms-3">{{ formatPrice(item?.raw?.sell_price) }}</div>
+									</template>
+								</v-list-item>
+							</template>
+						</v-autocomplete>
+
 					</v-form>
 				</v-col>
 			</v-row>
@@ -93,7 +155,7 @@ const searchInput = ref("");
 				href="/login"
 			>
 				<template #icon>mdi-account-circle-outline</template>
-				<template #label>{{ userStore.full_name ? userStore.full_name : "Đăng nhập" }}</template>
+				<template #label>{{ siteData1.userInfo.full_name ? siteData1.userInfo.full_name : "Đăng nhập" }}</template>
 			</HeaderButton>
 		</v-container>
 	</v-app-bar>

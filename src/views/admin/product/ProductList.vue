@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import axios from "../../../axiosComfig";
-import { mapKeys, camelCase, lowerFirst } from "lodash";
+import { mapKeys, camelCase } from "lodash";
 import GlobalPagination from "../../../components/globals/GlobalPagination.vue";
 import useCategoryStore from "@/stores/category";
 
@@ -29,7 +29,7 @@ const headers = [
     title: "Giá",
     key: "price",
     align: "start",
-    width: "20%"
+    width: "10%"
   },
   {
     title: "Số lượng",
@@ -49,7 +49,7 @@ const headers = [
     sortable: false,
     key: "action",
     align: "start",
-    width: "10%",
+    width: "5%",
   },
 ];
 
@@ -59,10 +59,9 @@ const numberOfPages = ref(0);
 const currentPage = ref(1);
 
 const alert = ref("");
-
 const tempId = ref(0);
-const tempStatus = ref(null);
 
+const status = ref(null);
 const statuses = [
   {
     title: "Tất cả",
@@ -77,7 +76,6 @@ const statuses = [
     value: true,
   }
 ];
-const status = ref(null);
 
 const categories = ref([
   {
@@ -123,7 +121,6 @@ const updatePage = event => {
 };
 
 const confirmAlert = async () => {
-
   try {
     const res = await axios.delete(`products/delete/${tempId.value}`);
 
@@ -162,6 +159,7 @@ const search = () => {
 watch([status, category, name], () => {
   currentPage.value = 1;
 });
+
 watch([currentPage, status, category, name], fetchProducts);
 
 watch(() => categoryStore.categories, (newVal) => {
@@ -177,222 +175,192 @@ onMounted(fetchProducts);
 </script>
 
 <template>
-  <v-container>
-    <v-row>
-      <v-col
-        cols="12"
-        class="d-flex align-center"
-      >
-        <h2>Danh sách sản phẩm</h2>
-        <v-btn
-          prepend-icon="mdi-plus"
-          class="ms-auto"
-          :to="{
-            name: 'admin-product-create',
-          }"
+  <v-card class="m-card">
+    <v-container>
+      <v-row>
+        <v-col
+          cols="12"
+          class="d-flex align-center"
         >
-          Thêm mới
-        </v-btn>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col
-        cols="6"
-        sm="4"
-      >
-        <v-autocomplete
-          color="red-accent-4"
-          prepend-inner-icon="mdi-list-box-outline"
-          density="compact"
-          label="Danh mục"
-          :items="categories"
-          v-model="category"
-          variant="outlined"
-          hide-details
-        ></v-autocomplete>
-      </v-col>
-      <v-col
-        cols="6"
-        sm="4"
-      >
-        <v-select
-          color="red-accent-4"
-          density="compact"
-          label="Trạng thái"
-          :items="statuses"
-          v-model="status"
-          variant="outlined"
-          hide-details
-        ></v-select>
-      </v-col>
-      <v-col>
-        <v-text-field
-          v-model="searchInput"
-          density="compact"
-          append-inner-icon="mdi-magnify"
-          label="Tìm kiếm theo tên"
-          variant="outlined"
-          hide-details
-          clearable
-          @click:append-inner="search"
-          @keyup.enter="search"
-        ></v-text-field>
+          <h2>Danh sách sản phẩm</h2>
+          <v-btn
+            prepend-icon="mdi-plus"
+            class="ms-auto"
+            :to="{
+              name: 'admin-product-create',
+            }"
+          >
+            Thêm mới
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          cols="6"
+          sm="4"
+        >
+          <v-autocomplete
+            color="red-accent-4"
+            prepend-inner-icon="mdi-list-box-outline"
+            density="compact"
+            label="Danh mục"
+            :items="categories"
+            v-model="category"
+            variant="outlined"
+            hide-details
+          ></v-autocomplete>
+        </v-col>
+        <v-col
+          cols="6"
+          sm="4"
+        >
+          <v-select
+            color="red-accent-4"
+            density="compact"
+            label="Trạng thái"
+            :items="statuses"
+            v-model="status"
+            variant="outlined"
+            hide-details
+          ></v-select>
+        </v-col>
+        <v-col>
+          <v-text-field
+            v-model="searchInput"
+            density="compact"
+            append-inner-icon="mdi-magnify"
+            label="Tìm kiếm theo tên"
+            variant="outlined"
+            hide-details
+            clearable
+            @click:append-inner="search"
+            @keyup.enter="search"
+          ></v-text-field>
 
-      </v-col>
-    </v-row>
-    <v-row v-if="alert">
-      <v-col>
-        <v-alert
-          type="warning"
-          :text="alert"
-          :model-value="!!alert"
-          variant="tonal"
-        >
-          <template #append>
-            <v-btn
-              density="compact"
-              color="red-accent-4"
-              icon="mdi-window-close"
-              variant="flat"
-              class="mr-2"
-              @click="alert = ''"
-            ></v-btn>
-            <v-btn
-              density="compact"
-              color="success"
-              icon="mdi-check"
-              variant="flat"
-              @click="confirmAlert"
-            ></v-btn>
-          </template>
-        </v-alert>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-data-table
-          :items-per-page="rowsPerPage"
-          :page="currentPage"
-          :headers="headers"
-          :items="products"
-          class="elevation-1"
-          item-value="name"
-          hover
-          no-data-text="Không có sản phẩm!"
-        >
-          <template #column.price="{ column }">
-            <div class="v-data-table-header__content flex-wrap">
-              <v-chip
-                color="amber"
-                label
-              >Giá gốc
-              </v-chip>
-              <v-chip
+        </v-col>
+      </v-row>
+      <v-row v-if="alert">
+        <v-col>
+          <v-alert
+            type="warning"
+            :text="alert"
+            :model-value="!!alert"
+            variant="tonal"
+          >
+            <template #append>
+              <v-btn
+                density="compact"
+                color="red-accent-4"
+                icon="mdi-window-close"
+                variant="flat"
+                class="mr-2"
+                @click="alert = ''"
+              ></v-btn>
+              <v-btn
+                density="compact"
                 color="success"
-                label
-              >Giá bán
-              </v-chip>
-              <v-chip
-                color="red-accent-4"
-                label
-              >Giá khuyến mãi
-              </v-chip>
-            </div>
-          </template>
-          <template #item.price="{ item }">
-            <div class="my-2">
-              <v-chip
-                color="amber"
-                label
-                class="justify-center"
-              >
-                {{ item.raw.originPrice }}
-              </v-chip>
-              <v-chip
-                color="success"
-                label
-                class="justify-center"
-              >
-                {{ item.raw.sellPrice }}
-              </v-chip>
-              <v-chip
-                v-if="item.raw.discountPrice"
-                color="red-accent-4"
-                label
-                class="justify-center"
-              >
-                {{ item.raw.discountPrice }}
-              </v-chip>
-            </div>
+                icon="mdi-check"
+                variant="flat"
+                @click="confirmAlert"
+              ></v-btn>
+            </template>
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-data-table
+            :items-per-page="rowsPerPage"
+            :page="currentPage"
+            :headers="headers"
+            :items="products"
+            class="elevation-1"
+            item-value="name"
+            hover
+            no-data-text="Không có sản phẩm!"
+          >
+            <template #item.name="{ item }">
 
-          </template>
-          <template #item.image="{ item }">
-            <v-img
-              :src="`${url}${item.columns.image}`"
-              width="60"
-            ></v-img>
-          </template>
-          <template #item.isDisabled="{ item }">
+              <RouterLink
+                width="100%"
+                :to="`/san-pham/${item.raw.slug}`"
+              >
+                <div>
+                  {{ item.raw.name }}
+                </div>
+              </RouterLink>
+            </template>
+            <template #item.price="{ item }">
+              <div>
+                {{ formatPrice(item.raw.discountPrice || item.raw.sellPrice) }}
 
-            <v-switch
-              color="red-accent-4"
-              :model-value="!item.raw.isDisabled"
-              @update:modelValue="() => handleToggleButton(item.raw.id)"
-              hide-details
-            ></v-switch>
-          </template>
-          <template #item.action="{ item }">
-            <div class="d-flex">
-              <v-btn
-                size="small"
-                variant="tonal"
-                icon="mdi-information-variant"
-                color="info"
-                :to="{
-                  name: 'admin-product-detail',
-                  params: {
-                    id: item.raw.id,
-                  },
-                }"
-              >
-              </v-btn>
-              <v-btn
-                size="small"
-                variant="tonal"
-                icon="mdi-pencil"
-                color="primary"
-                :to="{
-                  name: 'admin-product-update',
-                  params: {
-                    id: item.raw.id,
-                  },
-                }"
-              >
-              </v-btn>
-              <v-btn
-                v-if="item.raw.isDisabled"
-                size="small"
-                variant="tonal"
-                icon="mdi-trash-can-outline"
+                <v-tooltip
+                  activator="parent"
+                  location="right"
+                  class="d-flex flex-column"
+                >
+                  <p>
+                    Giá gốc: {{ formatPrice(item.raw.originPrice) }}
+                  </p>
+
+                </v-tooltip>
+              </div>
+            </template>
+            <template #item.image="{ item }">
+              <v-img
+                :src="`${url}${item.columns.image}`"
+                width="60"
+              ></v-img>
+            </template>
+            <template #item.isDisabled="{ item }">
+
+              <v-switch
                 color="red-accent-4"
-                @click="() => handleDeleteButton(item.raw.id, item.raw.name)"
-              >
-              </v-btn>
-            </div>
-          </template>
-          <template #bottom>
-            <GlobalPagination
-              v-if="numberOfPages > 1"
-              :numberOfPages="numberOfPages"
-              :page="currentPage"
-              @update:page="updatePage"
-            ></GlobalPagination>
-          </template>
-        </v-data-table>
-      </v-col>
-    </v-row>
-
-  </v-container>
+                :model-value="!item.raw.isDisabled"
+                @update:modelValue="() => handleToggleButton(item.raw.id)"
+                hide-details
+              ></v-switch>
+            </template>
+            <template #item.action="{ item }">
+              <div class="d-flex">
+                <v-btn
+                  size="x-small"
+                  variant="tonal"
+                  icon="mdi-pencil"
+                  color="primary"
+                  :to="{
+                    name: 'admin-product-update',
+                    params: {
+                      id: item.raw.id,
+                    },
+                  }"
+                  class="me-1"
+                >
+                </v-btn>
+                <v-btn
+                  v-if="item.raw.isDisabled"
+                  size="x-small"
+                  variant="tonal"
+                  icon="mdi-trash-can-outline"
+                  color="red-accent-4"
+                  @click="() => handleDeleteButton(item.raw.id, item.raw.name)"
+                >
+                </v-btn>
+              </div>
+            </template>
+            <template #bottom>
+              <GlobalPagination
+                v-if="numberOfPages > 1"
+                :numberOfPages="numberOfPages"
+                :page="currentPage"
+                @update:page="updatePage"
+              ></GlobalPagination>
+            </template>
+          </v-data-table>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-card>
 </template>
 <style>
 .more {

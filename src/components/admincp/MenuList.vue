@@ -47,4 +47,5 @@ const menus = ref([
   line-height: 1.2rem;
   letter-spacing: 0.02em !important;
   text-transform: none !important;
-}</style>
+}
+</style>

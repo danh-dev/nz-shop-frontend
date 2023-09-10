@@ -3,7 +3,7 @@ const routes = [
         path: "",
         name: "redirect",
         redirect: to => {
-            return {name: "dashboard-admin"};
+            return { name: "dashboard-admin" };
         },
     },
     {
@@ -68,11 +68,11 @@ const routes = [
         path: "product/:id",
         component: () => import("../views/admin/product/ProductDetail.vue"),
     },
-	{
-		name: "admin-product-variant",
-		path: "variants/:id",
-		component: () => import("../views/admin/product/ProductVariant.vue"),
-	},
+    {
+        name: "admin-product-variant",
+        path: "variants/:id",
+        component: () => import("../views/admin/product/ProductVariant.vue"),
+    },
     {
         name: "admin-product-update",
         path: "product/update/:id",
@@ -98,7 +98,7 @@ const routes = [
         path: "category/update/:id",
         component: () => import("../views/admin/category/CategoryUpdate.vue"),
     },
-// 	Sang
+    // 	Sang
     {
         path: "post",
         name: "admin-post",

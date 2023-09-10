@@ -150,8 +150,8 @@ const postsNumber = computed(() => {
 	}
 });
 
-watch(() => categoryStore.categories, async () => {
-	for (const category of categoryStore.parentCategories) {
+watch(() => categoryStore.parentCategories, async (newVal) => {
+	for (const category of newVal) {
 		products.value[category.id] = await fetchRecursiveCategoryProducts(category.id, 8);
 	}
 });
@@ -245,7 +245,7 @@ onMounted(() => {
 		</HomeMainProductLayout>
 	</template>
 
-	<HomeMainProductLayout>
+	<!-- <HomeMainProductLayout>
 		<template #title>Phụ kiện</template>
 		<template #content>
 			<v-sheet class="d-flex flex-wrap">
@@ -268,7 +268,7 @@ onMounted(() => {
 				</ButtonBackground>
 			</v-sheet>
 		</template>
-	</HomeMainProductLayout>
+	</HomeMainProductLayout> -->
 
 	<HomeMainProductLayout>
 		<template #title>Tin công nghệ</template>
