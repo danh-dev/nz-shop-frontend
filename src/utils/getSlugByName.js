@@ -1,6 +1,6 @@
 import { deburr } from "lodash";
 
-const getSlugByName = slug => {
+export const getSlugByName = slug => {
 	// Normalize the title to remove accents and special characters
 	const normalizedTitle = deburr(slug)
 		.normalize("NFD")
