@@ -4,6 +4,7 @@ import axios from "../../axiosComfig";
 import { useRouter } from "vue-router";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
+
 const router = useRouter();
 // Begin: Upload & crop ảnh
 const callModel = ref(false);
@@ -47,6 +48,7 @@ async function createSlider() {
     }
   });
   try {
+    siteStore.isLoading = true;
     const response = await axios.post("sliders", {
       name: newSlider.value.name,
       title: newSlider.value.title,
@@ -54,6 +56,7 @@ async function createSlider() {
     });
     if (response.data.status === 201) {
       router.push("/admincp/slider");
+      siteStore.isLoading = false;
       siteStore.hasRes({ data: { status: "ok", message: "Tạo mới thành công." } });
     }
   } catch (e) {
@@ -154,11 +157,12 @@ async function createSlider() {
     </v-container>
   </v-form>
 
+  <!-- callModel to upload new image -->
   <v-dialog
     v-model="callModel"
     width="auto"
   >
-    <v-card class="rounded">
+    <v-card class="rounded w-50 h-25 mx-auto">
       <v-file-input
         type="file"
         id="image"
@@ -167,17 +171,17 @@ async function createSlider() {
         prepend-icon=""
         label="Upload ảnh:"
         @change="getUploadedImage"
-        class="d-flex flex-column justify-center"
+        class="d-flex flex-column justify-center ma-3"
       />
       <Cropper
         ref="cropperArea"
         :src="uploadedImage"
         :stencil-props="{
-          aspectRatio: 950 / 320,
+          aspectRatio: 950 / 350,
         }"
         :canvas="{
           width: 950,
-          height: 320
+          height: 350
         }"
       />
       <br>
@@ -185,7 +189,7 @@ async function createSlider() {
         <v-img
           :src="croppedImageData"
           width="950"
-          height="320"
+          height="350"
         ></v-img>
       </div>
       <div class="d-flex justify-center my-5">

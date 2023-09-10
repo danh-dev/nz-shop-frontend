@@ -11,6 +11,43 @@ import CropImageModal from "@/components/globals/CropImageModal.vue";
 import { siteData } from "@/stores/globals.js";
 const siteStore = siteData();
 
+//------ Create product description by AI technology ----------//
+const descByAIModal = ref(false);
+const descriptionByAI = ref({
+  name: "",
+  description: "",
+});
+const validateDescByAI = ref([
+  description => {
+    if (description.length > 9) { return true; }
+    return "Từ khóa thiểu 10 ký tự.";
+  },
+  title => {
+    if (title.length > 9) { return true; }
+    return "mô tả ngắn tối thiểu 10 ký tự.";
+  },
+]);
+
+async function createDescByAI() {
+  try {
+    siteStore.isLoading = true;
+    const response = await axios.post("content", {
+      name: descriptionByAI.value.name,
+      description: descriptionByAI.value.description,
+    });
+    if (response.status === 200) {
+      mainForm.value.description.value = response.data.data;
+      siteStore.isLoading = false;
+      descByAIModal.value = false;
+      siteStore.hasRes({ data: { status: "ok", message: "Tạo mô tả sản phẩm thành công." } });
+      descByAIModal.value = false;
+    }
+  } catch (error) {
+    console.log(error);
+    siteStore.hasRes({ data: { status: "error", message: "Tạo mô tả sản phẩm thất bại." } });
+  }
+};
+
 const url = import.meta.env.VITE_PUBLIC_URL;
 const route = useRoute();
 const router = useRouter();
@@ -772,8 +809,12 @@ onMounted(fetchOneProductById);
       </v-row>
 
       <v-row>
-        <v-col cols="12">
+        <v-col
+          cols="12"
+          class="d-flex justify-space-between"
+        >
           <v-label>Mô tả</v-label>
+          <v-btn @click="descByAIModal = !descByAIModal">Sử dụng công nghệ AI</v-btn>
         </v-col>
       </v-row>
 
@@ -1060,6 +1101,42 @@ onMounted(fetchOneProductById);
     </v-form>
 
   </v-container>
+
+  <!-- Modal tạo content bằng AI -->
+  <v-dialog
+    v-model="descByAIModal"
+    class="w-50 "
+  ><v-card class="pa-4 rounded-lg">
+      <v-text-field
+        v-model="descriptionByAI.name"
+        variant="outlined"
+        :counter="100"
+        label="Từ khóa sản phẩm:"
+        :rules="validateDescByAI"
+      ></v-text-field>
+
+      <v-textarea
+        v-model="descriptionByAI.description"
+        variant="outlined"
+        :counter="100"
+        placeholder="Mô tả ngắn về sản phẩm: "
+        :rules="validateDescByAI"
+      ></v-textarea>
+
+      <div class="d-flex justify-center">
+        <v-btn
+          @click="createDescByAI"
+          color="success"
+          class="mx-1"
+        >Xác nhận</v-btn>
+        <v-btn
+          @click="descByAIModal = !descByAIModal"
+          color="#d50000"
+          class="mx-1"
+        >Đóng</v-btn>
+      </div>
+    </v-card>
+  </v-dialog>
 </template>
 
 <style></style>

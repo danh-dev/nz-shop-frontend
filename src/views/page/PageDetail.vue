@@ -3,6 +3,8 @@ import { ref, onMounted } from "vue";
 import axios from "../../axiosComfig";
 import { useRoute } from "vue-router";
 import getSlugByName from "../../utils/getSlugByName.js";
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
 
 // Page API
 const route = useRoute();
@@ -15,12 +17,14 @@ const page = ref({
 });
 
 const fetchPage = async () => {
-  const response = await axios.get(`pages`);
+  siteStore.isLoading = true;
+  const response = await axios.get("pages");
   if (response.data.status === 200) {
     pages.value = response.data.data;
     page.value = pages.value.find((page) => {
       return getSlugByName(page.name) === route.params.name;
     });
+    siteStore.isLoading = false;
   }
 };
 
@@ -51,12 +55,13 @@ onMounted(fetchPage);
           </div>
         </v-sheet>
 
-      <v-sheet>
-        <p
-          class="py-2"
-          v-html="page.content"
-        ></p>
+        <v-sheet>
+          <p
+            class="py-2"
+            v-html="page.content"
+          ></p>
+        </v-sheet>
       </v-sheet>
-    </v-sheet>
-  </v-col>
-</v-row></template>
+    </v-col>
+  </v-row>
+</template>

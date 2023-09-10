@@ -2,8 +2,10 @@
 import { ref, computed, onMounted, watch } from "vue";
 import axios from "../../axiosComfig";
 import { useRouter } from "vue-router";
-// import getSlugByName from "../../utils/getSlugByName.js";
 import GlobalPagination from "@/components/globals/GlobalPagination.vue";
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
+
 // Slider API
 const url = import.meta.env.VITE_PUBLIC_URL;
 const sliders = ref([]);
@@ -21,11 +23,13 @@ watch(selected, () => {
 
 const fetchSlider = async () => {
   try {
+    siteStore.isLoading = true;
     const response = await axios.get("sliders");
     if (response.data.status === 200) {
       sliders.value = response.data.data.reverse();
       filteredSliders.value = sliders.value;
       selected.value = 0;
+      siteStore.isLoading = false;
     }
   } catch (error) {
     console.log("Error: ", error);
@@ -93,29 +97,19 @@ const updatePage = (event) => {
         >
           <thead>
             <tr>
-              <th
-                style="width: 22.5%;"
-              >
+              <th style="width: 22.5%;">
                 Tên
               </th>
-              <th
-                style="width: 22.5%;"
-              >
+              <th style="width: 22.5%;">
                 Tiêu đề
               </th>
-              <th
-                style="width: 15%"
-              >
+              <th style="width: 15%">
                 Hình ảnh
               </th>
-              <th
-                style="width: 15%;"
-              >
+              <th style="width: 15%;">
                 Ngày tạo
               </th>
-              <th
-                style="width: 15%;"
-              >Tình trạng</th>
+              <th style="width: 15%;">Tình trạng</th>
               <th class="font-weight-bold">
                 Chức năng
               </th>

@@ -6,6 +6,44 @@ import ContentEditor from "@/components/globals/ContentEditor.vue";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
 const url = import.meta.env.VITE_PUBLIC_URL;
+
+//------ Create content by AI technology ----------//
+const contentByAIModal = ref(false);
+const contentByAI = ref({
+  title: "",
+  description: "",
+});
+const validateContentByAI = ref([
+  description => {
+    if (description.length > 9) { return true; }
+    return "Bình luận tối thiểu 10 ký tự.";
+  },
+  title => {
+    if (title.length > 9) { return true; }
+    return "Bình luận tối thiểu 10 ký tự.";
+  },
+]);
+
+async function createContentByAI() {
+  try {
+    siteStore.isLoading = true;
+    const response = await axios.post("content", {
+      name: contentByAI.value.title,
+      description: contentByAI.value.description,
+    });
+
+    if (response.status === 200) {
+      post.value.content = response.data.data;
+      siteStore.isLoading = false;
+      contentByAIModal.value = false;
+      siteStore.hasRes({ data: { status: "ok", message: "Tạo nội dung thành công." } });
+    }
+  } catch (error) {
+    console.log(error);
+    siteStore.hasRes({ data: { status: "error", message: "Tạo nội dung thất bại." } });
+  }
+};
+
 // Begin: Upload & crop ảnh
 const callModel = ref(false);
 const fileInput = ref(null);
@@ -203,7 +241,10 @@ onBeforeMount(fetchPost);
           cols="12"
           md="12"
         >
-          <v-label class="text-caption">Nội dung bài viết:</v-label>
+          <div class="d-flex justify-space-between my-2">
+            <v-label class="text-caption">Nội dung bài viết</v-label>
+            <v-btn @click="contentByAIModal = !contentByAIModal">Sử dụng công nghệ AI</v-btn>
+          </div>
           <ContentEditor
             :editorContent="post.content"
             @editContent="editContent"
@@ -230,11 +271,12 @@ onBeforeMount(fetchPost);
     </v-container>
   </v-form>
 
+  <!-- Modal xử lý ảnh -->
   <v-dialog
     v-model="callModel"
     width="auto"
   >
-    <v-card class="rounded">
+    <v-card class="rounded w-50 h-25 mx-auto">
       <v-file-input
         chips
         id="image"
@@ -243,17 +285,17 @@ onBeforeMount(fetchPost);
         prepend-icon=""
         label="Upload ảnh:"
         @change="getUploadedImage"
-        class="d-flex flex-column justify-center"
+        class="d-flex flex-column justify-center ma-3"
       />
       <Cropper
         ref="cropperArea"
         :src="uploadedImage"
         :stencil-props="{
-          aspectRatio: 1000 / 600,
+          aspectRatio: 1000 / 450,
         }"
         :canvas="{
           width: 1000,
-          height: 600
+          height: 450
         }"
       />
       <br>
@@ -261,7 +303,7 @@ onBeforeMount(fetchPost);
         <v-img
           :src="croppedImageData"
           width="1000"
-          height="600"
+          height="450"
         ></v-img>
       </div>
       <div class="d-flex justify-center my-5">
@@ -294,6 +336,41 @@ onBeforeMount(fetchPost);
           @click="callModel = false"
         >ĐÓNG
         </v-btn>
+      </div>
+    </v-card>
+  </v-dialog>
+
+  <!-- Modal tạo content bằng AI -->
+  <v-dialog
+    v-model="contentByAIModal"
+    class="w-50"
+  ><v-card class="pa-4">
+      <v-text-field
+        v-model="contentByAI.title"
+        variant="outlined"
+        :counter="100"
+        label="Tiêu đề bài viết:"
+        :rules="validateContentByAI"
+      ></v-text-field>
+
+      <v-textarea
+        v-model="contentByAI.description"
+        variant="outlined"
+        placeholder="Tóm tắt nội dung: "
+        :rules="validateContentByAI"
+      ></v-textarea>
+
+      <div class="d-flex justify-center">
+        <v-btn
+          @click="createContentByAI"
+          color="success"
+          class="mx-1"
+        >Xác nhận</v-btn>
+        <v-btn
+          @click="contentByAIModal = !contentByAIModal"
+          color="#d50000"
+          class="mx-1"
+        >Đóng</v-btn>
       </div>
     </v-card>
   </v-dialog>

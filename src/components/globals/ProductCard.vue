@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 import { useDisplay } from "vuetify";
 
 defineProps({
-  product: Object
+  product: Object,
 });
 
 const url = import.meta.env.VITE_PUBLIC_URL;

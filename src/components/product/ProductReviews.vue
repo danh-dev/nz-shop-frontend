@@ -9,6 +9,26 @@ const props = defineProps({
 	},
 });
 
+function formatTimePassed(created_at) {
+	const reviewDate = new Date(created_at);
+	const currentDate = new Date();
+
+	const timeDiff = currentDate.getTime() - reviewDate.getTime();
+	const minutes = Math.floor(timeDiff / (1000 * 60));
+	const hours = Math.floor(minutes / 60);
+	const days = Math.floor(hours / 24);
+
+	if (days > 0) {
+		return `${days} ngày trước`;
+	} else if (hours > 0) {
+		return `${hours} giờ trước`;
+	} else if (minutes > 0) {
+		return `${minutes} phút trước`;
+	}
+	return "Vừa mới đăng";
+
+};
+
 const moreReview = ref(false);
 const averageRating = computed(() => {
 	let totalRating = 0;
@@ -18,9 +38,9 @@ const averageRating = computed(() => {
 	return totalRating / props.reviews.length.toFixed(1) || 0;
 });
 
-const percentReviews = rating => {
-	return props.reviews.filter(review => review.rating === rating).length;
-};
+// const percentReviews = rating => {
+// 	return props.reviews.filter(review => review.rating === rating).length;
+// };
 
 // import { siteData } from "@/stores/globals";
 // const siteStore = siteData();
@@ -41,7 +61,7 @@ const percentReviews = rating => {
 			<div class="d-flex align-center flex-column">
 				<h3 class="pt-5 d-flex justify-center text-uppercase">Đánh giá & nhận xét</h3>
 				<div class="text-h2 mt-3">
-					{{ averageRating }}
+					 {{ averageRating.toFixed(1) || 0 }}
 					<span class="text-h6 ml-n3">/5</span>
 				</div>
 
@@ -110,12 +130,12 @@ const percentReviews = rating => {
 					:key="review.id"
 				>
 					<div class="border-left bg-grey-lighten-4 text-body-2 rounded-lg my-4">
-						<div class="text-uppercase d-flex justify-space-between pa-2">
+						<div class="d-flex justify-space-between pa-2">
 							<p class="text-uppercase font-weight-bold">
 								<b class="text-h6 rounded-b-pill bg-amber pa-2"> {{ review.full_name.slice(0, 1) }}</b> {{
 									review.full_name }}
 							</p>
-							<p>{{ review.created_at.slice(0, 19) }}</p>
+							<p>{{ formatTimePassed(review.created_at) }}</p>
 						</div>
 						<div class="pa-2">
 							<div class="d-flex align-center">

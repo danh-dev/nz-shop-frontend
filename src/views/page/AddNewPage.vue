@@ -25,9 +25,11 @@ async function createPage() {
     }
   });
   try {
+    siteStore.isLoading = true;
     const response = await axios.post("pages", formData);
     if (response.data.status === 201) {
       router.push("/admincp/page");
+      siteStore.isLoading = false;
       siteStore.hasRes({ data: { status: "ok", message: "Tạo mới thành công." } });
     }
   } catch (e) {

@@ -1,20 +1,42 @@
 <script setup>
 import { useRoute } from "vue-router";
 import axios from "@/axiosComfig";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 import { camelCase, mapKeys } from "lodash";
-import ProductReviews from "../components/product/ProductReviews.vue";
-import ProductNews from "../components/product/ProductNews.vue";
-// import ProductGallery from "../components/product/ProductGallery.vue";
-import ProductSlider from "../components/product/ProductSlider.vue";
-import ProductThumbnailGroup from "../components/product/ProductThumbnailGroup.vue";
+import ProductReviews from "@/components/product/ProductReviews.vue";
+import ProductNews from "@/components/product/ProductNews.vue";
+import ProductSlider from "@/components/product/ProductSlider.vue";
+import ProductSlider1 from "@/components/globals/ProductSlider.vue";
+import ProductThumbnailGroup from "@/components/product/ProductThumbnailGroup.vue";
+import ProductCard from "@/components/globals/ProductCard.vue";
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
+
+const { name, xs } = useDisplay();
+
+const productsShow = computed(() => {
+	switch (name.value) {
+		case "xs":
+			return 2;
+		case "sm":
+			return 3;
+		case "md":
+			return 4;
+		case "xl":
+			return 6;
+		case "xxl":
+			return 7;
+		default:
+			return 5;
+	}
+});
 
 const variantSelected = ref(0);
 const readMore = ref(false);
 
 const route = useRoute();
-const { xs } = useDisplay();
+
 const moreDiscount = ref([
 	{ id: 1, icon: "mdi-check-circle", name: "Giảm thêm tới 1% cho thành viên Smember (áp dụng tùy sản phẩm)" },
 	{ id: 2, icon: "mdi-check-circle", name: "Ưu đãi đến 500k khi mở thẻ VP Bank" },
@@ -26,12 +48,11 @@ const product = ref({});
 const posts = ref([]);
 const products = ref([]);
 
-import { siteData } from "@/stores/globals";
-const siteStore = siteData();
+
 
 const reviewModal = ref(false);
 
-// Create & fetch product reviews
+//------------ Create & fetch product reviews -----------//
 const review = ref("");
 const reviews = ref([]);
 const rating = ref(null);
@@ -39,6 +60,7 @@ const showMoreReviews = ref(false);
 
 const createReview = async () => {
 	try {
+		siteStore.isLogin = true;
 		await axios.post("reviews", {
 			user_id: siteStore.userInfo.user_id,
 			product_id: product.value.id,
@@ -48,7 +70,6 @@ const createReview = async () => {
 		fetchReviews(product.value.id);
 		siteStore.hasRes({ data: { status: "ok", message: "Bình luận thành công." } });
 		reviewModal.value = false;
-
 	}
 	catch (e) {
 		siteStore.hasRes({ data: { status: "error", message: "Xảy ra lỗi. Vui lòng đăng nhập để thực hiện thao tác." } });
@@ -68,20 +89,20 @@ const fetchReviews = async id => {
 	}
 };
 
-// Create & fetch product comments
+//------------- Create & fetch product comments -----------//
 const comments = ref([]);
 const comment = ref("");
-// const visibleComments = ref(3)
 const showMoreComments = ref(false);
 const validate = ref([
 	comment => {
 		if (comment.length > 2) { return true; }
-		return "Bình luận tối thiểu 2 ký tự.";
+		return "Bình luận tối thiểu 3 ký tự.";
 	},
 ]);
 
 const createComment = async () => {
 	try {
+		siteStore.isLogin = true;
 		await axios.post("product-comments", {
 			user_id: siteStore.userInfo.user_id,
 			product_id: product.value.id,
@@ -91,7 +112,7 @@ const createComment = async () => {
 		siteStore.hasRes({ data: { status: "ok", message: "Bình luận thành công." } });
 	}
 	catch (e) {
-		siteStore.hasRes({ data: { status: "error", message: "Xảy ra lỗi. Bình luận thất bại." } });
+		siteStore.hasRes({ data: { status: "error", message: "Xảy ra lỗi. Vui lòng đăng nhập để thực hiện thao tác." } });
 		console.log(e);
 	}
 };
@@ -114,9 +135,26 @@ const visibleComments = () => {
 	return reviews.value.slice(0, 3);// Hiển thị tối đa 3 đánh giá nếu showMoreReview = false
 };
 
-const feedback = ref(false);
+function formatTimePassed(created_at) {
+	const reviewDate = new Date(created_at);
+	const currentDate = new Date();
 
-// Product photos Slider
+	const timeDiff = currentDate.getTime() - reviewDate.getTime();
+	const minutes = Math.floor(timeDiff / (1000 * 60));
+	const hours = Math.floor(minutes / 60);
+	const days = Math.floor(hours / 24);
+
+	if (days > 0) {
+		return `${days} ngày trước`;
+	} else if (hours > 0) {
+		return `${hours} giờ trước`;
+	} else if (minutes > 0) {
+		return `${minutes} phút trước`;
+	}
+	return "Vừa mới đăng";
+};
+
+//------------- Product photos carousel -----------//
 const model = ref(0);
 const maxModel = ref(0);
 
@@ -129,20 +167,22 @@ watch(model, (cur, pre) => {
 		maxModel.value = cur;
 	}
 });
-// fetch Product
+//------------- Fetch each Product -----------//
 const fetchProduct = async () => {
 	try {
+		siteStore.isLoading = true;
 		const res = await axios.get(`products/${route.params.name}`);
 		if (res.status === 200) {
 			product.value = mapKeys(res.data.data, (value, key) => camelCase(key));
 		}
+		siteStore.isLoading = false;
 	}
 	catch (e) {
 		console.log(e);
 	}
 };
 
-// fetch random posts
+//------------- Fetch random posts -----------//
 const fetchRandomPosts = async () => {
 	try {
 		const response = await axios.get("randomPosts");
@@ -156,57 +196,24 @@ const fetchRandomPosts = async () => {
 	}
 };
 
-// fetch random products
+//------------- Fetch random products -----------//
 const fetchRandomProducts = async () => {
 	try {
 		const response = await axios.get("randomProducts");
 		if (response.data.status === 200) {
-			products.value = response.data.data.filter(item => {
-				return !item.isDisabled;
-			});
+			products.value = response.data.data.map(item => mapKeys(item, (value, key) => camelCase(key)));
 		}
 	} catch (error) {
 		console.log("Error: ", error);
 	}
 };
 
-// const fetchFeedbacks = async comment => {
-// 	try {
-// 		const res = await axios.get(`comments/${comment.id}/feedbacks`);
-// 		if (res.status === 200) {
-// 			comment.feedbacks = res.data.data;
-// 		}
-// 	}
-// 	catch (e) {
-// 		console.log(e);
-// 	}
-// };
-
-// const fetchUserByComment = async comment => {
-// 	try {
-// 		const res = await axios.get(`comments/${comment.id}/users`);
-// 		if (res.status === 200) {
-// 			comment.user = res.data.data.name;
-// 		}
-// 	}
-// 	catch (e) {
-// 		console.log(e);
-// 	}
-// };
-
-// watch(comments, () => {
-// 	for (const comment of comments.value) {
-// 		fetchFeedbacks(comment);
-// 		fetchUserByComment(comment);
-// 	}
-// });
-
 watch(product, () => {
 	fetchReviews(product.value.id);
 	fetchComments(product.value.id);
 });
 
-onMounted(async () => {
+onMounted(() => {
 	fetchProduct();
 	fetchRandomProducts();
 	fetchRandomPosts();
@@ -219,14 +226,14 @@ onMounted(async () => {
 			<h3 class=" my-3">{{ product.name }}</h3>
 		</v-sheet>
 
-		<!-- Product Photos Silder -->
+		<!-- Product Photos Carousel -->
 		<v-row>
 			<v-col
 				:cols="12"
 				lg="8"
 				md="12"
 			>
-				<!-- Product Photos Silder -->
+				<!-- Product Photos Carousel -->
 				<v-sheet
 					max-height="30rem"
 					width="100%"
@@ -287,22 +294,6 @@ onMounted(async () => {
 							</v-radio-group>
 
 						</div>
-
-						<!-- <div class="d-flex text-center">
-							<v-card
-								v-for="(item, index) in JSON.parse(product.variants || '[]')"
-								:key="item.sku"
-								:value="item.name"
-								@click="() => { variantSelected = index }"
-								:class="variantSelected === index ? 'selected' : null"
-								class="pa-1 me-2 rounded-lg text-caption"
-							>
-								<b>{{ String(item.name) }}</b>
-								<p
-									@click="cartStore.add(product.variants.sku)"
-								>{{ formatPrice(item.sellPrice) }}</p>
-							</v-card>
-						</div> -->
 					</v-sheet>
 
 					<!-- Buy now, Add to cart -->
@@ -409,10 +400,10 @@ onMounted(async () => {
 				lg="8"
 				md="12"
 			>
-				<!-- Create and display review -->
+				<!-- Create and display reviews -->
 				<ProductReviews :reviews="reviews" />
 
-				<!-- Create and display comment -->
+				<!-- Create and display comments -->
 				<v-sheet
 					elevation="3"
 					rounded="lg"
@@ -421,38 +412,38 @@ onMounted(async () => {
 					<h4 class="px-4 py-2">Bình luận:</h4>
 					<v-container class="d-flex flex-column">
 						<!-- Create a comment -->
-						<v-sheet>
-							<v-textarea
-								v-model="comment"
-								variant="outlined"
-								auto-grow
-								label="Bình luận"
-								background="white"
-								:rules="validate"
-							></v-textarea>
+						<v-textarea
+							v-model="comment"
+							variant="outlined"
+							auto-grow
+							label="Bình luận"
+							background="white"
+							:rules="validate"
+						></v-textarea>
+						<div align="right">
 							<v-btn
 								prepend-icon="mdi-send-circle"
 								color="red-accent-4"
-								class="text-white my-2"
+								class="text-white"
 								@click="createComment"
 							>Gửi</v-btn>
-						</v-sheet>
 
+						</div>
 						<!-- Dislay comments -->
 						<div>
 							<v-sheet
 								class="my-4"
-								v-for="item in comments"
+								v-for=" item in comments "
 								:key="item.id"
 							>
 								<v-sheet>
 									<div class="pa-4 text-body-2 rounded-lg more border-left bg-grey-lighten-4">
-										<div class="text-uppercase d-flex justify-space-between pb-2">
+										<div class="d-flex justify-space-between pb-2">
 											<p class="text-uppercase font-weight-bold">
-												<b class="text-h6 rounded-b-pill bg-amber pa-2"> {{ item.full_name.slice(0, 1) }} </b> {{
-													item.full_name }}
+												<b class="text-h6 rounded-b-pill bg-amber pa-2"> {{ item.full_name.slice(0, 1) || "v" }} </b> {{
+													item.full_name || "visitor" }}
 											</p>
-											<p class="">{{ item.created_at.slice(0, 19) }}</p>
+											<p class="">{{ formatTimePassed(item.created_at) }}</p>
 										</div>
 
 										<div class="d-flex justify-space-between">
@@ -460,24 +451,6 @@ onMounted(async () => {
 										</div>
 									</div>
 								</v-sheet>
-								<v-dialog id="feedback">
-									<v-card>
-										<v-textarea
-											v-model="feedback"
-											variant="outlined"
-											auto-grow
-											label="Bình luận"
-											background="white"
-											:rules="validate"
-										></v-textarea>
-										<v-btn
-											prepend-icon="mdi-send-circle"
-											color="red-accent-4"
-											class="text-white my-2"
-											@click="createFeedback"
-										>Gửi</v-btn>
-									</v-card>
-								</v-dialog>
 							</v-sheet>
 						</div>
 
@@ -510,6 +483,31 @@ onMounted(async () => {
 			>
 				<v-sheet class="d-none d-md-flex d-md-none d-lg-block">
 					<ProductNews :posts="posts" />
+				</v-sheet>
+			</v-col>
+		</v-row>
+
+		<!--  Recommended Product -->
+		<v-row>
+			<v-col>
+				<v-sheet>
+					<h3 class="text-uppercase">sản phẩm gợi ý</h3>
+					<ProductSlider1
+						:products="products"
+						:floors="1"
+						:productsPerFloor="8"
+						:productsShow="productsShow"
+					>
+						<template #default="{ props }">
+							<ProductCard
+								class="flex-1-0 me-2"
+								:width="`calc((100% - ${8 * (productsShow - 1)}px) / ${productsShow})`"
+								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }"
+								:product="props.product"
+								:href="`/san-pham/${props.product.slug}`"
+							/>
+						</template>
+					</ProductSlider1>
 				</v-sheet>
 			</v-col>
 		</v-row>

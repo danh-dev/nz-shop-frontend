@@ -46,12 +46,14 @@ const createPostComment = async () => {
 
 const fetchPost = async () => {
   try {
+    siteStore.isLoading = true;
     const response = await axios.get("posts");
     if (response.data.status === 200) {
       posts.value = response.data.data;
       post.value = posts.value.find((post) => {
         return getSlugByName(post.title) === route.params.title;
       });
+      siteStore.isLoading = false;
     }
   } catch (error) {
     console.log("Error: ", error);
