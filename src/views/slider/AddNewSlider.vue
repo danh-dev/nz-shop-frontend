@@ -33,6 +33,9 @@ const newSlider = ref({
   newImage: [],
 });
 
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
+
 async function createSlider() {
   const formData = new FormData();
   Object.entries(newSlider.value).forEach(([key, value]) => {
@@ -51,8 +54,10 @@ async function createSlider() {
     });
     if (response.data.status === 201) {
       router.push("/admincp/slider");
+      siteStore.hasRes({ data: { status: "ok", message: "Tạo mới thành công." } });
     }
   } catch (e) {
+    siteStore.hasRes({ data: { status: "error", message: "Tạo mới thất bại." } });
     console.log("error", e);
   }
 };

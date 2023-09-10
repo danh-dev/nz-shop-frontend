@@ -11,6 +11,9 @@ const newPage = ref({
   content: "",
 });
 
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
+
 async function createPage() {
   const formData = new FormData();
   Object.entries(newPage.value).forEach(([key, value]) => {
@@ -25,8 +28,10 @@ async function createPage() {
     const response = await axios.post("pages", formData);
     if (response.data.status === 201) {
       router.push("/admincp/page");
+      siteStore.hasRes({ data: { status: "ok", message: "Tạo mới thành công." } });
     }
   } catch (e) {
+    siteStore.hasRes({ data: { status: "error", message: "Tạo mới thất bại." } });
     console.log("error", e);
   }
 };
@@ -80,11 +85,11 @@ function editContent(event) {
         </v-col>
       </v-row>
       <v-row>
-      <v-col
-        cols="12"
-        md="12"
-      >
-        <!-- <v-textarea
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <!-- <v-textarea
           name="editor"
           variant="outlined"
           v-model="newPage.content"
@@ -92,20 +97,20 @@ function editContent(event) {
           label="Nội dung trang:"
         >
         </v-textarea> -->
-        <v-label class="text-caption">Nội dung trang:</v-label>
-        <ContentEditor
-          :editorContent="newPage.content"
-          @editContent="editContent"
-          :rules="[v => !!v || 'Vui lòng không để trống']"
-        />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col
-        cols="12"
-        md="12"
-      >
-        <v-btn
+          <v-label class="text-caption">Nội dung trang:</v-label>
+          <ContentEditor
+            :editorContent="newPage.content"
+            @editContent="editContent"
+            :rules="[v => !!v || 'Vui lòng không để trống']"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <v-btn
             class="me-2"
             type="submit"
           >Hoàn tất</v-btn>
@@ -114,7 +119,8 @@ function editContent(event) {
             href=""
             type="reset"
           >Hủy bỏ</v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
-</v-form></template>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-form>
+</template>

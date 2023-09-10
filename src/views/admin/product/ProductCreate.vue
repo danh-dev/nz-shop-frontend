@@ -871,6 +871,8 @@ const generateSku = async () => {
                         variant="outlined"
                         density="compact"
                         @update:model-value="() => handleInput(variantProduct.originPrice)"
+                        hint="Không bắt buộc"
+                        persistent-hint
                       ></v-text-field>
                     </v-col>
                     <v-col cols="4">
@@ -883,6 +885,8 @@ const generateSku = async () => {
                         variant="outlined"
                         density="compact"
                         @update:model-value="() => handleInput(variantProduct.sellPrice)"
+                        hint="Không bắt buộc"
+                        persistent-hint
                       ></v-text-field>
                     </v-col>
                     <v-col cols="4">

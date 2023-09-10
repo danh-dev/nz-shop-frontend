@@ -1,9 +1,11 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import axios from "axios";
+import axios from "../../../axiosComfig";
 
-const feedbacks = ref([]);
-const filteredFeedbacks = ref([]);
+const comments = ref([]);
+const filteredComments = ref([]);
+const users = ref([]);
+const products = ref([]);
 
 const status = ref(0);
 const statuses = [
@@ -21,25 +23,55 @@ const statuses = [
     }
 ];
 
-watch([status, feedbacks], () => {
+watch([status, comments], () => {
     switch (status.value) {
         case 0:
-            filteredFeedbacks.value = feedbacks.value.filter(item => item.status === "pending");
+            filteredComments.value = comments.value.filter(item => item.status === "pending");
             break;
         case 1:
-            filteredFeedbacks.value = feedbacks.value.filter(item => item.status === "approved");
+            filteredComments.value = comments.value.filter(item => item.status === "approved");
             break;
         case 2:
-            filteredFeedbacks.value = feedbacks.value.filter(item => item.status === "deleted");
+            filteredComments.value = comments.value.filter(item => item.status === "deleted");
             break;
     }
 });
 
-const fetchFeedbacks = async id => {
+const fetchUsers = async () => {
     try {
-        const res = await axios.get(`http://127.0.0.1:8000/api/product-comments/${id}/product-feedbacks`);
+        const res = await axios.get("users");
         if (res.status === 200) {
-            feedbacks.value = res.data.data;
+            users.value = res.data.data;
+        }
+        if (res.status === 204) {
+            console.log("ko co gi");
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+};
+
+const fetchProducts = async () => {
+    try {
+        const res = await axios.get("products");
+        if (res.status === 200) {
+            products.value = res.data.data;
+        }
+        if (res.status === 204) {
+            console.log("ko co gi");
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+};
+
+const fetchComments = async () => {
+    try {
+        const res = await axios.get("product-comments");
+        if (res.status === 200) {
+            comments.value = res.data.data;
         }
         if (res.status === 204) {
             console.log("ko co gi");
@@ -51,11 +83,14 @@ const fetchFeedbacks = async id => {
 
 };
 
+const getUserNameById = id => users.value.find(item => item.id === id)?.full_name;
+const getProductsTitleById = id => products.value.find(item => item.id === id)?.name;
+
 const handleCheckButton = async id => {
     try {
         const res = await axios.put(`http://127.0.0.1:8000/api/product-comments/approve/${id}`);
         if (res.status === 200) {
-            await fetchFeedbacks();
+            await fetchComments();
             console.log(res.data.message);
         }
     }
@@ -68,7 +103,7 @@ const handleDeleteButton = async id => {
     try {
         const res = await axios.put(`http://127.0.0.1:8000/api/product-comments/delete/${id}`);
         if (res.status === 200) {
-            await fetchFeedbacks();
+            await fetchComments();
             console.log(res.data.message);
         }
     }
@@ -78,7 +113,9 @@ const handleDeleteButton = async id => {
 };
 
 onMounted(async () => {
-    await fetchFeedbacks();
+    await fetchComments();
+    await fetchUsers();
+    await fetchProducts();
 });
 </script>
 
@@ -108,7 +145,7 @@ onMounted(async () => {
                     class="text-left"
                     style="width: 25%;"
                 >
-                    Sản phẩm
+                    Bài viết
                 </th>
                 <th
                     class="text-left"
@@ -126,7 +163,7 @@ onMounted(async () => {
         </thead>
         <tbody>
             <tr
-                v-for="item in filteredFeedbacks"
+                v-for="item in filteredComments"
                 :key="item.name"
             >
                 <td>{{ getUserNameById(item.user_id) }}</td>

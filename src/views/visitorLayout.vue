@@ -52,4 +52,8 @@ const { lgAndUp } = useDisplay();
   </v-layout>
 </template>
 
-<style></style>
+<style scoped>
+main {
+  min-height: 83vh;
+}
+</style>

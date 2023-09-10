@@ -23,7 +23,7 @@ const { mdAndUp } = useDisplay();
         :height="mdAndUp ? '23rem' : '20rem'"
       >
         <v-sheet
-          width="13rem"
+          width="15rem"
           max-width="23%"
           class="d-none d-sm-block rounded-lg overflow-hidden mr-3 py-1"
         >
@@ -38,7 +38,7 @@ const { mdAndUp } = useDisplay();
           class="d-flex flex-1-1"
           position="relative"
           color="transparent"
-          width="calc(100% - 13rem - 12px)"
+          width="calc(100% - 15rem - 12px)"
           min-width="calc(77% - 12px)"
         >
         </v-sheet>

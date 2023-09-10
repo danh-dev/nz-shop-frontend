@@ -37,14 +37,8 @@ const headers = [
         align: "start"
     },
     {
-        title: "Trạng thái",
+        title: "Đã duyệt / Chờ duyệt",
         key: "isApproved",
-        align: "start"
-    },
-    {
-        title: "Chức năng",
-        sortable: false,
-        key: "action",
         align: "start"
     },
     {
@@ -52,7 +46,14 @@ const headers = [
         sortable: false,
         key: "feedbackCount",
         align: "start"
+    },
+    {
+        title: "Chức năng",
+        sortable: false,
+        key: "action",
+        align: "start"
     }
+
 ];
 const headers1 = [
     {
@@ -325,6 +326,15 @@ onMounted(fetchComments);
                                 icon="mdi-trash-can-outline"
                                 color="red-accent-4"
                                 @click="() => handleDeleteButton(item.raw.id)"
+                            >
+                            </v-btn>
+                            <v-btn
+                                v-if="item.raw.isApproved"
+                                size="small"
+                                variant="tonal"
+                                icon="mdi-information-variant"
+                                color="red-accent-4"
+                                :to="`/san-pham/${item.raw.slug}`"
                             >
                             </v-btn>
                             <v-btn

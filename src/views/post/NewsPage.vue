@@ -3,6 +3,8 @@ import { ref, onMounted, watch } from "vue";
 import axios from "../../axiosComfig";
 import { useRoute } from "vue-router";
 import getSlugByName from "../../utils/getSlugByName.js";
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
 
 const more = ref(false);
 // Post API
@@ -20,24 +22,24 @@ const post = ref({
 
 const comment = ref("");
 const comments = ref([]);
+const validate = ref([
+  comment => {
+    if (comment.length > 2) { return true; }
+    return "Bình luận tối thiểu 2 ký tự.";
+  },
+]);
 const createPostComment = async () => {
   try {
-    const response = await axios.post("post-comments", {
-      // user_id: userData.id,
-      user_id: 1,
+    await axios.post("post-comments", {
+      user_id: siteStore.userInfo.user_id,
       post_id: post.value.id,
       comment: comment.value,
     });
-    const commentId = response.data.data.id;
-    const commentDate = response.data.data.created_at;
-    comments.value.push({
-      id: commentId,
-      created_at: commentDate,
-      comment: comment.value,
-    });
-    alert("Bình luận thành công.");
+    fetchCommentsPost(post.value.id);
+    siteStore.hasRes({ data: { status: "ok", message: "Bình luận thành công." } });
   }
   catch (e) {
+    siteStore.hasRes({ data: { status: "error", message: "Xảy ra lỗi. Bình luận thất bại." } });
     console.log(e);
   }
 };
@@ -55,7 +57,6 @@ const fetchPost = async () => {
     console.log("Error: ", error);
   }
 };
-
 
 const fetchCommentsPost = async id => {
   try {
@@ -115,7 +116,7 @@ onMounted(async () => {
           <v-sheet>
             <p
               class="py-2"
-              :style="!more && [{ height: '60rem', overflow: 'hidden' }]"
+              :style="!more && [{ height: '40rem', overflow: 'hidden' }]"
               v-html="post.content"
             ></p>
             <div
@@ -150,7 +151,6 @@ onMounted(async () => {
 
           <!-- Comments -->
           <v-sheet
-            elevation="2"
             rounded="lg"
             class="my-3 order-last flex-md-fill"
           >
@@ -162,35 +162,34 @@ onMounted(async () => {
                   variant="filled"
                   auto-grow
                   background="white"
+                  :rules="validate"
                   placeholder="Bình luận:"
                 ></v-textarea>
                 <v-btn
                   prepend-icon="mdi-send-circle"
                   color="red-accent-4"
-                  class="text-white"
+                  class="text-white my-2"
                   @click="createPostComment"
                 >Gửi</v-btn>
               </div>
-
+              <!-- Display comments -->
               <v-sheet
                 class="mt-4 mb-2"
                 v-for="item in comments"
                 :key="item.id"
               >
-                <v-sheet
-                  class="pa-4 text-body-2 rounded-lg"
-                  style="background-color: rgb(247, 243, 243); margin-left: 5%;"
-                >
-                  <div class="d-flex align-center justify-space-between">
-                    <p class="px-2"><b>Username: </b>{{ item.full_name }}</p>
+                <v-sheet class="pa-4 text-body-2 rounded-lg border-left bg-grey-lighten-4">
+                  <div class="text-uppercase d-flex align-center justify-space-between pb-2">
+                    <p class="font-weight-bold">
+                      <b class="text-h6 rounded-b-pill bg-amber pa-2">{{ item.full_name.slice(0, 1) }} </b> {{
+                        item.full_name }}
+                    </p>
                     <p class="text-caption">{{ item.created_at.slice(0, 19) }}</p>
                   </div>
-                  <div class="pa-2 more">
+                  <div class="more">
                     <p><b>Bình luận: </b>{{ item.comment }}</p>
                   </div>
                 </v-sheet>
-
-
               </v-sheet>
             </v-container>
           </v-sheet>

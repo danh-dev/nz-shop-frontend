@@ -37,6 +37,10 @@ const newPost = ref({
   content: "",
   type: "",
 });
+
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
+
 async function createPost() {
   const formData = new FormData();
   Object.entries(newPost.value).forEach(([key, value]) => {
@@ -58,8 +62,10 @@ async function createPost() {
     });
     if (response.data.status === 201) {
       router.push("/admincp/post");
+      siteStore.hasRes({ data: { status: "ok", message: "Tạo mới thành công." } });
     }
   } catch (e) {
+    siteStore.hasRes({ data: { status: "error", message: "Tạo mới thất bại." } });
     console.log("error", e);
   }
 };
