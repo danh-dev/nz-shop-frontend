@@ -116,7 +116,7 @@ const love = ref(true);
           size="small"
         >
         </v-rating>
-        <div class="text-caption">{{ product?.ratingCount }}</div>
+        <div class="text-caption ms-9">{{ product?.ratingCount }} đánh giá</div>
       </div>
     </v-card-actions>
     <v-sheet
