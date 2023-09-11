@@ -16,11 +16,11 @@ const contentByAI = ref({
 const validateContentByAI = ref([
   description => {
     if (description.length > 9) { return true; }
-    return "Bình luận tối thiểu 10 ký tự.";
+    return "Nhập tối thiểu 10 ký tự.";
   },
   title => {
     if (title.length > 9) { return true; }
-    return "Bình luận tối thiểu 10 ký tự.";
+    return "Nhập tối thiểu 10 ký tự.";
   },
 ]);
 

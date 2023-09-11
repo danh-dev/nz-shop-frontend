@@ -20,11 +20,11 @@ const descriptionByAI = ref({
 const validateDescByAI = ref([
   description => {
     if (description.length > 9) { return true; }
-    return "Từ khóa thiểu 10 ký tự.";
+    return "Nhập tối thiểu 10 ký tự.";
   },
   title => {
     if (title.length > 9) { return true; }
-    return "mô tả ngắn tối thiểu 10 ký tự.";
+    return "Nhập tối thiểu 10 ký tự.";
   },
 ]);
 
