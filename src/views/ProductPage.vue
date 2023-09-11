@@ -11,7 +11,6 @@ import ProductSlider1 from "@/components/globals/ProductSlider.vue";
 import ProductThumbnailGroup from "@/components/product/ProductThumbnailGroup.vue";
 import ProductCard from "@/components/globals/ProductCard.vue";
 import { siteData } from "@/stores/globals";
-const siteStore = siteData();
 
 const { name, xs } = useDisplay();
 

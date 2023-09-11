@@ -1,7 +1,7 @@
 <script setup>
 import {useDisplay} from "vuetify";
 import {siteData} from "@/stores/globals";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {useRouter} from "vue-router";
 
 const router = useRouter();
@@ -82,13 +82,22 @@ const fetchSearchOutput = async () => {
                 alt="Logo"
             >
           </router-link>
-          <div class="d-none d-sm-block">
+          <div class="d-none d-sm-block"
+               id="categories">
             <v-btn
-                id="categories"
+                v-if="lgAndUp"
                 class="menu-list text-body-2"
                 prepend-icon="mdi-format-list-bulleted"
+
             >
               Danh mục
+            </v-btn>
+            <v-btn
+                v-else
+                class="menu-list text-body-2"
+                prepend-icon="mdi-format-list-bulleted"
+                size="40"
+            >
             </v-btn>
           </div>
         </v-col>
@@ -166,7 +175,7 @@ const fetchSearchOutput = async () => {
               stacked
           >
             <v-badge
-                :content="cartStore.totalUnit"
+                :content="siteStore.totalUnit"
                 color="pink-lighten-2"
             >
               <v-icon size="25">mdi-cart</v-icon>
@@ -180,33 +189,27 @@ const fetchSearchOutput = async () => {
               stacked
               @click="siteStore.userInfo.full_name ? null : $router.push('/login')"
           >
-            <v-menu
-                activator="parent"
-                v-if="siteStore.userInfo.full_name"
-            >
+            <v-menu activator="parent" v-if="siteStore.userInfo.full_name">
               <v-list>
-                <v-menu activator="parent" v-if="siteStore.userInfo.full_name">
-                  <v-list>
-                    <v-list-item prepend-icon="mdi-shield-crown-outline" v-if="siteStore.isAdmin"
-                                 @click="router.push('/admincp')">Admin CP
-                    </v-list-item>
+                <v-list-item prepend-icon="mdi-shield-crown-outline" v-if="siteStore.isAdmin"
+                             @click="router.push('/admincp')">Admin CP
+                </v-list-item>
 
-                    <v-list-item
-                        v-for="(item, index) in menus"
-                        :key="index"
-                        :prepend-icon="item.icon"
-                        @click="clickAction(item, index)"
-                    >
-                      <v-list-item-title>{{ item.text }}</v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-                <span
-                    v-if="mdAndUp"
-                    class="m-ellipsis"
-                >{{
-              siteStore.userInfo.full_name ? siteStore.userInfo.full_name : "Đăng nhập"
-            }}</span>
+                <v-list-item
+                    v-for="(item, index) in menus"
+                    :key="index"
+                    :prepend-icon="item.icon"
+                    @click="clickAction(item, index)"
+                >
+                  <v-list-item-title>{{ item.text }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+
+            <span v-if="mdAndUp" class="m-ellipsis">                  {{
+                siteStore.userInfo.full_name ? siteStore.userInfo.full_name : "Đăng nhập"
+              }}</span>
+
           </v-btn>
         </v-col>
       </v-row>
