@@ -4,6 +4,8 @@ import axios from "../../axiosComfig";
 import getSlugByName from "../../utils/getSlugByName.js";
 import GlobalPagination from "../../components/globals/GlobalPagination.vue";
 import { useDisplay } from "vuetify/lib/framework.mjs";
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
 
 const { xs } = useDisplay();
 // Post API
@@ -14,11 +16,13 @@ const randomPosts = ref([]);
 // fetch all posts
 const fetchPost = async () => {
   try {
+    siteStore.isLoading = true;
     const response = await axios.get(`${url}api/posts`);
     if (response.data.status === 200) {
       posts.value = response.data.data.reverse().filter(item => {
         return !item.isDeleted;
       });
+      siteStore.isLoading = false;
     }
   } catch (error) {
     console.log("Error: ", error);
@@ -60,6 +64,7 @@ const updatePage = (event) => {
   <v-row>
     <v-col cols="12">
       <v-carousel
+        v-if="randomPosts.length > 0"
         cycle
         height="25rem"
         color="red"

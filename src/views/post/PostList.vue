@@ -2,8 +2,9 @@
 import { ref, computed, onMounted, watch } from "vue";
 import axios from "../../axiosComfig";
 import { useRouter } from "vue-router";
-// import getSlugByName from "../../utils/getSlugByName.js";
 import GlobalPagination from "../../components/globals/GlobalPagination.vue";
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
 // Post API
 const posts = ref([]);
 const router = useRouter();
@@ -22,11 +23,13 @@ watch(selected, () => {
 const fetchPost = async () => {
   selected.value = null;
   try {
+    siteStore.isLoading = true;
     const response = await axios.get("posts");
     if (response.data.status === 200) {
       posts.value = response.data.data.reverse();
       filteredPosts.value = posts.value;
       selected.value = 0;
+      siteStore.isLoading = false;
     }
   } catch (error) {
     console.log("Error: ", error);

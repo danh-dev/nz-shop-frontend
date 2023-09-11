@@ -2,7 +2,7 @@
 import axios from "../axiosComfig";
 import { ref, computed, watch } from "vue";
 import { mapKeys, camelCase } from "lodash";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
 import useCategoryStore from "@/stores/category";
 
@@ -13,8 +13,11 @@ import FilterCard from "@/components/category/FilterCard.vue";
 import ProductList from "@/components/category/ProductList.vue";
 import GlobalPagination from "@/components/globals/GlobalPagination.vue";
 
+
+
 const categoryStore = useCategoryStore();
 const route = useRoute();
+const router = useRouter();
 const { findCategoryBySlug, findRecursiveCategorySlug } = categoryStore;
 const { name } = useDisplay();
 
@@ -72,25 +75,33 @@ watch(() => categoryStore.categories, async () => {
   if (slugs) {
     category.value = findCategoryBySlug(slugs[slugs.length - 1]);
 
-    slugs.forEach((slug, index, self) => {
-      if (index !== self.length - 1) {
-        const category = findCategoryBySlug(slug);
-        breadCrumbsItems.value.push({
-          title: category.name,
-          href: `/danh-muc${findRecursiveCategorySlug(category)}`,
-          disable: false,
-        });
-      }
-    });
-    breadCrumbsItems.value.push({
-      title: category.value.name,
-      href: `/danh-muc${findRecursiveCategorySlug(category.value)}`,
-      disable: true,
-      activeColor: "black",
-      active: true
-    });
+    if (!category.value) {
+      router.push({
+        name: "404",
+      });
+    }
 
-    products.value = await fetchRecursiveCategoryProducts(category.value.id);
+    else {
+      slugs.forEach((slug, index, self) => {
+        if (index !== self.length - 1) {
+          const category = findCategoryBySlug(slug);
+          breadCrumbsItems.value.push({
+            title: category.name,
+            href: `/danh-muc${findRecursiveCategorySlug(category)}`,
+            disable: false,
+          });
+        }
+      });
+      breadCrumbsItems.value.push({
+        title: category.value.name,
+        href: `/danh-muc${findRecursiveCategorySlug(category.value)}`,
+        disable: true,
+        activeColor: "black",
+        active: true
+      });
+
+      products.value = await fetchRecursiveCategoryProducts(category.value.id);
+    }
   }
 
   else if (name) {

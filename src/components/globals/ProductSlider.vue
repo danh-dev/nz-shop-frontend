@@ -27,7 +27,8 @@ const maxSlider = computed(() => {
   if (props.productsPerFloor) {
     return props.productsPerFloor - props.productsShow + 1;
   }
-  return props.products.length - props.productsShow + 1;
+  return props.products.len
+  th - props.productsShow + 1;
 });
 
 const disabled = computed(() => {

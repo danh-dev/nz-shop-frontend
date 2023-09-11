@@ -10,20 +10,45 @@ const siteStore = siteData();
 
 const miniLogo = import.meta.env.VITE_PUBLIC_URL + siteStore.siteSetings.logo_mini;
 const menus = ref([
-  { icon: 'mdi-card-account-details', text: 'Tài khoản', route: 'user' },
-  { icon: 'mdi-truck-fast-outline', text: 'Lịch sử đơn hàng', route: 'coupons' },
-  { icon: 'mdi-account-outline', text: 'User Manager', route: 'users', role:'admin'},
-  { icon: 'mdi-logout', text: 'Đăng xuất', route: 'logout' },
+  {icon: "mdi-card-account-details", text: "Tài khoản", route: "user"},
+  {icon: "mdi-truck-fast-outline", text: "Lịch sử đơn hàng", route: "coupons"},
+  {icon: "mdi-account-outline", text: "User Manager", route: "users", role: "admin"},
+  {icon: "mdi-logout", text: "Đăng xuất", route: "logout"},
 ]);
 
-const clickAction = (item , index)=>{
-  console.log(item)
+const clickAction = (item, index) => {
+  console.log(item);
   if (index === menus.value.length - 1) {
-    siteStore.logout()
-  }else{
+    siteStore.logout();
+  } else {
     router.push(`/${item.route}`);
   }
-}
+};
+
+const url = import.meta.env.VITE_PUBLIC_URL;
+
+const searchInput = ref("");
+const searchOutput = ref([]);
+
+const submit = () => {
+  window.location.href = `/tim-kiem?name=${searchInput.value}`;
+};
+
+watch(searchInput, () => {
+  fetchSearchOutput();
+});
+
+const fetchSearchOutput = async () => {
+  if (searchInput.value && searchInput.value.length >= 3) {
+    try {
+      const res = await axios.get(`search-output/${searchInput.value}`);
+      searchOutput.value = res.data.data;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+};
+
 </script>
 
 <template>
@@ -35,65 +60,102 @@ const clickAction = (item , index)=>{
     <v-container :fluid="!lgAndUp">
       <v-row class="d-flex align-center justify-space-between py-0">
         <v-col
-            cols="2" md="3" lg="4"
+            cols="2"
+            md="3"
+            lg="4"
             class="d-flex align-center"
         >
-          <router-link :to="{ name: 'home' }" class="d-flex align-center">
-            <img v-if="mdAndUp" src="/assets/NZShop.svg" width="180" alt="Logo">
-            <img v-else :src="miniLogo" width="50" alt="Logo">
+          <router-link
+              :to="{ name: 'home' }"
+              class="d-flex align-center"
+          >
+            <img
+                v-if="mdAndUp"
+                src="/assets/NZShop.svg"
+                width="180"
+                alt="Logo"
+            >
+            <img
+                v-else
+                :src="miniLogo"
+                width="50"
+                alt="Logo"
+            >
           </router-link>
-          <div id="categories" class="d-none d-sm-block">
+          <div class="d-none d-sm-block">
             <v-btn
-                v-if="lgAndUp"
+                id="categories"
                 class="menu-list text-body-2"
                 prepend-icon="mdi-format-list-bulleted"
-
             >
               Danh mục
-            </v-btn>
-            <v-btn
-                v-else
-                class="menu-list text-body-2"
-                prepend-icon="mdi-format-list-bulleted"
-                size="40"
-            >
             </v-btn>
           </div>
         </v-col>
         <v-col
-            cols="7" md="5" lg="4"
+            cols="7"
+            md="5"
+            lg="4"
             class="d-flex align-center justify-content-between"
         >
           <v-form
               id="searchBox"
-              @submit.prevent
+              @submit.prevent="submit"
           >
-            <v-text-field
-                density="compact"
+            <v-autocomplete
                 variant="solo"
-                label="Bạn cần tìm gì?"
-                prepend-inner-icon="mdi-magnify"
-                single-line
                 hide-details
-            ></v-text-field>
-            <button
-                type="submit"
-                hidden
-            ></button>
+                prepend-inner-icon="mdi-magnify"
+                label="Bạn cần tìm gì?"
+                single-line
+                density="compact"
+                v-model:search="searchInput"
+                :items="searchOutput"
+                item-title="name"
+                hide-no-data
+                menu-icon=""
+                @keyup.enter="submit"
+            >
+              <template #item="{ item }">
+                <v-list-item
+                    :href="`san-pham/${item?.raw?.slug}`"
+                    density="compact"
+                >
+                  <template #prepend>
+                    <v-img
+                        width="30"
+                        height="40"
+                        :src="`${url}${item?.raw?.image}`"
+                    ></v-img>
+                  </template>
+                  <template #title>
+                    <div class="ms-3">{{ item?.raw?.name }}</div>
+                  </template>
+                  <template #subtitle>
+                    <div class="ms-3">{{ formatPrice(item?.raw?.sell_price) }}</div>
+                  </template>
+                </v-list-item>
+              </template>
+            </v-autocomplete>
           </v-form>
         </v-col>
         <v-col
-            cols="3" md="4" lg="4"
+            cols="3"
+            md="4"
+            lg="4"
             class="d-flex align-center justify-end"
         >
           <v-btn
               class="tracking text-body-2 text-start d-none d-sm-flex"
-              :size="mdAndUp?'large':'small'"
+              :size="mdAndUp ? 'large' : 'small'"
           >
             <template #prepend>
               <v-icon size="30">mdi-truck-fast-outline</v-icon>
             </template>
-            <div v-if="mdAndUp" class="d-none d-block">
+            <div
+                v-if="mdAndUp"
+                class="d-none d-block"
+            >
               Tra cứu<br>đơn hàng
             </div>
           </v-btn>
@@ -104,7 +166,7 @@ const clickAction = (item , index)=>{
               stacked
           >
             <v-badge
-                :content="siteStore.totalUnit"
+                :content="cartStore.totalUnit"
                 color="pink-lighten-2"
             >
               <v-icon size="25">mdi-cart</v-icon>
@@ -118,22 +180,33 @@ const clickAction = (item , index)=>{
               stacked
               @click="siteStore.userInfo.full_name ? null : $router.push('/login')"
           >
-            <v-menu activator="parent" v-if="siteStore.userInfo.full_name">
-              <v-list> <v-list-item prepend-icon="mdi-shield-crown-outline" v-if="siteStore.isAdmin" @click="router.push('/admincp')">Admin CP</v-list-item>
+            <v-menu
+                activator="parent"
+                v-if="siteStore.userInfo.full_name"
+            >
+              <v-list>
+                <v-menu activator="parent" v-if="siteStore.userInfo.full_name">
+                  <v-list>
+                    <v-list-item prepend-icon="mdi-shield-crown-outline" v-if="siteStore.isAdmin"
+                                 @click="router.push('/admincp')">Admin CP
+                    </v-list-item>
 
-                <v-list-item
-                    v-for="(item, index) in menus"
-                    :key="index"
-                    :prepend-icon="item.icon"
-                    @click="clickAction(item, index)"
-                >
-                  <v-list-item-title>{{ item.text }}</v-list-item-title>
-                </v-list-item>
-                </v-list>
-            </v-menu>
-            <span v-if="mdAndUp" class="m-ellipsis">{{
-                siteStore.userInfo.full_name ? siteStore.userInfo.full_name : "Đăng nhập"
-              }}</span>
+                    <v-list-item
+                        v-for="(item, index) in menus"
+                        :key="index"
+                        :prepend-icon="item.icon"
+                        @click="clickAction(item, index)"
+                    >
+                      <v-list-item-title>{{ item.text }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+                <span
+                    v-if="mdAndUp"
+                    class="m-ellipsis"
+                >{{
+              siteStore.userInfo.full_name ? siteStore.userInfo.full_name : "Đăng nhập"
+            }}</span>
           </v-btn>
         </v-col>
       </v-row>
@@ -142,7 +215,6 @@ const clickAction = (item , index)=>{
 </template>
 
 <style scoped>
-
 #searchBox {
   width: clamp(250px, 80%, 350px);
   padding: 0 10px;

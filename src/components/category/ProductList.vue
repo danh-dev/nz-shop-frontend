@@ -21,6 +21,7 @@ defineProps({
       <ProductCard
         :product="product"
         :href="`/san-pham/${product.slug}`"
+        class="flex-1-0 me-2"
       ></ProductCard>
     </v-sheet>
   </v-sheet>

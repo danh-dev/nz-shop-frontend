@@ -52,9 +52,11 @@ async function updatePage() {
   formData.append("_method", "PUT");
 
   try {
+    siteStore.isLoading = true;
     const response = await axios.post(`pages/edit/${page.value.id}`, formData);
     if (response.data.status === 200) {
       router.push("/admincp/page");
+      siteStore.isLoading = false;
       siteStore.hasRes({ data: { status: "ok", message: "Cập nhật thành công." } });
     }
   } catch (e) {

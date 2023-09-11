@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import axios from "../../../axiosComfig";
-import { mapKeys, camelCase, lowerFirst } from "lodash";
+import { mapKeys, camelCase } from "lodash";
 import GlobalPagination from "../../../components/globals/GlobalPagination.vue";
 import useCategoryStore from "@/stores/category";
 
@@ -49,7 +49,7 @@ const headers = [
     sortable: false,
     key: "action",
     align: "start",
-    width: "10%",
+    width: "5%",
   },
 ];
 
@@ -59,10 +59,9 @@ const numberOfPages = ref(0);
 const currentPage = ref(1);
 
 const alert = ref("");
-
 const tempId = ref(0);
-const tempStatus = ref(null);
 
+const status = ref(null);
 const statuses = [
   {
     title: "Tất cả",
@@ -77,7 +76,6 @@ const statuses = [
     value: true,
   }
 ];
-const status = ref(null);
 
 const categories = ref([
   {
@@ -124,7 +122,6 @@ const updatePage = event => {
 };
 
 const confirmAlert = async () => {
-
   try {
     const res = await axios.delete(`products/delete/${tempId.value}`);
 
@@ -163,6 +160,7 @@ const search = () => {
 watch([status, category, name], () => {
   currentPage.value = 1;
 });
+
 watch([currentPage, status, category, name], fetchProducts);
 
 watch(() => categoryStore.categories, (newVal) => {
@@ -180,7 +178,6 @@ onMounted(fetchProducts);
 <template>
   <v-card class="m-card">
     <v-container>
-
       <v-row>
         <v-col
           cols="12"
@@ -283,9 +280,20 @@ onMounted(fetchProducts);
             hover
             no-data-text="Không có sản phẩm!"
           >
+            <template #item.name="{ item }">
+
+              <RouterLink
+                width="100%"
+                :to="`/san-pham/${item.raw.slug}`"
+              >
+                <div>
+                  {{ item.raw.name }}
+                </div>
+              </RouterLink>
+            </template>
             <template #item.price="{ item }">
               <div>
-                {{ formatPrice(item.raw.discountPrice || item.raw.discountPrice) }}
+                {{ formatPrice(item.raw.discountPrice || item.raw.sellPrice) }}
 
                 <v-tooltip
                   activator="parent"
@@ -317,20 +325,7 @@ onMounted(fetchProducts);
             <template #item.action="{ item }">
               <div class="d-flex">
                 <v-btn
-                  size="small"
-                  variant="tonal"
-                  icon="mdi-information-variant"
-                  color="info"
-                  :to="{
-                    name: 'admin-product-detail',
-                    params: {
-                      id: item.raw.id,
-                    },
-                  }"
-                >
-                </v-btn>
-                <v-btn
-                  size="small"
+                  size="x-small"
                   variant="tonal"
                   icon="mdi-pencil"
                   color="primary"
@@ -340,11 +335,12 @@ onMounted(fetchProducts);
                       id: item.raw.id,
                     },
                   }"
+                  class="me-1"
                 >
                 </v-btn>
                 <v-btn
                   v-if="item.raw.isDisabled"
-                  size="small"
+                  size="x-small"
                   variant="tonal"
                   icon="mdi-trash-can-outline"
                   color="red-accent-4"
@@ -364,7 +360,6 @@ onMounted(fetchProducts);
           </v-data-table>
         </v-col>
       </v-row>
-
     </v-container>
   </v-card>
 </template>

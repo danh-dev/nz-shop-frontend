@@ -2,8 +2,9 @@
 import { ref, computed, onMounted, watch } from "vue";
 import axios from "../../axiosComfig";
 import { useRouter } from "vue-router";
-// import getSlugByName from "../../utils/getSlugByName.js";
 import GlobalPagination from "../../components/globals/GlobalPagination.vue";
+import { siteData } from "@/stores/globals";
+const siteStore = siteData();
 // Page API
 const url = import.meta.env.VITE_PUBLIC_URL;
 const pages = ref([]);
@@ -21,11 +22,13 @@ watch(selected, () => {
 
 const fetchPage = async () => {
   try {
+    siteStore.isLoading = true;
     const response = await axios.get("pages");
     if (response.data.status === 200) {
       pages.value = response.data.data.reverse();
       filteredPages.value = pages.value;
       selected.value = 0;
+      siteStore.isLoading = false;
     }
   } catch (error) {
     console.log("Error: ", error);
@@ -56,7 +59,6 @@ const numberOfPage = computed(() => {
 const updatePage = (event) => {
   page.value = event;
 };
-
 
 </script>
 

@@ -62,6 +62,7 @@ const siteStore = siteData();
 
 async function updateSlider() {
   try {
+    siteStore.isLoading = true;
     const response = await axios.put(`sliders/edit/${slider.value.id}`, {
       name: slider.value.name,
       title: slider.value.title,
@@ -69,6 +70,7 @@ async function updateSlider() {
     });
     if (response.data.status === 200) {
       router.push("/admincp/slider");
+      siteStore.isLoading = false;
       siteStore.hasRes({ data: { status: "ok", message: "Cập nhật thành công." } });
     }
   } catch (e) {
@@ -168,12 +170,13 @@ onMounted(fetchSlider);
     </v-container>
 
   </v-form>
+
   <!-- callModel to upload new image -->
   <v-dialog
     v-model="callModel"
     width="auto"
   >
-    <v-card class="rounded">
+    <v-card class="rounded w-50 h-25 mx-auto">
       <v-file-input
         type="file"
         id="image"
@@ -182,25 +185,24 @@ onMounted(fetchSlider);
         prepend-icon=""
         label="Upload ảnh:"
         @change="getUploadedImage"
-        class="d-flex flex-column justify-center"
+        class="d-flex flex-column justify-center ma-3"
       />
       <Cropper
         ref="cropperArea"
         :src="uploadedImage"
         :stencil-props="{
-          aspectRatio: 950 / 320,
+          aspectRatio: 950 / 350,
         }"
         :canvas="{
           width: 950,
-          height: 320
+          height: 350
         }"
       />
-      <br>
       <div>
         <v-img
           :src="croppedImageData"
           width="950"
-          height="320"
+          height="350"
         ></v-img>
       </div>
       <div class="d-flex justify-center my-5">
