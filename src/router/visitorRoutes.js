@@ -37,13 +37,13 @@ const routes = [
     {
         path: "login",
         name: "login-page",
-        // meta: { auth: "true" },
+        meta: { auth: "true" },
         component: () => import("../views/Login.vue"),
     },
     {
         path: "register",
         name: "register-page",
-        // meta: { auth: "true" },
+        meta: { auth: "true" },
         component: () => import("../views/Register.vue"),
     },
     {
@@ -76,6 +76,7 @@ const routes = [
     {
         name: "user",
         path: "/user",
+        meta: { auth: "login" },
         redirect: () => {
             return {name: "user-home"};
         },
@@ -84,36 +85,43 @@ const routes = [
             {
                 name: "user-home",
                 path: "/user/home",
+                meta: { auth: "login" },
                 component: () => import("@/views/user/UserHome.vue"),
             },
             {
                 name: "user-history",
                 path: "/user/history",
+                meta: { auth: "login" },
                 component: () => import("@/views/user/UserHistory.vue"),
             },
             {
                 name: "user-history-detail",
                 path: "/user/history/detail/:code",
+                meta: { auth: "login" },
                 component: () => import("@/views/user/UserHistoryDetail.vue"),
             },
             {
                 name: "user-promotion",
                 path: "/user/promotion",
+                meta: { auth: "login" },
                 component: () => import("@/views/user/UserPromotion.vue"),
             },
             {
                 name: "user-account",
                 path: "/user/account",
+                meta: { auth: "login" },
                 component: () => import("@/views/user/UserAccount.vue"),
             },
             {
                 name: "user-change-password",
                 path: "/user/account/change-password",
+                meta: { auth: "login" },
                 component: () => import("@/views/user/UserPassword.vue"),
             },
             {
                 name: "user-feedback",
                 path: "/user/feedback",
+                meta: { auth: "login" },
                 component: () => import("@/views/user/UserFeedback.vue"),
             },
         ],

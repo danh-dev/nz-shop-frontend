@@ -17,7 +17,7 @@
                       density="compact"
                       label="Password" prepend-inner-icon="mdi-lock-outline" variant="outlined"
                       @click:append-inner="visible = !visible" autocomplete="new-password"></v-text-field>
-        <v-text-field class="my-3" v-model="password_cf" :rules="[rule_password, !rule_repass]"
+        <v-text-field class="my-3" v-model="password_cf" :rules="[rule_password, rule_repass]"
                       :error-messages="rule_repass" :append-inner-icon="visible_cf ? 'mdi-eye-off' : 'mdi-eye'"
                       :type="visible_cf ? 'text' : 'password'" density="compact" label="Re-Password"
                       prepend-inner-icon="mdi-lock-outline" variant="outlined"
@@ -86,13 +86,12 @@ const register = async () => {
       password: password.value
     });
     if (res.data.token) {
+      axios.defaults.headers.common["Authorization"] = "Bearer " + res.data.token;
       localStorage.setItem("accessToken", res.data.token);
-      setTimeout(() => {
-        siteStore.setUserInfo(res.data.user_id);
-      }, 100);
+      await siteStore.setUserInfo(res.data.user_id);
       setTimeout(() => {
         router.replace(route.query.to ? String(route.query.from) : "/");
-      }, 500);
+      }, 200);
     }
     siteStore.hasRes(res);
   } catch (e) {

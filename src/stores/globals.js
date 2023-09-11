@@ -38,7 +38,8 @@ export const siteData = defineStore("siteData", () => {
             phone_number: "",
             email: "",
             verified: "",
-            status: ""
+            status: "",
+            created_at:""
         });
         const cartInfo = ref({
             cartList: {},
@@ -52,7 +53,8 @@ export const siteData = defineStore("siteData", () => {
             },
             coupon: null,
             shipping: {},
-            selectStep: "stepAddress"
+            selectStep: "stepAddress",
+            orderCompleted:"",
         });
         const emailBuyer = computed(() => {
             return userInfo.value.email ? userInfo.value.email : useGuest.value;
@@ -68,10 +70,16 @@ export const siteData = defineStore("siteData", () => {
         });
 
         const valueDiscount = computed(() => {
+            if (cartInfo.value.coupon && cartInfo.value.coupon.coupon_requests && JSON.parse(cartInfo.value.coupon.coupon_requests).MinCart && +totalValue.value < +JSON.parse(cartInfo.value.coupon.coupon_requests).MinCart) {
+                return 0;
+            }
             if (cartInfo.value.coupon && cartInfo.value.coupon.type_coupon === "totalcart" && cartInfo.value.coupon.type_value === "number_value") {
                 return cartInfo.value.coupon.value;
             }
             if (cartInfo.value.coupon && cartInfo.value.coupon.type_coupon === "totalcart" && cartInfo.value.coupon.type_value === "percent_value") {
+                if (cartInfo.value.coupon.coupon_requests && JSON.parse(cartInfo.value.coupon.coupon_requests).MaxValue && +JSON.parse(cartInfo.value.coupon.coupon_requests).MaxValue < +totalValue.value) {
+                    return +JSON.parse(cartInfo.value.coupon.coupon_requests).MaxValue;
+                }
                 return (totalValue.value / 100) * cartInfo.value.coupon.value;
             }
             return 0;
@@ -83,7 +91,7 @@ export const siteData = defineStore("siteData", () => {
             // }
         });
         const totalValue = computed(() => {
-            return  listCart.value.reduce((total, product) => {
+            return listCart.value.reduce((total, product) => {
                 const price = product.info.discount_price ? product.info.discount_price : product.info.sell_price;
                 return total + parseFloat(price) * product.quantity;
             }, 0);
@@ -116,7 +124,9 @@ export const siteData = defineStore("siteData", () => {
             }
         };
 
-        const totalCart = computed(()=>{ return +totalValue.value + +priceShipping.value - +valueDiscount.value });
+        const totalCart = computed(() => {
+            return +totalValue.value + +priceShipping.value - +valueDiscount.value;
+        });
         const fetchProduct = async (sku) => {
             const res = await axios.post("products/sku", {
                 sku: sku
@@ -153,6 +163,7 @@ export const siteData = defineStore("siteData", () => {
                 userInfo.value.role = res.data.role;
                 userInfo.value.verified = res.data.verified;
                 userInfo.value.status = res.data.status;
+                userInfo.value.created_at = res.data.created_at;
                 isLogin.value = true;
             } else {
                 console.log("Khong tim thay user");

@@ -1,21 +1,25 @@
 <script setup>
 import UserCardBadge from "./UserCardBadge.vue";
+import {siteData} from "@/stores/globals";
 defineProps({
     user: Object
 });
+const siteStore = siteData();
+function formatDate(timestamp) {
+  const date = new Date(timestamp);
+  const day = date.getUTCDate().toString().padStart(2, "0");
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+  const year = date.getUTCFullYear().toString();
+  return `${day}/${month}/${year}`;
+}
 </script>
 <template>
     <v-card
         rounded="xl"
-        class="d-flex flex-column align-center"
+        class="d-flex flex-column align-center py-10"
     >
-        <v-avatar
-            variant="elevated"
-            size="80"
-            image="https://cellphones.com.vn/smember/_nuxt/img/Shipper_CPS3.0251fdd.png"
-        ></v-avatar>
         <div>Xin Chào</div>
-        <h2 class="text-uppercase text-red-accent-4">{{ user.name }}</h2>
+        <h2 class="text-uppercase text-red-accent-4">{{ siteStore.userInfo.full_name}}</h2>
         <v-sheet
             width="100%"
             class="d-flex justify-space-around "
@@ -23,17 +27,7 @@ defineProps({
             <UserCardBadge>
                 <template #icon>mdi-calendar-account-outline</template>
                 <template #name>Ngày tham gia</template>
-                <template #data>{{ user.date }}</template>
-            </UserCardBadge>
-            <UserCardBadge>
-                <template #icon>mdi-medal-outline</template>
-                <template #name>Hạng thành viên</template>
-                <template #data>{{ user.rank }}</template>
-            </UserCardBadge>
-            <UserCardBadge>
-                <template #icon>mdi-bitcoin</template>
-                <template #name>Điểm tích lũy</template>
-                <template #data>{{ user.point }}</template>
+                <template #data>{{ formatDate(siteStore.userInfo.created_at)}}</template>
             </UserCardBadge>
         </v-sheet>
     </v-card>

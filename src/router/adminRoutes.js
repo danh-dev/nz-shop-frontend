@@ -31,6 +31,11 @@ const routes = [
         name: "site-settings",
         component: () => import("../views/admin/SiteSetting.vue"),
     },
+    {
+        path:"orders",
+        name:"order-admin",
+        component: () => import("../views/admin/Orders.vue"),
+    },
     // // Tam
     {
         path: "post-comment",

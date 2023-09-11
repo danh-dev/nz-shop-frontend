@@ -23,7 +23,7 @@ const modelLogin = ref(false);
 
 
 onMounted(()=>{
-  if(siteStore.listCart.length<=0){
+  if(siteStore.listCart.length<=0||!siteStore.cartInfo.orderCompleted){
     router.push("/cart")
   }
 })
@@ -31,8 +31,6 @@ onMounted(()=>{
 
 <template>
   <div style="min-height: inherit;">
-    <v-btn @click="()=>{siteStore.isLogin = !siteStore.isLogin;}">isLogin:{{ siteStore.isLogin }}</v-btn>
-    <v-btn @click="()=>{siteStore.useGuest = '';}">isGuest:{{ siteStore.useGuest }}</v-btn>
     <v-sheet v-if="siteStore.isLogin||siteStore.useGuest" style="min-height: inherit;">
       <v-card class="pa-5" style="min-height: inherit;">
         <v-row>
@@ -54,8 +52,8 @@ onMounted(()=>{
         </v-row>
         <Step1 v-if="siteStore.cartInfo.selectStep==='stepAddress'||siteStore.cartInfo.selectStep===null"/>
         <Step2 v-if="siteStore.cartInfo.selectStep==='stepShipping'"/>
-        <Step4 v-if="siteStore.cartInfo.selectStep==='stepCompleted'"/>
         <Step3 v-if="siteStore.cartInfo.selectStep==='stepPayment'"/>
+        <Step4 v-if="siteStore.cartInfo.selectStep==='stepCompleted'"/>
       </v-card>
     </v-sheet>
     <v-sheet v-else>

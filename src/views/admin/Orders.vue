@@ -31,22 +31,10 @@
   <v-row>
     <v-col cols="12">
       <v-card class="m-card">
-        <v-card-title class="font-weight-bold text-h5 my-3 text-grey-darken-2">Danh sách người dùng</v-card-title>
-
+        <v-card-title class="font-weight-bold text-h5 my-3 text-grey-darken-2">Danh sách đơn hàng</v-card-title>
         <v-card-text>
           <v-row>
-            <v-col cols="12" sm="4" md="3" class="d-flex">
-              <v-btn
-                  color="red-accent-2"
-                  prepend-icon="mdi-plus"
-                  size="large"
-                  @click="()=>{clearFields(); formCreate = !formCreate;}"
-              >
-                Thêm User Mới
-              </v-btn>
-            </v-col>
-            <v-spacer/>
-            <v-col cols="12" sm="4" md="3" class="d-flex justify-end">
+            <v-col cols="12" sm="4" md="4" class="d-flex">
               <v-text-field
                   color="red-accent-2"
                   v-model="searchQuery"
@@ -54,6 +42,9 @@
                   density="compact"
                   variant="outlined"
               />
+            </v-col>
+            <v-spacer/>
+            <v-col cols="12" sm="4" md="3" class="d-flex justify-end">
             </v-col>
             <v-col cols="12" sm="3" md="2">
               <v-select
@@ -64,9 +55,7 @@
                   :items="[
                           { value: 10, title: '10' },
                           { value: 25, title: '25' },
-                          { value: 50, title: '50' },
-                          { value: 100, title: '100' },
-                          { value: -1, title: 'All' },
+                          { value: 50, title: '50' }
                         ]"
                   @update:model-value="options.itemsPerPage = parseInt($event, 10)"
               />
@@ -76,10 +65,7 @@
         <v-divider/>
         <v-card-text>
           <v-row>
-            <v-col
-                cols="12"
-                sm="6"
-            >
+            <v-col cols="12" sm="6">
               <v-select
                   density="compact"
                   v-model="selectedRole"
@@ -87,16 +73,12 @@
                   :items="roles"
                   item-title="name"
                   item-value="name"
-                  clearable
                   variant="outlined"
                   color="red-accent-2"
-                  aria-autocomplete="none"
+                  autocomplete="off"
               />
             </v-col>
-            <VCol
-                cols="12"
-                sm="6"
-            >
+            <VCol cols="12" sm="6">
               <v-select
                   density="compact"
                   v-model="selectedStatus"
@@ -205,107 +187,6 @@
       </v-card>
     </v-col>
   </v-row>
-  <v-dialog
-      v-model="formCreate"
-      persistent
-      max-width="550"
-  >
-    <v-card>
-      <template #append>
-        <v-btn density="compact" icon="mdi-close" color="red-darken-2" @click="formCreate = !formCreate"></v-btn>
-      </template>
-      <v-card-title>
-        <span class="text-h5 font-weight-bold">Tạo tài khoản</span>
-      </v-card-title>
-      <v-card-text>
-        <v-form @submit.prevent="onCreate" ref="dataForm" validate-on="lazy blur">
-
-          <v-text-field class="my-3" v-model="cf_fullname" :rules="[rule_fullname]" density="compact" label="Họ và Tên"
-                        prepend-inner-icon="mdi-account-outline" variant="outlined"
-          ></v-text-field>
-          <v-text-field class="my-3" v-model="cf_email" :rules="[rule_email]" density="compact" label="Email"
-                        prepend-inner-icon="mdi-email-outline" variant="outlined"
-          ></v-text-field>
-          <v-text-field class="my-3" v-model="cf_phone" :rules="[rule_phone]" density="compact"
-                        label="Số điện thoại"
-                        prepend-inner-icon="mdi-phone-dial-outline" variant="outlined"></v-text-field>
-          <v-select
-              density="compact"
-              v-model="cf_role"
-              label="Vai trò"
-              :items="roles"
-              item-title="name"
-              item-value="name"
-              variant="outlined"
-              color="red-accent-2"
-              aria-autocomplete="none"
-          />
-          <v-select
-              density="compact"
-              v-model="cf_verify"
-              label="Xác minh"
-              :items="status"
-              variant="outlined"
-              color="red-accent-2"
-              aria-autocomplete="none"
-          />
-          <v-btn block="" class="mb-8" color="red-accent-4" size="large" type="submit">
-            Thêm Tài Khoản
-          </v-btn>
-        </v-form>
-      </v-card-text>
-    </v-card>
-  </v-dialog>
-  <v-dialog
-      v-model="formUpdate"
-      persistent
-      max-width="550"
-  >
-    <v-card>
-      <template #append>
-        <v-btn density="compact" icon="mdi-close" color="red-darken-2" @click="formUpdate = !formUpdate"></v-btn>
-      </template>
-      <v-card-title>
-        <span class="text-h5 font-weight-bold">Sửa thông tin tài khoán</span>
-      </v-card-title>
-      <v-card-text>
-        <v-form @submit.prevent="onUpdate" ref="dataForm" validate-on="lazy blur" autocomplete="off">
-          <v-text-field class="my-3" v-model="cf_fullname" :rules="[rule_fullname]" density="compact" label="Họ và Tên"
-                        prepend-inner-icon="mdi-account-outline" variant="outlined" autocomplete="off"></v-text-field>
-          <v-text-field class="my-3" v-model="cf_email" :rules="[rule_email]" density="compact" label="Email"
-                        prepend-inner-icon="mdi-email-outline" variant="outlined" autocomplete="off"></v-text-field>
-          <v-text-field class="my-3" v-model="cf_phone" :rules="[rule_phone]" density="compact" label="Số điện thoại"
-                        prepend-inner-icon="mdi-phone-dial-outline" variant="outlined"
-                        autocomplete="off"></v-text-field>
-          <v-select
-              density="compact"
-              v-model="cf_role"
-              label="Vai trò"
-              :items="roles"
-              item-title="name"
-              item-value="name"
-              variant="outlined"
-              color="red-accent-2"
-              autocomplete="off"
-              aria-autocomplete="none"
-          />
-          <v-select
-              density="compact"
-              v-model="cf_verify"
-              label="Xác minh"
-              :items="status"
-              variant="outlined"
-              color="red-accent-2"
-              autocomplete="off"
-              aria-autocomplete="none"
-          />
-          <v-btn block="" class="mb-8" color="red-accent-4" size="large" type="submit">
-            Cập nhật
-          </v-btn>
-        </v-form>
-      </v-card-text>
-    </v-card>
-  </v-dialog>
 </template>
 
 <script setup>
@@ -313,7 +194,6 @@ import {useSeoMeta} from "@unhead/vue";
 import {useRoute, useRouter} from "vue-router";
 import {computed, onMounted, ref, watchEffect} from "vue";
 import axios from "../../axiosComfig";
-import {rule_email, rule_fullname, rule_phone} from "@/validators";
 import {siteData} from "@/stores/globals";
 
 const siteStore = siteData();
@@ -567,7 +447,7 @@ async function fetchUserList(q, r, s) {
     siteStore.errorSystem();
     console.log(e);
   } finally {
-    siteStore.isLoading =  false;
+    siteStore.isLoading = false;
   }
 }
 

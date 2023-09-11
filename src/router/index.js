@@ -21,14 +21,9 @@ const routes = [
         children: [...adminRoutes],
     },
     {
-        name: "test",
-        path: "/test",
-        component: () => import("../views/test.vue")
-    },
-    {
-        name: "test2",
-        path: "/test2",
-        component: () => import("../views/test2.vue")
+        name: "invoice-page",
+        path: "/invoice/:code",
+        component: () => import("../views/Invoice.vue")
     }
 ];
 const router = createRouter({
@@ -75,7 +70,7 @@ router.beforeEach(async (to, from, next) => {
     } else if (to.meta.auth === "true" && siteStore.isLogin) {
         // Protect login page
         next({path: "/"});
-    } else if (to.meta.auth === "login" && siteStore.isLogin) {
+    } else if (to.meta.auth === "login" && !siteStore.isLogin) {
         //Request login
         next({path: "login", query: {to: to.path !== "/" ? to.fullPath : undefined}});
     } else {

@@ -1,20 +1,21 @@
 <script setup>
 
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 
 const menus = ref([
   { icon: 'mdi-home-outline', text: 'Dashboard', route: 'dashboard' },
-  { icon: 'mdi-ticket-percent-outline', text: 'Coupons', route: 'coupons' },
-  { icon: 'mdi-account-outline', text: 'User Manager', route: 'users' },
-  { icon: 'mdi-shield-star-outline', text: 'Roles Manager', route: 'roles' },
+  { icon: 'mdi-newspaper-variant-multiple', text: 'Posts', route: 'post' },
+  { icon: 'mdi-book-open-page-variant-outline', text: 'Pages', route: 'page' },
+  { icon: 'mdi-image-multiple-outline', text: 'Sliders', route: 'slider' },
   { icon: 'mdi-comment-outline', text: 'Comments Post', route: 'post-comment' },
   { icon: 'mdi-comment-outline', text: 'Comments Product', route: 'product-comment' },
   { icon: 'mdi-star-outline', text: 'Reviews', route: 'review' },
   { icon: 'mdi-list-box-outline', text: 'Category Product', route: 'category' },
   { icon: 'mdi-package-variant-closed', text: 'Product', route: 'product' },
-  { icon: 'mdi-newspaper-variant-multiple', text: 'Posts', route: 'post' },
-  { icon: 'mdi-image-multiple-outline', text: 'Sliders', route: 'slider' },
-  { icon: 'mdi-book-open-page-variant-outline', text: 'Pages', route: 'page' },
+  { icon: 'mdi-archive-outline', text: 'Order Management', route: 'orders' },
+  { icon: 'mdi-ticket-percent-outline', text: 'Coupon Management', route: 'coupons' },
+  { icon: 'mdi-account-outline', text: 'User Management', route: 'users' },
+  { icon: 'mdi-shield-star-outline', text: 'Roles Management', route: 'roles' },
   { icon: 'mdi-cogs', text: 'Site Settings', route: 'site-settings' },
 ]);
 </script>

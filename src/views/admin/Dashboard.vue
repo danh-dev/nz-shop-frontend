@@ -134,7 +134,10 @@
 import axios from "axios";
 import {computed, onMounted, ref} from "vue";
 import {useSeoMeta} from "@unhead/vue";
-import {useRoute} from "vue-router";
+import {siteData} from "@/stores/globals";
+
+
+const siteStore = siteData()
 
 const tasks = ref([
   {
@@ -166,13 +169,9 @@ function create() {
   newTask.value = null;
 }
 
-const route = useRoute();
 const url = import.meta.env.VITE_PUBLIC_URL;
 
-route.meta.title = "Dashboard";
-useSeoMeta({
-  title: route.meta.title,
-});
+
 
 const outStock = ref([]);
 const outStockCount = ref(0);
@@ -190,6 +189,11 @@ const fetchOutStock = async () => {
 };
 onMounted(() => {
   fetchOutStock();
+});
+
+siteStore.titleNow = "Dashboard"
+useSeoMeta({
+  title: siteStore.titleNow,
 });
 </script>
 <style scoped></style>;

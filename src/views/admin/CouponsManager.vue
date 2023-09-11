@@ -255,7 +255,7 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12" sm="4" v-for="item in typeCoupon">
+              <v-col cols="12" sm="6" v-for="item in typeCoupon">
                 <v-radio-group
                     v-model="formTypeCoupon"
                     color="red-darken-3"
@@ -287,32 +287,33 @@
                 />
               </v-col>
               <v-col cols="6" md="8">
-                <v-text-field v-model="formValue"
+                <v-text-field
+                              v-if="formTypeValue!=='free_shipping'"
+                              v-model="formValue"
                               :rules="[(value) =>!!value || 'Dữ liệu bắt buộc']"
                               density="compact"
                               label="Giá trị"
                               prepend-inner-icon="mdi-sale"
                               variant="outlined"
                               autocomplete="off"
-                              :disabled="formTypeValue==='free_shipping'"
                 >
                 </v-text-field>
               </v-col>
-              <v-col cols="12" v-if="formTypeCoupon==='onproduct'">
-                {{formSelectProduct}}
-                <v-autocomplete
-                    v-model="formSelectProduct"
-                    v-model:search="formSearchProduct"
-                    :items="formProductList"
-                    density="compact"
-                    item-title="name"
-                    item-value="name"
-                    label="Sản phẩm"
-                    clearable
-                    variant="outlined"
-                    autocomplete="off"
-                ></v-autocomplete>
-              </v-col>
+<!--              <v-col cols="12" v-if="formTypeCoupon==='onproduct'">-->
+<!--                {{formSelectProduct}}-->
+<!--                <v-autocomplete-->
+<!--                    v-model="formSelectProduct"-->
+<!--                    v-model:search="formSearchProduct"-->
+<!--                    :items="formProductList"-->
+<!--                    density="compact"-->
+<!--                    item-title="name"-->
+<!--                    item-value="name"-->
+<!--                    label="Sản phẩm"-->
+<!--                    clearable-->
+<!--                    variant="outlined"-->
+<!--                    autocomplete="off"-->
+<!--                ></v-autocomplete>-->
+<!--              </v-col>-->
             </v-row>
             <v-row>
               <v-col cols="12" md="6">
@@ -400,7 +401,7 @@
                     </v-col>
                     <v-divider/>
                   </v-row>
-                  <v-row>
+                  <v-row v-if="formTypeValue!=='number_value'&& formTypeCoupon!=='shipping'">
                     <v-col cols="12" sm="5">
                       <v-chip
                           color="red-darken-2"
@@ -411,7 +412,7 @@
                       </v-chip>
                     </v-col>
                     <v-col cols="12" sm="7">
-                      <v-text-field v-model="formMaxValue"
+                      <v-text-field  v-model="formMaxValue"
                                     density="compact"
                                     label="Giá trị"
                                     :rules="[(value) => /^(undefined|null||\d*[1-9]\d*)$/.test(value) || 'Dữ liệu không đúng']"
@@ -612,6 +613,16 @@ const paginationMeta = computed(() => {
     return `Đang hiển thị từ ${start} đến ${end} trên tổng ${total} dữ liệu.`;
   };
 });
+watch(()=>addRequest.value,()=>{
+  if(addRequest.value===false){
+  formForUser.value = null;
+  formForRole.value = null;
+  formMinQ.value = null;
+  formMaxQ.value = null;
+  formMinCart.value =  null;
+  formMaxValue.value = null;
+}
+})
 const typeValue = computed(() => {
   if (formTypeCoupon.value) {
     switch (formTypeCoupon.value.toLowerCase()) {
@@ -637,11 +648,7 @@ const typeValue = computed(() => {
         return [{
           name: "Số tiền",
           value: "number_value",
-        },
-          {
-            name: "Phần trăm",
-            value: "percent_value",
-          }];
+        }];
       default:
         return [];
     }
@@ -698,7 +705,8 @@ const typeCoupon = [
     name: "Theo tổng đơn hàng",
     text: "Giảm giá tính vào tổng đơn hàng",
     value: "totalcart"
-  },
+  }
+  // ,
   // {
   //   icon: "mdi-package-variant-closed-check",
   //   name: "Theo sản phẩm",

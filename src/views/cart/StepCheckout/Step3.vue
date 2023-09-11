@@ -13,9 +13,24 @@ const createOrder = async () => {
       items: siteStore.listCart,
       addressShipping: siteStore.cartInfo.infoAddress,
       delivery: siteStore.cartInfo.shipping,
-      coupon: siteStore.cartInfo.coupon.code,
+      coupon: siteStore.cartInfo.coupon ? siteStore.cartInfo.coupon.code : null,
     });
     siteStore.hasRes(res);
+    if (res.data.status === "ok") {
+      siteStore.cartInfo.cartList = {};
+      siteStore.cartInfo.infoAddress = {
+        name: "",
+        phone_number: "",
+        address: "",
+        ward: null,
+        district: null,
+        city: null
+      };
+      siteStore.cartInfo.coupon = null;
+      siteStore.cartInfo.shipping = {};
+      siteStore.cartInfo.selectStep= "stepCompleted";
+      siteStore.cartInfo.orderCompleted= res.data.data;
+    }
   } catch (e) {
     siteStore.errorSystem();
     console.log(e);
@@ -128,7 +143,8 @@ const onSubmit = async () => {
                 <v-card-text class="d-flex justify-space-between py-2 text-blue-grey-darken-2 font-weight-black"><span>Phí ship:</span>
                   {{ formatPrice(siteStore.priceShipping) }}
                 </v-card-text>
-                <v-card-text v-if="siteStore.valueDiscount" class="d-flex justify-space-between py-2 text-blue-grey-darken-2 font-weight-black"><span>Giảm giá:</span>
+                <v-card-text v-if="siteStore.valueDiscount"
+                             class="d-flex justify-space-between py-2 text-blue-grey-darken-2 font-weight-black"><span>Giảm giá:</span>
                   {{ formatPrice(siteStore.valueDiscount) }}
                 </v-card-text>
                 <v-card-text class="d-flex justify-space-between text-blue-grey-darken-3 text-h6 font-weight-bold">

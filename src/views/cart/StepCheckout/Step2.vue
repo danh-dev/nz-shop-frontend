@@ -157,6 +157,16 @@ onMounted(async () => {
             </v-text-field>
           </v-form>
         </v-card-item>
+        <v-alert
+            v-if="siteStore.cartInfo.coupon && siteStore.cartInfo.coupon.coupon_requests && JSON.parse(siteStore.cartInfo.coupon.coupon_requests).MinCart && +siteStore.totalValue< +JSON.parse(siteStore.cartInfo.coupon.coupon_requests).MinCart "
+            variant="outlined"
+            type="warning"
+            prominent
+            border="top"
+        >
+          Coupon này dành cho đơn hàng có giá trị tối thiểu {{formatPrice(JSON.parse(siteStore.cartInfo.coupon.coupon_requests).MinCart)}} <br>
+          Mua thêm {{formatPrice(+JSON.parse(siteStore.cartInfo.coupon.coupon_requests).MinCart - +siteStore.totalValue)}} để kích hoạt giảm giá. <router-link to="/">Mua thêm</router-link>
+        </v-alert>
       </v-card>
     </v-col>
     <v-col cols="12" lg="4">
@@ -184,6 +194,7 @@ onMounted(async () => {
                 <v-col cols="9" class="d-flex flex-column justify-space-between">
                   <v-card-title class="text-body-2 font-weight-bold"
                                 :title="product.info.name+' - '+product.info.name_variant">{{ product.info.name }}
+
                   </v-card-title>
 
                   <v-card-text v-if="product.info.name_variant" class="pa-0">
@@ -246,6 +257,9 @@ onMounted(async () => {
               <v-card-text class="pa-0" v-if="siteStore.cartInfo.coupon.type_value!=='free_shipping'">Giá trị:{{
                   siteStore.cartInfo.coupon.type_value === "percent_value" ? siteStore.cartInfo.coupon.value + "%" : formatPrice(siteStore.cartInfo.coupon.value)
                 }}
+              </v-card-text>
+              <v-card-text class="pa-0" v-if="siteStore.cartInfo.coupon.coupon_requests && JSON.parse(siteStore.cartInfo.coupon.coupon_requests).MaxValue">
+              Mức giảm tối đa: {{formatPrice(JSON.parse(siteStore.cartInfo.coupon.coupon_requests).MaxValue)}}
               </v-card-text>
             </v-card>
           </div>
