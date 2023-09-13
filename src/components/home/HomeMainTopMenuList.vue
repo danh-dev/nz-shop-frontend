@@ -83,6 +83,7 @@ const url = import.meta.env.VITE_PUBLIC_URL;
         color="red-accent-4"
         variant="text"
         :activatorClass="`news-activator${modal} flex-1-1`"
+        to="/news"
       >
         <div class="d-flex align-center">
           <v-icon
