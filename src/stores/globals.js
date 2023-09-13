@@ -276,18 +276,8 @@ export const siteData = defineStore("siteData", () => {
             errorImage,
         };
     }
-// , {
-//     persist: {
-//         paths: ['useGuest','isLogin','isAdmin'],
-//         storage: localStorage,
-//         serializer: {
-//             serialize: (value) => btoa(JSON.stringify(value)),
-//             deserialize: (value) => JSON.parse(atob(value)),
-//         },
-//     },
-// });
     , {
         persist: {
-            paths: ["useGuest", "isLogin", "isAdmin", "userInfo", "siteSetings", "cartInfo"],
+            paths: ["useGuest", "userInfo", "siteSetings", "cartInfo"],
         },
     });

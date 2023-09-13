@@ -1,6 +1,8 @@
 <script setup>
 import CartList from "../../components/cart/CartList.vue";
 import {siteData} from "@/stores/globals";
+import { LottieAnimation } from "lottie-web-vue"
+import EmptyCart from "@/assets/cart_empty.json"
 
 const siteStore = siteData();
 
@@ -37,9 +39,7 @@ const siteStore = siteData();
     </v-sheet>
     <v-sheet v-else class="rounded pa-3 d-flex flex-column justify-center align-center" elevation="0">
       <div>
-        <iframe width="300" height="300" frameBorder="0"
-                src="https://lottie.host/?file=95af846f-f62b-4bc5-b422-26c7cabda6eb/65kwV7npxO.json">
-        </iframe>
+        <LottieAnimation :animation-data="EmptyCart" :auto-play="true" :loop="true" :speed="1" style="width: 500px"/>
       </div>
       <div class="ma-3">
         <p>Không có sản phẩm nào trong giỏ hàng, vui lòng quay lại</p>

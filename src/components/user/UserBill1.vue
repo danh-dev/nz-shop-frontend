@@ -1,10 +1,7 @@
 <script setup>
-import { computed } from "vue";
 const props = defineProps({
-    product: Object,
+    product: Array,
 });
-
-
 </script>
 
 <template>

@@ -1,5 +1,8 @@
 <script setup>
 import UserHelp from "@/components/user/UserHelp.vue";
+import {siteData} from "@/stores/globals";
+
+const siteStore = siteData();
 </script>
 
 <template>
@@ -15,7 +18,7 @@ import UserHelp from "@/components/user/UserHelp.vue";
                 <template #name>
                     Tư vấn mua hàng(8h00-22h00)
                 </template>
-                <template #contact>1900.9000</template>
+                <template #contact>{{ siteStore.siteSetings.shop_cskh }}</template>
 
             </UserHelp>
             <UserHelp
@@ -25,7 +28,7 @@ import UserHelp from "@/components/user/UserHelp.vue";
                 <template #name>
                     Bảo hành(8h00-21h00)
                 </template>
-                <template #contact>1900.9090</template>
+                <template #contact>{{ siteStore.siteSetings.shop_cskhbh }}</template>
             </UserHelp>
         </v-sheet>
         <v-sheet class="d-flex justify-space-around">
@@ -36,7 +39,7 @@ import UserHelp from "@/components/user/UserHelp.vue";
                 <template #name>
                     Khiếu nại(8h00-21h00)
                 </template>
-                <template #contact>1900.9999</template>
+                <template #contact>{{ siteStore.siteSetings.shop_cskhkn }}</template>
             </UserHelp>
             <UserHelp
                 width="45%"
@@ -46,7 +49,7 @@ import UserHelp from "@/components/user/UserHelp.vue";
                 <template #name>
                     Email
                 </template>
-                <template #contact>Duytam20031996@gmail.com</template>
+                <template #contact>{{ siteStore.siteSetings.shop_email }}</template>
             </UserHelp>
         </v-sheet>
     </v-sheet>

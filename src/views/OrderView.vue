@@ -10,7 +10,7 @@ const queryPay = ref({});
 const route = useRoute();
 const router = useRouter();
 const order = ref({});
-
+const keyCheck = ref();
 function formatDate(timestamp) {
   const date = new Date(timestamp);
   const day = date.getUTCDate().toString().padStart(2, "0");
@@ -118,7 +118,7 @@ const createStripePayment = async (token) => {
     });
     if (String(res.data) === "succeeded") {
       siteStore.hasRes({data: {status: "ok", message: "Thanh toán thành công"}});
-      await fetchOrder();
+      await fetchOrder(keyCheck.value);
     } else {
       siteStore.hasRes({data: {status: "error", message: "Thanh toán thất bại"}});
     }
@@ -134,10 +134,10 @@ const createStripePayment = async (token) => {
 const runVNPay = async (request) => {
   siteStore.hasLoading();
   try {
-    const res = await axios.post("runVNPay",request);
+    const res = await axios.post("runVNPay", request);
     siteStore.hasRes(res);
-    if(res.data.status === "ok"){
-      await fetchOrder();
+    if (res.data.status === "ok") {
+      await fetchOrder(keyCheck.value);
     }
   } catch (e) {
     siteStore.errorSystem();
@@ -170,30 +170,36 @@ const getLink = async () => {
     console.error(error);
   }
 };
-const fetchOrder = async () => {
+const fetchOrder = async (v) => {
   siteStore.hasLoading();
   try {
-    const res = await axios.get(`/orderByCode/${route.params.code}`);
+    const res = await axios.get(`/orderByCode/${route.params.code}?key=${v}`);
     siteStore.hasRes(res);
     if (res.data.status) {
-      await router.push("/user/history");
+      await router.push("/");
+    } else {
+      order.value = res.data.data;
+      priceShipping.value = JSON.parse(res.data.data.delivery).value;
+      shipInfo.value = JSON.parse(res.data.data.address_shipping);
+      await getLink();
     }
-    order.value = res.data.data;
-    priceShipping.value = JSON.parse(res.data.data.delivery).value;
-    shipInfo.value = JSON.parse(res.data.data.address_shipping);
   } catch (e) {
     siteStore.errorSystem();
     console.log(e);
-    await router.push("/user/history");
+    await router.push("/");
   } finally {
     siteStore.doneLoading();
   }
-}
+};
 onMounted(async () => {
-  await fetchOrder();
   queryPay.value = route.query;
+  if (route.query.key) {
+    keyCheck.value = route.query.key;
+    await fetchOrder(route.query.key);
+  } else {
+    await fetchOrder();
+  }
   await router.replace({query: null});
-  await getLink();
   // Xử lý stripe
   const stripeScript = document.createElement("script");
   stripeScript.src = "https://checkout.stripe.com/checkout.js";
@@ -206,13 +212,6 @@ const url = import.meta.env.VITE_PUBLIC_URL;
 
 <template>
   <v-sheet position="relative" width="100%" class="d-flex flex-column">
-    <v-btn
-        variant="text"
-        icon="mdi-arrow-left"
-        style="position: absolute;"
-        rounded="0"
-        @click="router.push({ name: 'user-history'})"
-    ></v-btn>
     <h1 class="text-center">Chi tiết đơn hàng</h1>
     <div class="d-flex align-center">
       <div>Mã hơn hàng: <span class="text-body-1 font-weight-bold">{{ order.order_code }}</span></div>

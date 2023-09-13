@@ -24,6 +24,11 @@ const routes = [
         name: "invoice-page",
         path: "/invoice/:code",
         component: () => import("../views/Invoice.vue")
+    },
+    {
+        name: "test",
+        path: "/test",
+        component: () => import("../views/test.vue")
     }
 ];
 const router = createRouter({
@@ -40,6 +45,10 @@ router.beforeEach(async (to, from, next) => {
             try {
                 const response = await axios.get("isLogin");
                 siteStore.isLogin = response.data.isLogin;
+                if(response.data.status !== 'active'){
+                    siteStore.isLogin = false;
+                    localStorage.removeItem(import.meta.env.VITE_NAME_KEY_TOKEN || "accessToken")
+                }
                 if(!response.data.isLogin){
                     localStorage.removeItem(import.meta.env.VITE_NAME_KEY_TOKEN || "accessToken")
                 }

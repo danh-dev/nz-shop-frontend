@@ -36,6 +36,16 @@ const routes = [
         name:"order-admin",
         component: () => import("../views/admin/Orders.vue"),
     },
+    {
+        path:"transactions",
+        name:"transaction-admin",
+        component: () => import("../views/admin/Transactions.vue"),
+    },
+    {
+        path:"tracking",
+        name:"tracking-admin",
+        component: () => import("../views/admin/Trackings.vue"),
+    },
     // // Tam
     {
         path: "post-comment",

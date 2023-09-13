@@ -13,6 +13,8 @@ const menus = ref([
   { icon: 'mdi-list-box-outline', text: 'Category Product', route: 'category' },
   { icon: 'mdi-package-variant-closed', text: 'Product', route: 'product' },
   { icon: 'mdi-archive-outline', text: 'Order Management', route: 'orders' },
+  { icon: 'mdi-cash-sync', text: 'Transactions', route: 'transactions' },
+  { icon: 'mdi-truck-fast-outline', text: 'Tracking', route: 'tracking' },
   { icon: 'mdi-ticket-percent-outline', text: 'Coupon Management', route: 'coupons' },
   { icon: 'mdi-account-outline', text: 'User Management', route: 'users' },
   { icon: 'mdi-shield-star-outline', text: 'Roles Management', route: 'roles' },

@@ -43,19 +43,21 @@
     </v-list>
   </v-card>
   <v-btn @click="vnpay">VNPAY</v-btn>
-  <a :href="url">zxczxc</a>
+
 </template>
 
 <script setup>
 import {computed, onMounted, ref, watchEffect} from "vue";
 import axios from "@/axiosComfig";
 
-const url= ref();
+const url = ref();
 const getLink = async () => {
   try {
-    const res = await axios.get('vnpay',{
+    const res = await axios.post("createVNPayLink", {
+      "order_code": "NZ110923I64",
+      "url_return": "http://localhost/"
     });
-    url.value = res.data.data
+    console.log(res);
   } catch (error) {
     console.error(error);
   }
@@ -70,9 +72,9 @@ const run = async () => {
   }
 };
 
-onMounted(()=>{
+onMounted(() => {
   getLink();
-})
+});
 
 const listCreate = ref([]);
 const bienthe = ref([]);
@@ -91,7 +93,7 @@ function generateCombinations(array) {
 
   if (array.length === 1) {
     for (let value of firstValues) {
-      result.push({ name: [`${firstProperty}:${value}`], gia: "" });
+      result.push({name: [`${firstProperty}:${value}`], gia: ""});
     }
   } else {
     const remainingArray = array.slice(1);
@@ -99,7 +101,7 @@ function generateCombinations(array) {
 
     for (let value of firstValues) {
       for (let combination of combinations) {
-        result.push({ name: [`${firstProperty}:${value}`, ...combination.name], gia: "" });
+        result.push({name: [`${firstProperty}:${value}`, ...combination.name], gia: ""});
       }
     }
   }

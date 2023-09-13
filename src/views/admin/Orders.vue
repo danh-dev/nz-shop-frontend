@@ -1,34 +1,5 @@
 <template>
   <v-row>
-    <v-col v-for="meta in userListMeta"
-           :key="meta.title"
-           cols="12"
-           sm="6"
-           lg="3">
-
-      <v-card class="m-card">
-        <v-card-text class="d-flex justify-space-between text-blue-grey-darken-2">
-          <div>
-            <span class="font-weight-bold">{{ meta.title }}</span>
-            <div class="d-flex align-center gap-2 my-1">
-              <h6 class="text-h4">
-                {{ meta.stats }}
-              </h6>
-              <span v-if="meta.percentage"
-                    :class="meta.percentage > 0 ? 'text-success' : 'text-error'">( +{{ meta.percentage }} Mới)</span>
-            </div>
-          </div>
-          <v-avatar
-              rounded
-              variant="tonal"
-              :color="meta.color"
-              :icon="meta.icon"
-          />
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </v-row>
-  <v-row>
     <v-col cols="12">
       <v-card class="m-card">
         <v-card-title class="font-weight-bold text-h5 my-3 text-grey-darken-2">Danh sách đơn hàng</v-card-title>
@@ -65,31 +36,53 @@
         <v-divider/>
         <v-card-text>
           <v-row>
-            <v-col cols="12" sm="6">
-              <v-select
-                  density="compact"
-                  v-model="selectedRole"
-                  label="Vai trò"
-                  :items="roles"
-                  item-title="name"
-                  item-value="name"
-                  variant="outlined"
+            <v-col
+                cols="12"
+                sm="6"
+                class="d-flex"
+            >
+              <v-text-field
                   color="red-accent-2"
-                  autocomplete="off"
+                  v-model="selectDateStart"
+                  label="Từ ngày"
+                  density="compact"
+                  variant="outlined"
+                  type="date"
+                  class="me-2"
+                  clearable
+              />
+              <v-text-field
+                  color="red-accent-2"
+                  v-model="selectDateEnd"
+                  label="Trước ngày"
+                  density="compact"
+                  variant="outlined"
+                  type="date"
+                  class="ms-2"
+                  clearable
               />
             </v-col>
-            <VCol cols="12" sm="6">
+            <v-spacer></v-spacer>
+            <v-col
+                cols="12"
+                sm="3"
+                class="d-flex"
+            >
               <v-select
                   density="compact"
-                  v-model="selectedStatus"
-                  label="Trạng thái"
-                  :items="status"
+                  v-model="selectedType"
+                  label="Loại"
+                  :items="typeCoupon"
+                  item-title="name"
+                  item-value="value"
                   clearable
                   variant="outlined"
                   color="red-accent-2"
                   aria-autocomplete="none"
+                  class="ms-3"
+                  autocomplete="off"
               />
-            </VCol>
+            </v-col>
           </v-row>
         </v-card-text>
         <v-divider/>
@@ -97,76 +90,77 @@
         <v-data-table
             v-model:items-per-page="options.itemsPerPage"
             v-model:page="options.page"
-            :items="users"
-            :items-length="users.length"
+            :items="orders"
+            :items-length="orders.length"
             :headers="headers"
             class="text-no-wrap"
             @update:options="options = $event"
         >
           <template #item.index="{ item }">{{ item.index + 1 }}</template>
-          <template #item.full_name="{ item }">
+          <template #item.code_order="{ item }">
             <div class="d-flex align-center">
               <v-avatar
                   size="34"
-                  :variant="!item.raw.avatar ? 'tonal' : undefined"
-                  :color="!item.raw.avatar ? customItem(item.raw.role).color : undefined"
-                  class="me-3"
-              >
-                <span>{{ avatarText(item.raw.full_name) }}</span>
-              </v-avatar>
-
-              <div class="d-flex flex-column">
-                <h5 class="text-base">
-                  {{ item.raw.full_name }}
-                </h5>
-
-                <span class="text-sm text-body-2 text-blue-grey-darken-1">{{ item.raw.email }}</span>
-              </div>
-            </div>
-          </template>
-
-          <template #item.role="{ item }">
-            <div>
-              <v-avatar
-                  :size="30"
-                  :color="customItem(item.raw.role).color"
                   variant="tonal"
+                  :color="customStatusOrder(statusOder(item.raw)).color"
                   class="me-3"
+                  :title="customStatusOrder(statusOder(item.raw)).status"
               >
-                <v-icon
-                    :size="20"
-                    :icon="customItem(item.raw.role).icon"
-                />
+                <v-icon :icon="customStatusOrder(statusOder(item.raw)).icon"></v-icon>
               </v-avatar>
-              <span class="text-capitalize">{{ item.raw.role || "none" }}</span>
+              <h5 class="text-base">
+                {{ item.raw.order_code || "**********" }}
+              </h5>
             </div>
           </template>
-
-          <template #item.isVerify="{ item }">
-            <v-chip
-                :color="item.raw.isVerify !=='Verified'?'red-darken-2':'green-darken-2'"
-                size="small"
-                label
-                class="text-capitalize"
-            >
-              {{ item.raw.isVerify }}
-            </v-chip>
+          <template #item.customer="{ item }">
+            <h5 v-if="item.raw.email_buyer" class="text-base">
+              {{ item.raw.email_buyer }}
+            </h5>
+            <h5 v-if="item.raw.phone_number_tracking" class="text-base">
+              {{ item.raw.phone_number_tracking }}
+            </h5>
           </template>
-          <template #item.status="{ item }">
-            <v-switch
-                :model-value="item.raw.status==='active'||false"
-                @change="changeStatus(item.raw.id)"
-                density="compact"
-                color="light-blue-lighten-3"
-                class="d-flex justify-center"
-            ></v-switch>
+          <template #item.total_order="{ item }">
+            <h5 class="text-base">
+              {{ formatPrice(item.raw.total_order || 0) }}
+            </h5>
           </template>
-
+          <template #item.value_discount="{ item }">
+            <h5 class="text-base">
+              {{ formatPrice(item.raw.value_discount || 0) }}
+            </h5>
+          </template>
+          <template #item.profit="{ item }">
+            <h5 class="text-base">
+              {{ formatPrice(item.raw.profit || 0) }}
+            </h5>
+          </template>
+          <template #item.created_at="{ item }">
+            <h5 class="text-base">
+              {{ formatDate(item.raw.created_at || 0) }}
+            </h5>
+          </template>
           <template #item.actions="{ item }">
-            <v-btn density="compact" icon="mdi-text-box-edit-outline" color="orange-darken-2"
-                   @click="()=>{clearFields(); formUpdate = !formUpdate; getInfo(item.raw.id)}"></v-btn>
-          </template>
+            <v-btn v-if="statusOder(item.raw)==='done'" @click="formTracking = !formTracking" variant="text"
+                   density="compact" icon="mdi-truck-fast-outline" color="grey-darken-1"></v-btn>
+            <v-btn variant="outlined" density="compact" color="grey-darken-1" title="Chức năng"
+                   class="ma-2 pa-1" size="30" rounded>
+              <v-icon>mdi-dots-vertical</v-icon>
+              <v-menu activator="parent">
+                <v-list>
+                  <v-list-item v-if="statusOder(item.raw) !== 'waiting'" density="compact"
+                               @click="clickTrans(item.index)">Xem nhanh giao dịch
+                  </v-list-item>
+                  <v-list-item v-if="statusOder(item.raw) !== 'waiting' && statusOder(item.raw) !== 'done'"
+                               density="compact" @click="clickTrank(item.index)">Xem nhanh vận chuyển
+                  </v-list-item>
+                  <v-list-item density="compact">Xem chi tiết đơn hàng</v-list-item>
+                </v-list>
+              </v-menu>
+            </v-btn>
 
+          </template>
           <template #bottom>
             <v-divider/>
             <div class="d-flex align-center justify-sm-space-between justify-center flex-wrap gap-3 pa-5 pt-3">
@@ -187,52 +181,112 @@
       </v-card>
     </v-col>
   </v-row>
+  <v-dialog
+      v-model="formTracking"
+      max-width="450"
+  >
+    <v-card>
+      <template #append>
+        <v-btn density="compact" icon="mdi-close" color="red-darken-2" @click="formTracking = !formTracking"></v-btn>
+      </template>
+      <v-card-title class="text-center">
+        <span class="text-h6 font-weight-bold">Bạn đã chuẩn bị hàng xong?</span>
+      </v-card-title>
+      <v-card-actions class="d-flex justify-center">
+        <v-btn color="red-darken-2" variant="flat">Xác nhận</v-btn>
+        <v-btn @click="formTracking = !formTracking" variant="flat" color="blue-grey-darken-1">Thoát</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  <v-dialog
+      v-model="formSelected"
+      max-width="450"
+  >
+    <v-card>
+      <template #append>
+        <v-btn density="compact" icon="mdi-close" color="red-darken-2" @click="formSelected = !formSelected"></v-btn>
+      </template>
+      <v-card-title class="text-center">
+        <span class="text-h6 font-weight-bold">{{ sTrack ? "Thông tin vận chuyển" : "Thông tin giao dịch" }}</span>
+      </v-card-title>
+      <v-card-item class="ma-2" v-if="sTrack">
+        <v-card-text class="d-flex text-body-1 font-weight-bold justify-space-between"><span class="text-grey-darken-2">Vận chuyển bởi :</span>
+        </v-card-text>
+        <v-card-text class="d-flex text-body-1 font-weight-bold justify-space-between"><span class="text-grey-darken-2">Tracking code :</span>{{ sTrack.tracking_code}}
+        </v-card-text>
+        <v-card-text class="d-flex text-body-1 font-weight-bold justify-space-between"><span class="text-grey-darken-2">Trạng thái :</span> {{ customStatusTracking(sTrack.status) }}
+        </v-card-text>
+        <v-card-text class="d-flex text-body-1 font-weight-bold justify-space-between"><span class="text-grey-darken-2">Ngày tạo :</span> {{ formatDate(sTrack.created_at) }}
+        </v-card-text>
+        <v-card-text class="d-flex text-body-1 font-weight-bold justify-space-between"><span class="text-grey-darken-2">Cập nhật cuối :</span> {{ formatDate(sTrack.updated_at) }}
+        </v-card-text>
+        <v-card>
+        </v-card>
+      </v-card-item>
+      <v-card-item class="ma-2 text-red-darken-2" v-else>
+        <v-card-text class="d-flex text-body-1 font-weight-bold justify-space-between"><span class="text-grey-darken-2">Cổng thanh toán :</span>
+          {{ sTrans.payment_method }}
+        </v-card-text>
+        <v-card-text class="d-flex text-body-1 font-weight-bold justify-space-between"><span class="text-grey-darken-2">Số tiền :</span>
+          {{ formatPrice(sTrans.amount) }}
+        </v-card-text>
+        <v-card-text class="d-flex text-body-1 font-weight-bold justify-space-between"><span class="text-grey-darken-2">Trạng thái :</span>
+          {{ sTrans.status }}
+        </v-card-text>
+        <v-card-text class="d-flex text-body-1 font-weight-bold justify-space-between"><span class="text-grey-darken-2">Thời gian :</span>
+          {{ formatDate(sTrans.created_at) }}
+        </v-card-text>
+      </v-card-item>
+
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
 import {useSeoMeta} from "@unhead/vue";
-import {useRoute, useRouter} from "vue-router";
 import {computed, onMounted, ref, watchEffect} from "vue";
 import axios from "../../axiosComfig";
 import {siteData} from "@/stores/globals";
+import {rule_coupon, rule_name_utf8, ruleTypeCoupon} from "@/validators";
 
 const siteStore = siteData();
-const router = useRouter();
-const roles = ref([]);
-const userStats = ref({});
-const selectedRole = ref();
+const formTracking = ref(false);
+const formSelected = ref(false);
+const orders = ref([]);
 const searchQuery = ref("");
-const selectedStatus = ref();
-const users = ref([]);
-const route = useRoute();
-const isLoading = ref();
-const formCreate = ref(false);
-const formUpdate = ref(false);
-const dataForm = ref();
-
-const cf_fullname = ref();
-const cf_email = ref();
-const cf_phone = ref();
-const cf_role = ref();
-const cf_verify = ref();
-const cf_id = ref();
-
+const selectedType = ref();
+const selectDateStart = ref();
+const selectDateEnd = ref();
 const options = ref({
   page: 1,
   itemsPerPage: 10,
 });
-
+const typeCoupon = [
+  {
+    name: "Chưa thanh toán",
+    value: "waiting"
+  }, {
+    name: "Đã thanh toán",
+    value: "done"
+  }, {
+    name: "Đang chuẩn bị hàng",
+    value: "warehouse"
+  }, {
+    name: "Đã giao đơn vị vận chuyển",
+    value: "shipping"
+  }, {
+    name: "Khách không nhận trả hàng",
+    value: "refund"
+  }, {
+    name: "Đã giao thành công",
+    value: "completed"
+  },
+];
+const sTrack = ref();
+const sTrans = ref();
 // Computed
-const clearFields = () => {
-  cf_fullname.value = null;
-  cf_email.value = null;
-  cf_phone.value = null;
-  cf_role.value = null;
-  cf_verify.value = null;
-  cf_id.value = null;
-};
 const totalUsers = computed(() => {
-  return users.value.length;
+  return orders.value.length;
 });
 const totalPage = computed(() => {
   return Math.ceil(totalUsers.value / options.value.itemsPerPage) || 1;
@@ -246,17 +300,84 @@ const paginationMeta = computed(() => {
   };
 });
 //Data
-
-const status = [
-  {
-    title: "Verified",
-    value: "verified",
-  },
-  {
-    title: "Pending",
-    value: "pending",
-  },
-];
+const statusOder = (item) => {
+  if (!item.transaction_id) {
+    return "waiting";
+  }
+  if (item.transaction_id && !item.tracking_id) {
+    return "done";
+  }
+  if (item.transaction_id && item.tracking_id && item.trackings && !item.trackings.status) {
+    return "warehouse";
+  }
+  if (item.transaction_id && item.tracking_id && item.trackings && item.trackings.status === "shipping") {
+    return "shipping";
+  }
+  if (item.transaction_id && item.tracking_id && item.trackings && item.trackings.status === "return") {
+    return "refund";
+  }
+  if (item.transaction_id && item.tracking_id && item.trackings && item.trackings.status === "done") {
+    return "completed";
+  }
+};
+const customStatusTracking = (value) => {
+  switch (value.toLowerCase()) {
+    case "shipping":
+      return "Đã giao đơn vị vận chuyển";
+    case "return":
+      return "Khách không nhận trả hàng";
+    case "done":
+      return "Đã giao thành công";
+    default:
+      return "Đang chuẩn bị hàng";
+  }
+};
+const customStatusOrder = (value) => {
+  switch (value.toLowerCase()) {
+    case "done":
+      return {
+        status: "Đã thanh toán",
+        color: "green-darken-2",
+        icon: "mdi-archive-check-outline",
+      };
+    case "waiting":
+      return {
+        status: "Chưa thanh toán",
+        color: "orange-darken-2",
+        icon: "mdi-credit-card-clock-outline"
+      };
+    case "warehouse":
+      return {
+        status: "Đang chuẩn bị hàng",
+        color: "green-accent-4",
+        icon: "mdi-package-variant"
+      };
+    case "shipping":
+      return {
+        status: "Đã giao đơn vị vận chuyển",
+        color: "teal-darken-2",
+        icon: "mdi-truck-delivery-outline"
+      };
+    case "return":
+      return {
+        status: "Khách không nhận trả hàng",
+        color: "mdi-truck-remove-outline",
+        icon: "mdi-truck-delivery-outline"
+      };
+    case "completed":
+      return {
+        status: "Đã giao thành công",
+        color: "blue-darken-2",
+        icon: "mdi-check-decagram-outline"
+      };
+    default:
+      return {
+        status: "",
+        color: "blue-grey-darken-4",
+        icon: "mdi-skull-scan"
+      };
+  }
+};
 const headers = [
   {
     title: "#",
@@ -264,275 +385,97 @@ const headers = [
     sortable: false,
   },
   {
-    title: "Họ và Tên",
-    key: "full_name",
+    title: "ID Order",
+    key: "code_order",
   },
   {
-    title: "Vai trò",
-    key: "role",
+    title: "Khách hàng",
+    key: "customer",
   },
   {
-    title: "Số điện thoại",
-    key: "phone_number",
+    title: "Tổng đơn",
+    key: "total_order",
   },
   {
-    title: "Xác minh",
-    key: "isVerify",
+    title: "Giảm giá",
+    key: "value_discount",
     sortable: false,
   },
   {
-    title: "Trạng thái",
-    key: "status",
+    title: "Lợi nhuận",
+    key: "profit",
+    align: "center",
+    sortable: false,
+  },
+  {
+    title: "Ngày tạo",
+    key: "created_at",
     align: "center",
     sortable: false,
   },
   {
     title: "Chức năng",
     key: "actions",
-    align: "center",
+    align: "end",
     sortable: false,
   },
 ];
-const userListMeta = computed(() => [
-  {
-    icon: "mdi-account-clock",
-    color: "primary",
-    title: "Tổng số tài khoản",
-    stats: userStats.value.total,
-    percentage: userStats.value.new,
-  },
-  {
-    icon: "mdi-account-star",
-    color: "success",
-    title: "Tài khoản đã kích hoạt",
-    stats: userStats.value.active,
-    percentage: "",
-  },
-  {
-    icon: "mdi-account-alert",
-    color: "warning",
-    title: "Tài khoản chờ kích hoạt",
-    stats: userStats.value.pending,
-    percentage: "",
-  },
-  {
-    icon: "mdi-account-cancel",
-    color: "error",
-    title: "Tài khoản bị khoá",
-    stats: userStats.value.status,
-    percentage: "",
-  },
-]);
 
 // Function
-
-function generatePassword() {
-  const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
-  const numberList = "1234567890";
-  const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const specialChars = "!@#$%^&*()_-+=<>?";
-
-  const getRandomChar = (characters) => {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    return characters[randomIndex];
-  };
-
-  let password = "";
-  for (let i = 0; i < 3; i++) {
-    password += getRandomChar(lowercaseChars);
-    password += getRandomChar(uppercaseChars);
-    password += getRandomChar(numberList);
-    password += getRandomChar(specialChars);
-  }
-
-  return password;
+function formatDate(timestamp) {
+  const date = new Date(timestamp);
+  const day = date.getUTCDate().toString().padStart(2, "0");
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+  const year = date.getUTCFullYear().toString();
+  return `${day}/${month}/${year}`;
 }
 
-const avatarText = value => {
-  if (!value) {
-    return "";
-  }
-  const nameArray = value.split(" ");
-
-  return nameArray.map(word => word.charAt(0).toUpperCase()).join("");
+const clickTrans = async (v) => {
+  sTrack.value = null;
+  sTrans.value = null;
+  formSelected.value = true;
+  sTrans.value = orders.value[v].transactions;
 };
-const customItem = (role) => {
-  switch (role.toLowerCase()) {
-    case "admin":
-      return {
-        color: "red-darken-2",
-        icon: "mdi-shield-crown-outline",
-      };
-    case "user":
-      return {
-        color: "light-blue-lighten-2",
-        icon: "mdi-shield-account-outline"
-      };
-    case "deliver":
-      return {
-        color: "green-darken-1",
-        icon: "mdi-package-variant-closed-check"
-      };
-    case "manager":
-      return {
-        color: "deep-orange-darken-4",
-        icon: "mdi-shield-star-outline"
-      };
-    default:
-      return {
-        color: "blue-grey-darken-4",
-        icon: "mdi-account-cog-outline"
-      };
-  }
+const clickTrank = async (v) => {
+  sTrack.value = null;
+  sTrans.value = null;
+  formSelected.value = true;
+  sTrack.value = orders.value[v].trackings;
+  console.log(sTrack.value);
+};
+const openForm = () => {
+
 };
 
-async function getInfo(id) {
-  siteStore.isLoading = true;
-  try {
-    const res = await axios.get(`/users/${id}`);
-    cf_email.value = res.data.email;
-    cf_fullname.value = res.data.full_name;
-    cf_role.value = res.data.role;
-    cf_verify.value = res.data.isVerify;
-    cf_phone.value = res.data.phone_number;
-    cf_id.value = res.data.id;
-  } catch (e) {
-    siteStore.errorSystem();
-    console.log(e);
-  } finally {
-    siteStore.isLoading = false;
-  }
-}
-
-async function fetchRoles() {
-  siteStore.isLoading = true;
-  try {
-    const res = await axios.get("/listRoles");
-    roles.value = res.data;
-  } catch (e) {
-    siteStore.errorSystem();
-    console.log(e);
-  } finally {
-    siteStore.isLoading = false;
-  }
-}
-
-async function fetchStatistics() {
-  isLoading.value = true;
-  try {
-    const res = await axios.get("/userStats");
-    userStats.value = res.data;
-  } catch (e) {
-    siteStore.errorSystem();
-    console.log(e);
-  } finally {
-    isLoading.value = false;
-  }
-}
-
-async function fetchUserList(q, r, s) {
-  siteStore.isLoading = true;
+async function fetchListOrder(q, ds, de, t) {
+  siteStore.hasLoading();
   try {
     const queryString = q ? q.toLowerCase() : "";
-    const queryRole = r ? r.toLowerCase() : "";
-    const queryStatus = s ? s.toLowerCase() : "";
+    const queryDateStart = ds || "";
+    const queryDateEnd = de || "";
+    const queryType = t ? t.toLowerCase() : "";
 
-    const res = await axios.get("/getListUser");
-    users.value = res.data.filter(user => (
-        (user.full_name.toLowerCase().includes(queryString) || user.phone_number.includes(queryString) || user.email.toLowerCase().includes(queryString)) &&
-        (queryRole === "" || user.role.toLowerCase() === queryRole) &&
-        (queryStatus === "" || user.isVerify.toLowerCase() === queryStatus)
+    const res = await axios.get("/fetchListOrder");
+    orders.value = res.data.filter(data => (
+        (data.order_code.toLowerCase().includes(queryString) || data.email_buyer.includes(queryString) || data.phone_number_tracking.toLowerCase().includes(queryString)) &&
+        (!queryDateStart || data.created_at >= queryDateStart) &&
+        (!queryDateEnd || data.created_at <= queryDateEnd) &&
+        (!queryType || statusOder(data).toLowerCase() === queryType)
     )).reverse();
   } catch (e) {
     siteStore.errorSystem();
     console.log(e);
   } finally {
-    siteStore.isLoading = false;
+    siteStore.doneLoading();
   }
 }
 
-const create = async () => {
-  try {
-    siteStore.isLoading = true;
-    let res = await axios.post("createUser", {
-      full_name: cf_fullname.value,
-      phone_number: cf_phone.value,
-      email: cf_email.value,
-      password: generatePassword(),
-      role: cf_role.value,
-      verify: cf_verify.value,
-    });
-    siteStore.hasRes(res);
-  } catch (e) {
-    siteStore.errorSystem();
-    console.log(e);
-  } finally {
-    siteStore.isLoading = false;
-  }
-};
-const onCreate = async () => {
-  dataForm.value?.validate().then(({valid: isValid}) => {
-    if (isValid) {
-      create();
-      formCreate.value = false;
-    }
-    fetchUserList();
-    fetchStatistics();
-  });
-};
-
-const update = async (id) => {
-  try {
-    siteStore.isLoading = true;
-    let res = await axios.put(`/updateUser/${id}`, {
-      full_name: cf_fullname.value,
-      phone_number: cf_phone.value,
-      email: cf_email.value,
-      role: cf_role.value,
-      verify: cf_verify.value,
-    });
-    siteStore.hasRes(res);
-  } catch (e) {
-    siteStore.errorSystem();
-    console.log(e);
-  } finally {
-    siteStore.isLoading = false;
-  }
-};
-const onUpdate = async () => {
-  dataForm.value?.validate().then(({valid: isValid}) => {
-    if (isValid) {
-      update(cf_id.value);
-      formUpdate.value = false;
-    }
-    fetchUserList();
-    fetchStatistics();
-  });
-};
-
-
-const changeStatus = async (id) => {
-  try {
-    siteStore.isLoading = true;
-    let res = await axios.put(`/changeStatusUser/${id}`);
-    await fetchStatistics();
-    siteStore.hasRes(res);
-  } catch (e) {
-    siteStore.errorSystem();
-    console.log(e);
-  } finally {
-    siteStore.isLoading = false;
-  }
-};
-
 watchEffect(() => {
-  fetchUserList(searchQuery.value, selectedRole.value, selectedStatus.value);
+  fetchListOrder(searchQuery.value, selectDateStart.value, selectDateEnd.value, selectedType.value);
 });
 
 onMounted(() => {
-  fetchRoles();
-  fetchStatistics();
-  fetchUserList();
+  fetchListOrder();
 });
 
 //SEO

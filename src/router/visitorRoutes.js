@@ -72,6 +72,11 @@ const routes = [
         name: "reset-password-page",
         component: () => import("../views/ResetPassword.vue"),
     },
+    {
+        name: "check-order-page",
+        path: "/check-order/:code",
+        component: () => import("../views/OrderView.vue"),
+    },
     // Tam
     {
         name: "user",
@@ -101,10 +106,10 @@ const routes = [
                 component: () => import("@/views/user/UserHistoryDetail.vue"),
             },
             {
-                name: "user-promotion",
-                path: "/user/promotion",
+                name: "user-address",
+                path: "/user/address",
                 meta: { auth: "login" },
-                component: () => import("@/views/user/UserPromotion.vue"),
+                component: () => import("@/views/user/AddressList.vue"),
             },
             {
                 name: "user-account",

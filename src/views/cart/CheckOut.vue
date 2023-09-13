@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref, watchEffect} from "vue";
 import {siteData} from "@/stores/globals";
 import Step1 from "@/views/cart/StepCheckout/Step1.vue";
 import Step2 from "@/views/cart/StepCheckout/Step2.vue";
@@ -21,9 +21,8 @@ const checkIndex =computed(()=>{ return stepList.value.findIndex(item => item.ta
 
 const modelLogin = ref(false);
 
-
-onMounted(()=>{
-  if(siteStore.listCart.length<=0||!siteStore.cartInfo.orderCompleted){
+watchEffect(()=>{
+  if(siteStore.listCart.length<=0 && !siteStore.cartInfo.orderCompleted){
     router.push("/cart")
   }
 })

@@ -8,7 +8,6 @@ import useCategoryStore from "@/stores/category";
 
 import HomeMainTop from "./HomeMainTop.vue";
 import ProductSlider from "@/components/globals/ProductSlider.vue";
-import ButtonBackground from "./ButtonBackground.vue";
 import HomeMainProductLayout from "./HomeMainProductLayout.vue";
 import ProductCard from "@/components/globals/ProductCard.vue";
 import NewsCard from "./NewsCard.vue";

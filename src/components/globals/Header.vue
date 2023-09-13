@@ -3,6 +3,7 @@ import {useDisplay} from "vuetify";
 import {siteData} from "@/stores/globals";
 import {ref, watch} from "vue";
 import {useRouter} from "vue-router";
+import axios from "@/axiosComfig";
 
 const router = useRouter();
 const {lgAndUp, mdAndUp} = useDisplay();
@@ -11,8 +12,7 @@ const siteStore = siteData();
 const miniLogo = import.meta.env.VITE_PUBLIC_URL + siteStore.siteSetings.logo_mini;
 const menus = ref([
   {icon: "mdi-card-account-details", text: "Tài khoản", route: "user"},
-  {icon: "mdi-truck-fast-outline", text: "Lịch sử đơn hàng", route: "coupons"},
-  {icon: "mdi-account-outline", text: "User Manager", route: "users", role: "admin"},
+  {icon: "mdi-truck-fast-outline", text: "Lịch sử đơn hàng", route: "user/history"},
   {icon: "mdi-logout", text: "Đăng xuất", route: "logout"},
 ]);
 

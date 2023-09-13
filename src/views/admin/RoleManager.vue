@@ -169,7 +169,7 @@ async function deleteRole(id) {
   if (confirm("Are you sure?")) {
     siteStore.isLoading = true;
     try {
-      const res = await axios.post("/deleteRole", {
+      const res = await axios.delete("/deleteRole", {
         role_id: id
       });
       await fetchRoles();

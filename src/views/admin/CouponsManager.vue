@@ -1000,7 +1000,7 @@ const deleteCoupon = async (id) => {
   if (confirm("Are you sure?")) {
     siteStore.isLoading = true;
     try {
-      const res = await axios.post("/deleteCoupon", {
+      const res = await axios.delete("/deleteCoupon", {
         coupon_id: id
       });
       await fetchCouponList(searchQuery.value, selectDateStart.value, selectDateEnd.value, selectedType.value, selectedStatus.value);

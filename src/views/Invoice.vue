@@ -67,9 +67,6 @@ onMounted(async () => {
   } finally {
     siteStore.doneLoading();
   }
-  if (route.query.key) {
-    console.log(route.query.key);
-  }
 });
 </script>
 

@@ -49,7 +49,7 @@ defineProps({
 				<v-list-item-title> Lịch sử mua hàng </v-list-item-title>
 			</v-list-item>
 			<v-list-item
-				:to="{ name: `user-promotion` }"
+				:to="{ name: `user-address` }"
 				class="px-2 py-0"
 				value="gift"
 				color="red-accent-4"
@@ -57,11 +57,11 @@ defineProps({
 				<template v-slot:prepend>
 					<v-icon
 						class="mr-1"
-						icon="mdi-gift-outline"
+						icon="mdi-text-account"
 					></v-icon>
 				</template>
 
-				<v-list-item-title> Ưu đãi của bạn </v-list-item-title>
+				<v-list-item-title> Danh sách địa chỉ </v-list-item-title>
 			</v-list-item>
 			<v-list-item
 				:to="{ name: `user-account` }"

@@ -330,27 +330,12 @@ const formCreate = ref(false);
 const formUpdate = ref(false);
 const dataForm = ref();
 
-const cf_fullname = ref();
-const cf_email = ref();
-const cf_phone = ref();
-const cf_role = ref();
-const cf_verify = ref();
-const cf_id = ref();
-
 const options = ref({
   page: 1,
   itemsPerPage: 10,
 });
 
 // Computed
-const clearFields = () => {
-  cf_fullname.value = null;
-  cf_email.value = null;
-  cf_phone.value = null;
-  cf_role.value = null;
-  cf_verify.value = null;
-  cf_id.value = null;
-};
 const totalUsers = computed(() => {
   return users.value.length;
 });
@@ -377,6 +362,7 @@ const status = [
     value: "pending",
   },
 ];
+
 const headers = [
   {
     title: "#",
@@ -413,6 +399,7 @@ const headers = [
     sortable: false,
   },
 ];
+
 const userListMeta = computed(() => [
   {
     icon: "mdi-account-clock",
