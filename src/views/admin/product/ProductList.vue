@@ -104,7 +104,6 @@ const fetchProducts = async () => {
     const res = await axios.get(url);
 
     if (res.status === 200) {
-      console.log(res.data.data.products);
       products.value = res.data.data.products.map(product => mapKeys(product, (value, key) => camelCase(key)));
       numberOfPages.value = res.data.data.numberOfPages;
     }
