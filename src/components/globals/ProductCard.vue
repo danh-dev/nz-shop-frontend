@@ -71,6 +71,7 @@ const changeLove = async id => {
       ></slot>
 
       <v-btn
+        v-if="product.love !== undefined"
         class="ma-1"
         rounded="circle"
         style="position: absolute; top: 0; right: 0;"
