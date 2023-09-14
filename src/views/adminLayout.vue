@@ -4,7 +4,7 @@
       <v-navigation-drawer v-model="drawer" class="pa-3" elevation="1">
         <template #prepend>
           <RouterLink to="/admincp" class="app-logo d-flex align-center gap-x-3 app-title-wrapper">
-            <img id="logoShop" src="/assets/NZShop-Text.svg" alt="logo shop">
+            <img id="logoShop" src="/src/assets/NZShop-Text.svg" alt="logo shop">
           </RouterLink>
           <v-btn density="compact" class="btn-close hidden-lg-and-up" icon="mdi-close"
                  @click.stop="drawer = !drawer"></v-btn>

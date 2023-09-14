@@ -1,8 +1,6 @@
 <script setup>
 import UserCard from "@/components/user/UserCard.vue";
 import UserCarousel from "@/components/user/UserCarousel.vue";
-import UserWishlist from "@/components/user/UserWishlist.vue";
-import UserCardItem from "@/components/user/UserCardItem.vue";
 </script>
 
 <template>
