@@ -10,8 +10,7 @@ const queryPay = ref({});
 const route = useRoute();
 const router = useRouter();
 const order = ref({});
-const reviewModal  = ref(false);
-
+const keyCheck = ref();
 function formatDate(timestamp) {
   const date = new Date(timestamp);
   const day = date.getUTCDate().toString().padStart(2, "0");
@@ -119,7 +118,7 @@ const createStripePayment = async (token) => {
     });
     if (String(res.data) === "succeeded") {
       siteStore.hasRes({data: {status: "ok", message: "Thanh toán thành công"}});
-      await fetchOrder();
+      await fetchOrder(keyCheck.value);
     } else {
       siteStore.hasRes({data: {status: "error", message: "Thanh toán thất bại"}});
     }
@@ -131,37 +130,14 @@ const createStripePayment = async (token) => {
     siteStore.doneLoading();
   }
 };
-const selectedProduct = ref();
-const review = ref("");
-const rating = ref(0);
-const createReview = async () => {
-  try {
-    siteStore.isLogin = true;
-    await axios.post("reviews", {
-      user_id: siteStore.userInfo.user_id,
-      product_id: selectedProduct.value,
-      comment: review.value,
-      rating: rating.value,
-    });
-    siteStore.hasRes({ data: { status: "ok", message: "Bình luận thành công." } });
-    reviewModal.value = false;
-  }
-  catch (e) {
-    siteStore.hasRes({ data: { status: "error", message: "Xảy ra lỗi. Vui lòng đăng nhập để thực hiện thao tác." } });
-    console.log(e);
-  }
-};
-const onReview = (v) =>{
-  reviewModal.value = true;
-  selectedProduct.value = v;
-}
+
 const runVNPay = async (request) => {
   siteStore.hasLoading();
   try {
     const res = await axios.post("runVNPay", request);
     siteStore.hasRes(res);
     if (res.data.status === "ok") {
-      await fetchOrder();
+      await fetchOrder(keyCheck.value);
     }
   } catch (e) {
     siteStore.errorSystem();
@@ -194,30 +170,36 @@ const getLink = async () => {
     console.error(error);
   }
 };
-const fetchOrder = async () => {
+const fetchOrder = async (v) => {
   siteStore.hasLoading();
   try {
-    const res = await axios.get(`/orderByCode/${route.params.code}`);
+    const res = await axios.get(`/orderByCode/${route.params.code}?key=${v}`);
     siteStore.hasRes(res);
     if (res.data.status) {
-      await router.push("/user/history");
+      await router.push("/");
+    } else {
+      order.value = res.data.data;
+      priceShipping.value = JSON.parse(res.data.data.delivery).value;
+      shipInfo.value = JSON.parse(res.data.data.address_shipping);
+      await getLink();
     }
-    order.value = res.data.data;
-    priceShipping.value = JSON.parse(res.data.data.delivery).value;
-    shipInfo.value = JSON.parse(res.data.data.address_shipping);
   } catch (e) {
     siteStore.errorSystem();
     console.log(e);
-    await router.push("/user/history");
+    await router.push("/");
   } finally {
     siteStore.doneLoading();
   }
 };
 onMounted(async () => {
-  await fetchOrder();
   queryPay.value = route.query;
+  if (route.query.key) {
+    keyCheck.value = route.query.key;
+    await fetchOrder(route.query.key);
+  } else {
+    await fetchOrder();
+  }
   await router.replace({query: null});
-  await getLink();
   // Xử lý stripe
   const stripeScript = document.createElement("script");
   stripeScript.src = "https://checkout.stripe.com/checkout.js";
@@ -229,14 +211,10 @@ const url = import.meta.env.VITE_PUBLIC_URL;
 </script>
 
 <template>
+  <v-row>
+    <v-col cols="12">
+      <v-card class="m-card pa-5">
   <v-sheet position="relative" width="100%" class="d-flex flex-column">
-    <v-btn
-        variant="text"
-        icon="mdi-arrow-left"
-        style="position: absolute;"
-        rounded="0"
-        @click="router.push({ name: 'user-history'})"
-    ></v-btn>
     <h1 class="text-center">Chi tiết đơn hàng</h1>
     <div class="d-flex align-center">
       <div>Mã hơn hàng: <span class="text-body-1 font-weight-bold">{{ order.order_code }}</span></div>
@@ -282,7 +260,6 @@ const url = import.meta.env.VITE_PUBLIC_URL;
               class="text-body-2 jutify-end"
               variant="outlined"
               color="red-accent-4"
-              @click="onReview(product.info.id)"
           >Đánh giá
           </v-btn>
         </v-sheet>
@@ -294,24 +271,6 @@ const url = import.meta.env.VITE_PUBLIC_URL;
           class="px-3 py-5"
           width="100%"
       >
-<!--        <v-sheet>-->
-<!--          <v-sheet class="d-flex">-->
-<!--            <v-icon-->
-<!--                class="mr-3"-->
-<!--                color="red-accent-4"-->
-<!--            >mdi-ticket-percent-outline-->
-<!--            </v-icon>-->
-<!--            <v-sheet class="text-body-1 font-weight-bold mb-4">Sử dụng mã giảm giá</v-sheet>-->
-<!--          </v-sheet>-->
-<!--          <v-sheet class="d-flex  justify-space-between mb-2">-->
-<!--            <div>Coupon:</div>-->
-<!--            <div>{{ order.coupon }}</div>-->
-<!--          </v-sheet>-->
-<!--          <v-divider-->
-<!--              class="border-opacity-50 mb-2"-->
-<!--              color="red"-->
-<!--          ></v-divider>-->
-<!--        </v-sheet>-->
         <v-sheet>
           <v-sheet class="d-flex">
             <v-icon
@@ -383,95 +342,10 @@ const url = import.meta.env.VITE_PUBLIC_URL;
         </v-sheet>
       </v-card>
     </v-sheet>
-
-
-    <v-sheet class="mt-4">
-      <v-card
-          class="px-3 py-5"
-          width="100%"
-      >
-        <v-sheet class="d-flex ">
-          <div class="text-body-1 font-weight-bold mb-4">
-            Thông tin hỗ trợ
-          </div>
-        </v-sheet>
-        <v-sheet class="d-flex">
-          <v-icon class="mr-3">mdi-phone-outline</v-icon>
-          <v-sheet class="text-grey-lighten-1">Số điện thoại cửa hàng:</v-sheet>
-        </v-sheet>
-        <v-sheet class="text-red-accent-4 ml-9 mt-1 mb-3">{{ siteStore.siteSetings.shop_cskh }}</v-sheet>
-        <v-sheet class="d-flex">
-          <v-icon class="mr-3">mdi-map-marker-outline</v-icon>
-          <v-sheet class="text-grey-lighten-1">Địa chỉ của hàng:</v-sheet>
-
-        </v-sheet>
-        <v-sheet class=" ml-9 mt-1 mb-3">{{ siteStore.siteSetings.shop_address }}</v-sheet>
-      </v-card>
-    </v-sheet>
-
-
   </v-sheet>
-
-
-  <v-dialog
-      v-model="reviewModal"
-      activator="#reviewModalButton"
-      width="auto"
-  >
-    <v-card
-        width="500"
-        class="mx-auto"
-    >
-      <v-sheet class="py-1 d-flex flex-column align-center justify-center text-body-2">
-        <img
-            src="https://cdn2.cellphones.com.vn/213x213,webp,q100/media/wysiwyg/Shipper_CPS.jpg"
-            class="w-25 h-25"
-        >
-        <p>Bạn thấy sản phẩm này như thế nào ?</p>
-      </v-sheet>
-
-      <v-textarea
-          v-model="review"
-          class="ma-2"
-          rounded="lg"
-          variant="outlined"
-          :rules="validate"
-          placeholder="Xin mời chia sẻ cảm nhận về sản phẩm"
-      >
-      </v-textarea>
-
-      <v-rating
-          v-model="rating"
-          class="text-caption mx-auto"
-          :item-labels="['Bad', 'So so', 'Ok', 'Good', 'Great']"
-          item-label-position="top"
-          color="yellow-darken-3"
-          denity="comfortable"
-      >
-      </v-rating>
-      <v-card-actions>
-        <v-btn
-            append-icon="mdi-check-outline"
-            color="success"
-            variant="elevated"
-            class="w-50 text-white rounded-xl"
-            @click="createReview"
-        >
-          Gửi đánh giá
-        </v-btn>
-        <v-btn
-            append-icon="mdi-close-outline"
-            color="red-accent-4"
-            variant="elevated"
-            class="ms-1 w-50 text-white rounded-xl"
-            @click="reviewModal = false"
-        >
-          Đóng
-        </v-btn>
-      </v-card-actions>
-
-    </v-card>
-  </v-dialog>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <style></style>

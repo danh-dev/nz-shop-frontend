@@ -12,8 +12,8 @@
         <MenuList/>
         <template #append>
           <div class="pa-2">
-            <v-btn block color="blue-grey-darken-4">
-              Logout
+            <v-btn to="/" block color="blue-grey-darken-4">
+              Back To Website
             </v-btn>
           </div>
         </template>

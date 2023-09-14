@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 import visitorRoutes from "./visitorRoutes";
 import adminRoutes from "./adminRoutes";
 import axios from "../axiosComfig";
@@ -15,7 +15,7 @@ const routes = [
     },
     {
         name: "Admin",
-        path: `/${import.meta.env.VITE_ADMIN_CONTROL_PANEL||'admincp'}`,
+        path: `/${import.meta.env.VITE_ADMIN_CONTROL_PANEL || "admincp"}`,
         component: () => import("../views/adminLayout.vue"),
         meta: {viewOf: "admin"},
         children: [...adminRoutes],
@@ -32,25 +32,25 @@ const routes = [
     }
 ];
 const router = createRouter({
-	history: createWebHistory(import.meta.env.BASE_URL),
-	routes,
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes,
 });
 
 router.beforeEach(async (to, from, next) => {
     const siteStore = siteData();
-    await siteStore.fetchSettingSite()
+    await siteStore.fetchSettingSite();
     const checkIsLoginFirstTime = async () => {
         const token = localStorage.getItem(import.meta.env.VITE_NAME_KEY_TOKEN || "accessToken");
         if (token) {
             try {
                 const response = await axios.get("isLogin");
                 siteStore.isLogin = response.data.isLogin;
-                if(response.data.status !== 'active'){
+                if (response.data.status !== "active") {
                     siteStore.isLogin = false;
-                    localStorage.removeItem(import.meta.env.VITE_NAME_KEY_TOKEN || "accessToken")
+                    localStorage.removeItem(import.meta.env.VITE_NAME_KEY_TOKEN || "accessToken");
                 }
-                if(!response.data.isLogin){
-                    localStorage.removeItem(import.meta.env.VITE_NAME_KEY_TOKEN || "accessToken")
+                if (!response.data.isLogin) {
+                    localStorage.removeItem(import.meta.env.VITE_NAME_KEY_TOKEN || "accessToken");
                 }
             } catch (error) {
                 siteStore.isLogin = false;
@@ -67,10 +67,8 @@ router.beforeEach(async (to, from, next) => {
             siteStore.isAdmin = false;
         }
     };
-    if (typeof siteStore.isLogin === "undefined" || siteStore.isLogin === null) {
-        await checkIsLoginFirstTime();
-    }
-    if (siteStore.isLogin && typeof siteStore.isAdmin === "undefined" || siteStore.isAdmin === null ) {
+    await checkIsLoginFirstTime();
+    if (siteStore.isLogin && typeof siteStore.isAdmin === "undefined" || siteStore.isAdmin === null) {
         await checkAdmin();
     }
     if (to.meta.viewOf === "admin" && !siteStore.isAdmin) {

@@ -42,15 +42,16 @@ onMounted(fetchPost);
         rounded="3"
       >
         <div class="d-flex flex-column justify-space-between py-1">
-          <a
-            :href="`/page/${getSlugByName(item.name)}`"
-          class=""
-        >{{ item.name }}</a>
-        <div class="d-flex align-center text-muted">
-          <v-icon size="16">mdi-clock-outline</v-icon>
-          <p class="px-1 text-caption">{{ item.created_at.slice(0, 10) }}</p>
+          <RouterLink
+              :to="`/page/${getSlugByName(item.name)}`"
+              class=""
+          >{{ item.name }}</RouterLink>
+          <div class="d-flex align-center text-muted">
+            <v-icon size="16">mdi-clock-outline</v-icon>
+            <p class="px-1 text-caption">{{ item.created_at.slice(0, 10) }}</p>
+          </div>
         </div>
-      </div>
-    </v-sheet>
-  </v-col>
-</v-row></template>
+      </v-sheet>
+    </v-col>
+  </v-row>
+</template>

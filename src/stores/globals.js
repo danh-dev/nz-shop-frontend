@@ -1,6 +1,7 @@
 import {defineStore} from "pinia";
 import {computed, ref} from "vue";
 import axios from "@/axiosComfig";
+import {useRouter} from "vue-router";
 
 export const siteData = defineStore("siteData", () => {
         const titleNow = ref("");
@@ -9,6 +10,7 @@ export const siteData = defineStore("siteData", () => {
         const isLogin = ref();
         const isAdmin = ref();
         const useGuest = ref("");
+        const router = useRouter();
         const siteSetings = ref({
             setting_ver: "",
             site_name: "",
@@ -69,6 +71,19 @@ export const siteData = defineStore("siteData", () => {
             return Object.values(cartInfo.value.cartList);
         });
 
+        const priceShipping = computed(() => {
+            if (cartInfo.coupon && cartInfo.coupon.type_value === "free_shipping") {
+                return 0;
+            }
+            if (cartInfo.coupon && cartInfo.coupon.type_value === "reduce_shipping") {
+                let calculatePrice = cartInfo.value.shipping.value - cartInfo.coupon.value;
+                return calculatePrice >= 0 ? calculatePrice : 0;
+            }
+            if (cartInfo.value.shipping.value) {
+                return cartInfo.value.shipping.value;
+            }
+        });
+
         const valueDiscount = computed(() => {
             if (cartInfo.value.coupon && cartInfo.value.coupon.coupon_requests && JSON.parse(cartInfo.value.coupon.coupon_requests).MinCart && +totalValue.value < +JSON.parse(cartInfo.value.coupon.coupon_requests).MinCart) {
                 return 0;
@@ -81,6 +96,12 @@ export const siteData = defineStore("siteData", () => {
                     return +JSON.parse(cartInfo.value.coupon.coupon_requests).MaxValue;
                 }
                 return (totalValue.value / 100) * cartInfo.value.coupon.value;
+            }
+            if(cartInfo.value.coupon && cartInfo.value.coupon.type_value === "free_shipping"){
+                return cartInfo.value.shipping.value;
+            }
+            if(cartInfo.value.coupon && priceShipping.value && cartInfo.value.coupon.type_value === "reduce_shipping"){
+                return priceShipping.value > 0 ? cartInfo.value.coupon.value : cartInfo.value.shipping.value;
             }
             return 0;
             // if (cartInfo.value.coupon.type_coupon && cartInfo.value.coupon.type_coupon === "totalcart" && cartInfo.value.coupon.type_value === "number_value") {
@@ -98,18 +119,6 @@ export const siteData = defineStore("siteData", () => {
         });
 
 
-        const priceShipping = computed(() => {
-            if (cartInfo.coupon && cartInfo.coupon.type_value === "free_shipping") {
-                return 0;
-            }
-            if (cartInfo.coupon && cartInfo.coupon.type_value === "reduce_shipping") {
-                let calculatePrice = cartInfo.value.shipping.value - cartInfo.coupon.value;
-                return calculatePrice >= 0 ? calculatePrice : 0;
-            }
-            if (cartInfo.value.shipping.value) {
-                return cartInfo.value.shipping.value;
-            }
-        });
         // Function
         const addProduct = async (sku) => {
             if (cartInfo.value.cartList.hasOwnProperty(sku)) {
@@ -125,7 +134,7 @@ export const siteData = defineStore("siteData", () => {
         };
 
         const totalCart = computed(() => {
-            return +totalValue.value + +priceShipping.value - +valueDiscount.value;
+            return +totalValue.value + +cartInfo.value.shipping.value - +valueDiscount.value;
         });
         const fetchProduct = async (sku) => {
             const res = await axios.post("products/sku", {
@@ -183,6 +192,7 @@ export const siteData = defineStore("siteData", () => {
                     userInfo.value.status = null;
                     isLogin.value = false;
                     localStorage.removeItem(import.meta.env.VITE_NAME_KEY_TOKEN || "accessToken");
+                    await router.push('/');
                 }
             } catch (e) {
                 if (e.response.status === 401) {

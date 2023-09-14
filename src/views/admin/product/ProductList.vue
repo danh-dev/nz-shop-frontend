@@ -104,7 +104,6 @@ const fetchProducts = async () => {
     const res = await axios.get(url);
 
     if (res.status === 200) {
-      console.log(res.data.data.products);
       products.value = res.data.data.products.map(product => mapKeys(product, (value, key) => camelCase(key)));
       numberOfPages.value = res.data.data.numberOfPages;
     }
@@ -180,14 +179,14 @@ onMounted(fetchProducts);
     <v-container>
       <v-row>
         <v-col
-          cols="12"
-          class="d-flex align-center"
+            cols="12"
+            class="d-flex align-center"
         >
           <h2>Danh sách sản phẩm</h2>
           <v-btn
-            prepend-icon="mdi-plus"
-            class="ms-auto"
-            :to="{
+              prepend-icon="mdi-plus"
+              class="ms-auto"
+              :to="{
               name: 'admin-product-create',
             }"
           >
@@ -197,45 +196,45 @@ onMounted(fetchProducts);
       </v-row>
       <v-row>
         <v-col
-          cols="6"
-          sm="4"
+            cols="6"
+            sm="4"
         >
           <v-autocomplete
-            color="red-accent-4"
-            prepend-inner-icon="mdi-list-box-outline"
-            density="compact"
-            label="Danh mục"
-            :items="categories"
-            v-model="category"
-            variant="outlined"
-            hide-details
+              color="red-accent-4"
+              prepend-inner-icon="mdi-list-box-outline"
+              density="compact"
+              label="Danh mục"
+              :items="categories"
+              v-model="category"
+              variant="outlined"
+              hide-details
           ></v-autocomplete>
         </v-col>
         <v-col
-          cols="6"
-          sm="4"
+            cols="6"
+            sm="4"
         >
           <v-select
-            color="red-accent-4"
-            density="compact"
-            label="Trạng thái"
-            :items="statuses"
-            v-model="status"
-            variant="outlined"
-            hide-details
+              color="red-accent-4"
+              density="compact"
+              label="Trạng thái"
+              :items="statuses"
+              v-model="status"
+              variant="outlined"
+              hide-details
           ></v-select>
         </v-col>
         <v-col>
           <v-text-field
-            v-model="searchInput"
-            density="compact"
-            append-inner-icon="mdi-magnify"
-            label="Tìm kiếm theo tên"
-            variant="outlined"
-            hide-details
-            clearable
-            @click:append-inner="search"
-            @keyup.enter="search"
+              v-model="searchInput"
+              density="compact"
+              append-inner-icon="mdi-magnify"
+              label="Tìm kiếm theo tên"
+              variant="outlined"
+              hide-details
+              clearable
+              @click:append-inner="search"
+              @keyup.enter="search"
           ></v-text-field>
 
         </v-col>
@@ -243,26 +242,26 @@ onMounted(fetchProducts);
       <v-row v-if="alert">
         <v-col>
           <v-alert
-            type="warning"
-            :text="alert"
-            :model-value="!!alert"
-            variant="tonal"
+              type="warning"
+              :text="alert"
+              :model-value="!!alert"
+              variant="tonal"
           >
             <template #append>
               <v-btn
-                density="compact"
-                color="red-accent-4"
-                icon="mdi-window-close"
-                variant="flat"
-                class="mr-2"
-                @click="alert = ''"
+                  density="compact"
+                  color="red-accent-4"
+                  icon="mdi-window-close"
+                  variant="flat"
+                  class="mr-2"
+                  @click="alert = ''"
               ></v-btn>
               <v-btn
-                density="compact"
-                color="success"
-                icon="mdi-check"
-                variant="flat"
-                @click="confirmAlert"
+                  density="compact"
+                  color="success"
+                  icon="mdi-check"
+                  variant="flat"
+                  @click="confirmAlert"
               ></v-btn>
             </template>
           </v-alert>
@@ -271,20 +270,20 @@ onMounted(fetchProducts);
       <v-row>
         <v-col>
           <v-data-table
-            :items-per-page="rowsPerPage"
-            :page="currentPage"
-            :headers="headers"
-            :items="products"
-            class="elevation-1"
-            item-value="name"
-            hover
-            no-data-text="Không có sản phẩm!"
+              :items-per-page="rowsPerPage"
+              :page="currentPage"
+              :headers="headers"
+              :items="products"
+              class="elevation-1"
+              item-value="name"
+              hover
+              no-data-text="Không có sản phẩm!"
           >
             <template #item.name="{ item }">
 
               <RouterLink
-                width="100%"
-                :to="`/san-pham/${item.raw.slug}`"
+                  width="100%"
+                  :to="`/san-pham/${item.raw.slug}`"
               >
                 <div>
                   {{ item.raw.name }}
@@ -296,9 +295,9 @@ onMounted(fetchProducts);
                 {{ formatPrice(item.raw.discountPrice || item.raw.sellPrice) }}
 
                 <v-tooltip
-                  activator="parent"
-                  location="right"
-                  class="d-flex flex-column"
+                    activator="parent"
+                    location="right"
+                    class="d-flex flex-column"
                 >
                   <p>
                     Giá gốc: {{ formatPrice(item.raw.originPrice) }}
@@ -309,52 +308,52 @@ onMounted(fetchProducts);
             </template>
             <template #item.image="{ item }">
               <v-img
-                :src="`${url}${item.columns.image}`"
-                width="60"
+                  :src="`${url}${item.columns.image}`"
+                  width="60"
               ></v-img>
             </template>
             <template #item.isDisabled="{ item }">
 
               <v-switch
-                color="red-accent-4"
-                :model-value="!item.raw.isDisabled"
-                @update:modelValue="() => handleToggleButton(item.raw.id)"
-                hide-details
+                  color="red-accent-4"
+                  :model-value="!item.raw.isDisabled"
+                  @update:modelValue="() => handleToggleButton(item.raw.id)"
+                  hide-details
               ></v-switch>
             </template>
             <template #item.action="{ item }">
               <div class="d-flex">
                 <v-btn
-                  size="x-small"
-                  variant="tonal"
-                  icon="mdi-pencil"
-                  color="primary"
-                  :to="{
+                    size="x-small"
+                    variant="tonal"
+                    icon="mdi-pencil"
+                    color="primary"
+                    :to="{
                     name: 'admin-product-update',
                     params: {
                       id: item.raw.id,
                     },
                   }"
-                  class="me-1"
+                    class="me-1"
                 >
                 </v-btn>
                 <v-btn
-                  v-if="item.raw.isDisabled"
-                  size="x-small"
-                  variant="tonal"
-                  icon="mdi-trash-can-outline"
-                  color="red-accent-4"
-                  @click="() => handleDeleteButton(item.raw.id, item.raw.name)"
+                    v-if="item.raw.isDisabled"
+                    size="x-small"
+                    variant="tonal"
+                    icon="mdi-trash-can-outline"
+                    color="red-accent-4"
+                    @click="() => handleDeleteButton(item.raw.id, item.raw.name)"
                 >
                 </v-btn>
               </div>
             </template>
             <template #bottom>
               <GlobalPagination
-                v-if="numberOfPages > 1"
-                :numberOfPages="numberOfPages"
-                :page="currentPage"
-                @update:page="updatePage"
+                  v-if="numberOfPages > 1"
+                  :numberOfPages="numberOfPages"
+                  :page="currentPage"
+                  @update:page="updatePage"
               ></GlobalPagination>
             </template>
           </v-data-table>

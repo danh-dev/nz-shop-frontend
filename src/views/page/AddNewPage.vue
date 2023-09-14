@@ -50,46 +50,46 @@ function editContent(event) {
     <v-container class="m-card my-3">
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <h2>Chi tiết trang mới:</h2>
         </v-col>
       </v-row>
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <v-text-field
-            variant="outlined"
-            v-model="newPage.name"
-            :rules="[v => !!v || 'Vui lòng không để trống.']"
-            :counter="20"
-            label="Tên trang:"
+              variant="outlined"
+              v-model="newPage.name"
+              :rules="[v => !!v || 'Vui lòng không để trống.']"
+              :counter="20"
+              label="Tên trang:"
           >
           </v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <v-text-field
-            variant="outlined"
-            v-model="newPage.author"
-            :rules="[v => !!v || 'Vui lòng không để trống.']"
-            :counter="20"
-            label="Tác giả:"
+              variant="outlined"
+              v-model="newPage.author"
+              :rules="[v => !!v || 'Vui lòng không để trống.']"
+              :counter="20"
+              label="Tác giả:"
           >
           </v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <!-- <v-textarea
           name="editor"
@@ -101,25 +101,24 @@ function editContent(event) {
         </v-textarea> -->
           <v-label class="text-caption">Nội dung trang:</v-label>
           <ContentEditor
-            :editorContent="newPage.content"
-            @editContent="editContent"
-            :rules="[v => !!v || 'Vui lòng không để trống']"
+              :editorContent="newPage.content"
+              @editContent="editContent"
+              :rules="[v => !!v || 'Vui lòng không để trống']"
           />
         </v-col>
       </v-row>
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <v-btn
-            class="me-2"
-            type="submit"
+              class="me-2"
+              type="submit"
           >Hoàn tất</v-btn>
           <v-btn
-            :to="`/admincp/page`"
-            href=""
-            type="reset"
+              :to="`/admincp/page`"
+              type="reset"
           >Hủy bỏ</v-btn>
         </v-col>
       </v-row>

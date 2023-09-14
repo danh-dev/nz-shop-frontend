@@ -11,24 +11,24 @@ defineProps({
 
 <template>
   <v-card
-    rounded="lg"
-    hover
-    class="pa-1 card-scale"
-    elevation="3"
-    v-ripple
-    :href="`/news/${getSlugByName(item.title)}`"
-    :width="width"
+      rounded="lg"
+      hover
+      class="pa-1 card-scale"
+      elevation="3"
+      v-ripple
+      :to="`/news/${getSlugByName(item.title)}`"
+      :width="width"
   >
     <v-img
-      :src="`${url}${item.image}`"
-      width="100%"
-      class="mb-2 rounded-t-lg"
+        :src="`${url}${item.image}`"
+        width="100%"
+        class="mb-2 rounded-t-lg"
     >
     </v-img>
     <v-sheet
-      class="news-title text-body-1 font-weight-bold clamp-2 px-2"
-      height="2.7rem"
-      :title="item.title"
+        class="news-title text-body-1 font-weight-bold clamp-2 px-2"
+        height="2.7rem"
+        :title="item.title"
     >
       {{ item.title }}
     </v-sheet>

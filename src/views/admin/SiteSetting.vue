@@ -19,7 +19,6 @@
               <ShopOnlineSetting v-if="selectSetting==='shopSetting'"/>
               <SEOSetting v-if="selectSetting==='seoSetting'"/>
               <DeliverySetting v-if="selectSetting==='deliverySetting'"/>
-              <PaymentSetting v-if="selectSetting==='paymentSetting'"/>
             </v-col>
           </v-row>
         </v-container>
@@ -48,7 +47,6 @@ const tabList = ref([
   {icon: "mdi-store-marker-outline", text: "Shop Setting", tabAction: "shopSetting"},
   {icon: "mdi-tab-search", text: "SEO Setting", tabAction: "seoSetting"},
   {icon: "mdi-truck-fast-outline", text: "Delivery Setting", tabAction: "deliverySetting"},
-  {icon: "mdi-cash-register", text: "Payment Setting", tabAction: "paymentSetting"},
 ]);
 siteStore.titleNow = "Site Settings";
 useSeoMeta({

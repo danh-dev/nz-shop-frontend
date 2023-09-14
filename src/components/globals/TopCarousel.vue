@@ -11,36 +11,36 @@ defineProps({
 
 <template>
   <v-carousel
-    hide-delimiters
-    cycle
-    interval="5000"
-    show-arrows="hover"
+      hide-delimiters
+      cycle
+      interval="5000"
+      show-arrows="hover"
   >
     <template #prev="{ props }">
       <v-btn
-        :class="[props.class, 'text-red-accent-4']"
-        :icon="props.icon"
-        @click="props.onClick"
+          :class="[props.class, 'text-red-accent-4']"
+          :icon="props.icon"
+          @click="props.onClick"
       ></v-btn>
     </template>
 
     <template #next="{ props }">
       <v-btn
-        :class="[props.class, 'text-red-accent-4']"
-        :icon="props.icon"
-        @click="props.onClick"
+          :class="[props.class, 'text-red-accent-4']"
+          :icon="props.icon"
+          @click="props.onClick"
       ></v-btn>
     </template>
     <v-carousel-item
-      v-for="item in gallery"
-      :key="item.id"
+        v-for="item in gallery"
+        :key="item.id"
     >
       <v-card
-        width="100%"
-        height="100%"
-        :href="`/${getSlugByName(item.name)}`"
-        v-ripple="false"
-        class="d-flex align-center"
+          width="100%"
+          height="100%"
+          :to="`news/${getSlugByName(item.title)}`"
+          v-ripple="false"
+          class="d-flex align-center"
       >
         <v-img :src="`${url}${item.image}`" />
       </v-card>

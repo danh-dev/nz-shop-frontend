@@ -105,13 +105,13 @@ const validate = ref([
 const createComment = async () => {
 	try {
 		siteStore.isLogin = true;
-		await axios.post("product-comments", {
+		let res = await axios.post("product-comments", {
 			user_id: siteStore.userInfo.user_id,
 			product_id: product.value.id,
 			comment: comment.value,
 		});
-		fetchComments(product.value.id);
-		siteStore.hasRes({ data: { status: "ok", message: "Bình luận thành công." } });
+		await fetchComments(product.value.id);
+		siteStore.hasRes(res);
 	}
 	catch (e) {
 		siteStore.hasRes({ data: { status: "error", message: "Xảy ra lỗi. Vui lòng đăng nhập để thực hiện thao tác." } });
@@ -498,7 +498,7 @@ onMounted(() => {
 								:width="`calc((100% - ${8 * (productsShow - 1)}px) / ${productsShow})`"
 								:style="{ translate: `calc(${-props.percent}% - ${props.px}px)` }"
 								:product="props.product"
-								:href="`/san-pham/${props.product.slug}`"
+                :to="`/san-pham/${props.product.slug}`"
 							/>
 						</template>
 					</ProductSlider1>
@@ -508,65 +508,65 @@ onMounted(() => {
 	</v-container>
 
 	<!-- Begin : Review Modal  -->
-	<v-dialog
-		v-model="reviewModal"
-		activator="#reviewModalButton"
-		width="auto"
-	>
-		<v-card
-			width="500"
-			class="mx-auto"
-		>
-			<v-sheet class="py-1 d-flex flex-column align-center justify-center text-body-2">
-				<img
-					src="https://cdn2.cellphones.com.vn/213x213,webp,q100/media/wysiwyg/Shipper_CPS.jpg"
-					class="w-25 h-25"
-				>
-				<p>Bạn thấy sản phẩm này như thế nào ?</p>
-			</v-sheet>
+<!--	<v-dialog-->
+<!--		v-model="reviewModal"-->
+<!--		activator="#reviewModalButton"-->
+<!--		width="auto"-->
+<!--	>-->
+<!--		<v-card-->
+<!--			width="500"-->
+<!--			class="mx-auto"-->
+<!--		>-->
+<!--			<v-sheet class="py-1 d-flex flex-column align-center justify-center text-body-2">-->
+<!--				<img-->
+<!--					src="https://cdn2.cellphones.com.vn/213x213,webp,q100/media/wysiwyg/Shipper_CPS.jpg"-->
+<!--					class="w-25 h-25"-->
+<!--				>-->
+<!--				<p>Bạn thấy sản phẩm này như thế nào ?</p>-->
+<!--			</v-sheet>-->
 
-			<v-textarea
-				v-model="review"
-				class="ma-2"
-				rounded="lg"
-				variant="outlined"
-				:rules="validate"
-				placeholder="Xin mời chia sẻ cảm nhận về sản phẩm"
-			>
-			</v-textarea>
+<!--			<v-textarea-->
+<!--				v-model="review"-->
+<!--				class="ma-2"-->
+<!--				rounded="lg"-->
+<!--				variant="outlined"-->
+<!--				:rules="validate"-->
+<!--				placeholder="Xin mời chia sẻ cảm nhận về sản phẩm"-->
+<!--			>-->
+<!--			</v-textarea>-->
 
-			<v-rating
-				v-model="rating"
-				class="text-caption mx-auto"
-				:item-labels="['Bad', 'So so', 'Ok', 'Good', 'Great']"
-				item-label-position="top"
-				color="yellow-darken-3"
-				denity="comfortable"
-			>
-			</v-rating>
-			<v-card-actions>
-				<v-btn
-					append-icon="mdi-check-outline"
-					color="success"
-					variant="elevated"
-					class="w-50 text-white rounded-xl"
-					@click="createReview"
-				>
-					Gửi đánh giá
-				</v-btn>
-				<v-btn
-					append-icon="mdi-close-outline"
-					color="red-accent-4"
-					variant="elevated"
-					class="ms-1 w-50 text-white rounded-xl"
-					@click="reviewModal = false"
-				>
-					Đóng
-				</v-btn>
-			</v-card-actions>
+<!--			<v-rating-->
+<!--				v-model="rating"-->
+<!--				class="text-caption mx-auto"-->
+<!--				:item-labels="['Bad', 'So so', 'Ok', 'Good', 'Great']"-->
+<!--				item-label-position="top"-->
+<!--				color="yellow-darken-3"-->
+<!--				denity="comfortable"-->
+<!--			>-->
+<!--			</v-rating>-->
+<!--			<v-card-actions>-->
+<!--				<v-btn-->
+<!--					append-icon="mdi-check-outline"-->
+<!--					color="success"-->
+<!--					variant="elevated"-->
+<!--					class="w-50 text-white rounded-xl"-->
+<!--					@click="createReview"-->
+<!--				>-->
+<!--					Gửi đánh giá-->
+<!--				</v-btn>-->
+<!--				<v-btn-->
+<!--					append-icon="mdi-close-outline"-->
+<!--					color="red-accent-4"-->
+<!--					variant="elevated"-->
+<!--					class="ms-1 w-50 text-white rounded-xl"-->
+<!--					@click="reviewModal = false"-->
+<!--				>-->
+<!--					Đóng-->
+<!--				</v-btn>-->
+<!--			</v-card-actions>-->
 
-		</v-card>
-	</v-dialog>
+<!--		</v-card>-->
+<!--	</v-dialog>-->
 	<!-- End : Review Modal  -->
 </template>
 

@@ -14,7 +14,7 @@
 
         <div class="text-medium-emphasis d-flex align-center flex-row-reverse align-content-end">
 
-          <router-link to="/forgot-password" class="text-caption text-decoration-none text-red-accent-4" href="#"
+          <router-link to="/forgot-password" class="text-caption text-decoration-none text-red-accent-4"
                        tabindex="-1">
             Quên mật khẩu?
           </router-link>
@@ -35,11 +35,11 @@
           Đăng Nhập
         </v-btn>
       </v-form>
-<!--      <div class="d-flex align-items-center">-->
-<!--        <hr class="w-25">-->
-<!--        <span class="d-flex align-center px-2">Hoặc đăng nhập bằng</span>-->
-<!--        <hr class="w-25">-->
-<!--      </div>-->
+      <!--      <div class="d-flex align-items-center">-->
+      <!--        <hr class="w-25">-->
+      <!--        <span class="d-flex align-center px-2">Hoặc đăng nhập bằng</span>-->
+      <!--        <hr class="w-25">-->
+      <!--      </div>-->
       <v-card-text class="text-center">Chưa có tài khoản?
         <router-link to="/register" class="text-blue text-decoration-none m-pointer">
           Đăng ký ngay
@@ -56,9 +56,11 @@ import {Checkbox} from "vue-recaptcha";
 import {useRoute, useRouter} from "vue-router";
 
 import {siteData} from "@/stores/globals";
+
 const siteStore = siteData();
 
 import {useRecaptchaProvider} from "vue-recaptcha";
+
 useRecaptchaProvider();
 
 const route = useRoute();
@@ -75,7 +77,7 @@ watch(v2_captcha, () => errors_captcha.value = v2_captcha.value ? null : "Mã x�
 
 
 const login = async () => {
-  siteStore.hasLoading()
+  siteStore.hasLoading();
   try {
     let res = await axios.post("login", {
       email: email.value,
@@ -86,7 +88,7 @@ const login = async () => {
       axios.defaults.headers.common["Authorization"] = "Bearer " + res.data.token;
       await siteStore.setUserInfo(res.data.user_id);
       localStorage.setItem("accessToken", res.data.token);
-      siteStore.isLogin =true;
+      siteStore.isLogin = true;
       siteStore.useGuest = "";
       setTimeout(() => {
         router.replace(route.query.to ? String(route.query.to) : "/");
@@ -95,8 +97,8 @@ const login = async () => {
   } catch (e) {
     siteStore.errorSystem();
     console.log(e);
-  }finally {
-    siteStore.doneLoading()
+  } finally {
+    siteStore.doneLoading();
   }
 };
 const onSubmit = () => {

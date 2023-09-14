@@ -37,6 +37,11 @@ const routes = [
         component: () => import("../views/admin/Orders.vue"),
     },
     {
+        path:"orders/detail/:code",
+        name:"order-detail-admin",
+        component: () => import("../views/admin/Orders_Detail.vue"),
+    },
+    {
         path:"transactions",
         name:"transaction-admin",
         component: () => import("../views/admin/Transactions.vue"),
@@ -66,6 +71,11 @@ const routes = [
         path: "review",
         name: "admin-review",
         component: () => import("../views/admin/review/ReviewList.vue"),
+    },
+    {
+        path: "bad-words",
+        name: "admin-bad-words",
+        component: () => import("../views/admin/BadWords.vue"),
     },
     // Long
     {

@@ -35,8 +35,8 @@ const createPostComment = async () => {
       post_id: post.value.id,
       comment: comment.value,
     });
-    fetchCommentsPost(post.value.id);
-    siteStore.hasRes({ data: { status: "ok", message: "Bình luận thành công." } });
+    await fetchCommentsPost(post.value.id);
+    siteStore.hasRes(res);
   }
   catch (e) {
     siteStore.hasRes({ data: { status: "error", message: "Xảy ra lỗi. Bình luận thất bại." } });

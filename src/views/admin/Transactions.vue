@@ -137,7 +137,7 @@
           </template>
           <template #item.actions="{ item }">
             <v-btn variant="text" density="compact" icon="mdi-text-box-edit-outline" color="grey-darken-1"
-                   @click="openForm(item.index)"></v-btn>
+                   :to="`/admincp/orders/detail/${item.raw.order.order_code}`"></v-btn>
           </template>
           <template #bottom>
             <v-divider/>
@@ -172,17 +172,10 @@ import {siteData} from "@/stores/globals";
 
 const siteStore = siteData();
 const route = useRoute();
-const addRequest = ref(false);
 const searchQuery = ref("");
 const selectedType = ref();
 const selectDateStart = ref();
 const selectDateEnd = ref();
-const formForUser = ref();
-const formForRole = ref();
-const formMinQ = ref();
-const formMaxQ = ref();
-const formMinCart = ref();
-const formMaxValue = ref();
 const roles = ref();
 const datas = ref([]);
 
@@ -203,16 +196,6 @@ const paginationMeta = computed(() => {
 
     return `Đang hiển thị từ ${start} đến ${end} trên tổng ${total} dữ liệu.`;
   };
-});
-watch(() => addRequest.value, () => {
-  if (addRequest.value === false) {
-    formForUser.value = null;
-    formForRole.value = null;
-    formMinQ.value = null;
-    formMaxQ.value = null;
-    formMinCart.value = null;
-    formMaxValue.value = null;
-  }
 });
 const headers = [
   {
@@ -270,7 +253,7 @@ const fetchListTransaction = async (q, ds, de, t) => {
   try {
     const res = await axios.get("fetchListTransaction");
     datas.value = res.data.filter(data => (
-        (data.order.order_code.toLowerCase().includes(queryString) || data.order.order_code.toLowerCase().includes(queryString)) &&
+        (data.order.order_code.toLowerCase().includes(queryString)) &&
         (!queryDateStart || data.created_at >= queryDateStart) &&
         (!queryDateEnd || data.created_at <= queryDateEnd) &&
         (!queryType || data.payment_method.toLowerCase() === queryType)

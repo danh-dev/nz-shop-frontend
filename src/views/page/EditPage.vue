@@ -79,64 +79,63 @@ onBeforeMount(fetchPage);
     <v-container class="m-card my-3">
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <h2>EditPage</h2>
         </v-col>
       </v-row>
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <v-text-field
-            variant="outlined"
-            v-model="page.name"
-            :rules="[v => !!v || 'Vui lòng không để trống.']"
-            label="Tên trang:"
+              variant="outlined"
+              v-model="page.name"
+              :rules="[v => !!v || 'Vui lòng không để trống.']"
+              label="Tên trang:"
           ></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <v-text-field
-            variant="outlined"
-            v-model="page.author"
-            :rules="[v => !!v || 'Vui lòng không để trống.']"
-            label="Tác giả:"
+              variant="outlined"
+              v-model="page.author"
+              :rules="[v => !!v || 'Vui lòng không để trống.']"
+              label="Tác giả:"
           ></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <v-label class="text-caption">Nội dung trang:</v-label>
           <ContentEditor
-            :rules="[v => !!v || 'Vui lòng không để trống.']"
-            :editorContent="page.content"
-            @editContent="editContent"
+              :rules="[v => !!v || 'Vui lòng không để trống.']"
+              :editorContent="page.content"
+              @editContent="editContent"
           />
         </v-col>
       </v-row>
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <v-btn
-            class="me-2"
-            type="submit"
+              class="me-2"
+              type="submit"
           >Hoàn tất</v-btn>
           <v-btn
-            :to="`/admincp/page`"
-            href=""
-            type="reset"
+              :to="`/admincp/page`"
+              type="reset"
           >Hủy bỏ</v-btn>
         </v-col>
       </v-row>

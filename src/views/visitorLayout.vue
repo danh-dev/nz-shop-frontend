@@ -6,6 +6,8 @@ import Header from "@/components/globals/Header.vue"
 import TheFooter from "@/components/layouts/TheFooter.vue";
 import FullscreenModal from "@/components/modals/FullscreenModal.vue";
 import MenuModal from "@/components/modals/MenuModal.vue";
+import Footer from "@/components/globals/Footer.vue";
+import HomeMain from "@/components/home/HomeMain.vue";
 
 const { lgAndUp } = useDisplay();
 </script>
@@ -50,6 +52,7 @@ const { lgAndUp } = useDisplay();
       content-class="position-fixed"
     />
   </v-layout>
+  <Footer />
 </template>
 
 <style scoped>

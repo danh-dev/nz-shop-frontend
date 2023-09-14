@@ -10,6 +10,7 @@ const {lgAndUp, mdAndUp} = useDisplay();
 const siteStore = siteData();
 
 const miniLogo = import.meta.env.VITE_PUBLIC_URL + siteStore.siteSetings.logo_mini;
+const bigLogo = import.meta.env.VITE_PUBLIC_URL + siteStore.siteSetings.logo_bg;
 const menus = ref([
   {icon: "mdi-card-account-details", text: "Tài khoản", route: "user"},
   {icon: "mdi-truck-fast-outline", text: "Lịch sử đơn hàng", route: "user/history"},
@@ -54,7 +55,7 @@ const fetchSearchOutput = async () => {
 <template>
   <v-app-bar
       elevation="4"
-      color="red-accent-4"
+      :color="siteStore.siteSetings.main_color"
       scroll-behavior="elevate"
   >
     <v-container :fluid="!lgAndUp">
@@ -71,7 +72,7 @@ const fetchSearchOutput = async () => {
           >
             <img
                 v-if="mdAndUp"
-                src="/assets/NZShop.svg"
+                :src="bigLogo"
                 width="180"
                 alt="Logo"
             >
@@ -127,7 +128,7 @@ const fetchSearchOutput = async () => {
             >
               <template #item="{ item }">
                 <v-list-item
-                    :href="`san-pham/${item?.raw?.slug}`"
+                    :to="`/san-pham/${item?.raw?.slug}`"
                     density="compact"
                 >
                   <template #prepend>

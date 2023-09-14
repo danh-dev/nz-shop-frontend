@@ -140,8 +140,8 @@ onBeforeMount(fetchPost);
     <v-container class="m-card my-3">
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <h2>Chi tiết bài viết</h2>
         </v-col>
@@ -149,30 +149,30 @@ onBeforeMount(fetchPost);
 
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <v-text-field
-            variant="outlined"
-            v-model="post.title"
-            :rules="[v => !!v || 'Vui lòng không để trống.']"
-            :counter="20"
-            label="Tiêu đề bài viết:"
+              variant="outlined"
+              v-model="post.title"
+              :rules="[v => !!v || 'Vui lòng không để trống.']"
+              :counter="20"
+              label="Tiêu đề bài viết:"
           ></v-text-field>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <v-text-field
-            variant="outlined"
-            v-model="post.author"
-            :rules="[v => !!v || 'Vui lòng không để trống.']"
-            :counter="20"
-            label="Tác giả:"
+              variant="outlined"
+              v-model="post.author"
+              :rules="[v => !!v || 'Vui lòng không để trống.']"
+              :counter="20"
+              label="Tác giả:"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -180,57 +180,57 @@ onBeforeMount(fetchPost);
       <v-row>
         <v-col>
           <v-btn
-            width=""
-            @click="callModel = !callModel"
+              width=""
+              @click="callModel = !callModel"
           >Upload ảnh</v-btn>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col
-          cols="12"
-          md="12"
-          class="d-flex align-center"
+            cols="12"
+            md="12"
+            class="d-flex align-center"
         >
           <v-img
-            v-if="newImage"
-            :src="newImage"
-            class="rounded-lg"
+              v-if="newImage"
+              :src="newImage"
+              class="rounded-lg"
           ></v-img>
           <v-img
-            v-else
-            :src="`${url}${post.image}`"
-            class="rounded-lg"
+              v-else
+              :src="`${url}${post.image}`"
+              class="rounded-lg"
           ></v-img>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <v-select
-            variant="outlined"
-            v-model="post.type"
-            label="Loại tin tức"
-            :rules="[v => !!v || 'Vui lòng lựa chọn.']"
-            :items="['Tin sản phẩm', 'Tin thị trường']"
+              variant="outlined"
+              v-model="post.type"
+              label="Loại tin tức"
+              :rules="[v => !!v || 'Vui lòng lựa chọn.']"
+              :items="['Tin sản phẩm', 'Tin thị trường']"
           ></v-select>
         </v-col>
       </v-row>
 
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <v-textarea
-            name="editor"
-            variant="outlined"
-            v-model="post.description"
-            :rules="[v => !!v || 'Vui lòng không để trống']"
-            label="Mô tả:"
+              name="editor"
+              variant="outlined"
+              v-model="post.description"
+              :rules="[v => !!v || 'Vui lòng không để trống']"
+              label="Mô tả:"
           >
           </v-textarea>
         </v-col>
@@ -238,33 +238,32 @@ onBeforeMount(fetchPost);
 
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <div class="d-flex justify-space-between my-2">
             <v-label class="text-caption">Nội dung bài viết</v-label>
             <v-btn @click="contentByAIModal = !contentByAIModal">Sử dụng công nghệ AI</v-btn>
           </div>
           <ContentEditor
-            :editorContent="post.content"
-            @editContent="editContent"
+              :editorContent="post.content"
+              @editContent="editContent"
           />
         </v-col>
       </v-row>
 
       <v-row>
         <v-col
-          cols="12"
-          md="12"
+            cols="12"
+            md="12"
         >
           <v-btn
-            class="me-2"
-            type="submit"
+              class="me-2"
+              type="submit"
           >Hoàn tất</v-btn>
           <v-btn
-            :to="`/admincp/post`"
-            href=""
-            type="reset"
+              :to="`/admincp/post`"
+              type="reset"
           >Hủy bỏ</v-btn>
         </v-col>
       </v-row>
@@ -273,27 +272,27 @@ onBeforeMount(fetchPost);
 
   <!-- Modal xử lý ảnh -->
   <v-dialog
-    v-model="callModel"
-    width="auto"
+      v-model="callModel"
+      width="auto"
   >
     <v-card class="rounded w-50 h-25 mx-auto">
       <v-file-input
-        chips
-        id="image"
-        ref="fileInput"
-        prepend-inner-icon="mdi-image-outline"
-        prepend-icon=""
-        label="Upload ảnh:"
-        @change="getUploadedImage"
-        class="d-flex flex-column justify-center ma-3"
+          chips
+          id="image"
+          ref="fileInput"
+          prepend-inner-icon="mdi-image-outline"
+          prepend-icon=""
+          label="Upload ảnh:"
+          @change="getUploadedImage"
+          class="d-flex flex-column justify-center ma-3"
       />
       <Cropper
-        ref="cropperArea"
-        :src="uploadedImage"
-        :stencil-props="{
+          ref="cropperArea"
+          :src="uploadedImage"
+          :stencil-props="{
           aspectRatio: 1000 / 450,
         }"
-        :canvas="{
+          :canvas="{
           width: 1000,
           height: 450
         }"
@@ -301,39 +300,39 @@ onBeforeMount(fetchPost);
       <br>
       <div>
         <v-img
-          :src="croppedImageData"
-          width="1000"
-          height="450"
+            :src="croppedImageData"
+            width="1000"
+            height="450"
         ></v-img>
       </div>
       <div class="d-flex justify-center my-5">
         <v-btn
-          v-if="uploadedImage"
-          @click="crop"
-          append-icon="mdi-content-cut"
-          variant="elevated"
-          class="w-25 pa-2 border-double rounded-lg mx-1"
+            v-if="uploadedImage"
+            @click="crop"
+            append-icon="mdi-content-cut"
+            variant="elevated"
+            class="w-25 pa-2 border-double rounded-lg mx-1"
         >
           CẮT ẢNH
         </v-btn>
 
         <v-btn
-          v-if="croppedImageData"
-          @click="done"
-          color="success"
-          append-icon="mdi-check"
-          variant="elevated"
-          class="w-25 pa-2 border-double rounded-lg mx-1"
+            v-if="croppedImageData"
+            @click="done"
+            color="success"
+            append-icon="mdi-check"
+            variant="elevated"
+            class="w-25 pa-2 border-double rounded-lg mx-1"
         >
           XÁC NHẬN
         </v-btn>
 
         <v-btn
-          color="#c50000"
-          variant="elevated"
-          class="w-25 pa-2 border-double rounded-lg mx-1"
-          append-icon="mdi-close-outline"
-          @click="callModel = false"
+            color="#c50000"
+            variant="elevated"
+            class="w-25 pa-2 border-double rounded-lg mx-1"
+            append-icon="mdi-close-outline"
+            @click="callModel = false"
         >ĐÓNG
         </v-btn>
       </div>
@@ -342,36 +341,36 @@ onBeforeMount(fetchPost);
 
   <!-- Modal tạo content bằng AI -->
   <v-dialog
-    v-model="contentByAIModal"
-    class="w-50"
+      v-model="contentByAIModal"
+      class="w-50"
   ><v-card class="pa-4">
-      <v-text-field
+    <v-text-field
         v-model="contentByAI.title"
         variant="outlined"
         :counter="100"
         label="Tiêu đề bài viết:"
         :rules="validateContentByAI"
-      ></v-text-field>
+    ></v-text-field>
 
-      <v-textarea
+    <v-textarea
         v-model="contentByAI.description"
         variant="outlined"
         placeholder="Tóm tắt nội dung: "
         :rules="validateContentByAI"
-      ></v-textarea>
+    ></v-textarea>
 
-      <div class="d-flex justify-center">
-        <v-btn
+    <div class="d-flex justify-center">
+      <v-btn
           @click="createContentByAI"
           color="success"
           class="mx-1"
-        >Xác nhận</v-btn>
-        <v-btn
+      >Xác nhận</v-btn>
+      <v-btn
           @click="contentByAIModal = !contentByAIModal"
           color="#d50000"
           class="mx-1"
-        >Đóng</v-btn>
-      </div>
-    </v-card>
+      >Đóng</v-btn>
+    </div>
+  </v-card>
   </v-dialog>
 </template>

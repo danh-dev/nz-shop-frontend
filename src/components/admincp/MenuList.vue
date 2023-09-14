@@ -10,6 +10,7 @@ const menus = ref([
   { icon: 'mdi-comment-outline', text: 'Comments Post', route: 'post-comment' },
   { icon: 'mdi-comment-outline', text: 'Comments Product', route: 'product-comment' },
   { icon: 'mdi-star-outline', text: 'Reviews', route: 'review' },
+  { icon: 'mdi-comment-off-outline', text: 'Từ khoá cấm', route: 'bad-words' },
   { icon: 'mdi-list-box-outline', text: 'Category Product', route: 'category' },
   { icon: 'mdi-package-variant-closed', text: 'Product', route: 'product' },
   { icon: 'mdi-archive-outline', text: 'Order Management', route: 'orders' },

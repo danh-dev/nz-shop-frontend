@@ -6,10 +6,6 @@ import {siteData} from "@/stores/globals";
 import {useRouter} from "vue-router";
 
 const siteStore = siteData();
-const props = defineProps({
-  user: Object,
-  orders: Array
-});
 const totalSpend = ref();
 const OrderList = ref([]);
 const countOrder = ref(0);

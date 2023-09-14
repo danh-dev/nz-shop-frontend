@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from "vue";
-const Promotions = ref(["S-Null", "S-New", "S-Mem", "S-Vip"]);
 </script>
 
 <template>

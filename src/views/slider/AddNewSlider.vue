@@ -149,7 +149,6 @@ async function createSlider() {
           >Hoàn tất</v-btn>
           <v-btn
             :to="`/admincp/slider`"
-            href=""
             type="reset"
           >Hủy bỏ</v-btn>
         </v-col>

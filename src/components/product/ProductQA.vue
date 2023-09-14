@@ -26,7 +26,6 @@ defineProps({
 					prepend-icon="mdi-send-circle"
 					color="red-accent-4"
 					class="text-white"
-					href="#"
 					onclick=""
 				>Gửi</v-btn>
 			</div>

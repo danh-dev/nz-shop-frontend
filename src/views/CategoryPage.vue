@@ -1,10 +1,11 @@
 <script setup>
 import axios from "../axiosComfig";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { mapKeys, camelCase } from "lodash";
 import { useRoute, useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
 import useCategoryStore from "@/stores/category";
+import { siteData } from "@/stores/globals";
 
 import BreadCrumbs from "@/components/category/BreadCrumbs.vue";
 import FilterChip from "@/components/category/FilterChip.vue";
@@ -14,7 +15,7 @@ import ProductList from "@/components/category/ProductList.vue";
 import GlobalPagination from "@/components/globals/GlobalPagination.vue";
 
 
-
+const siteStore = siteData();
 const categoryStore = useCategoryStore();
 const route = useRoute();
 const router = useRouter();
@@ -30,7 +31,7 @@ const switchCard = ref([false, false]);
 const chips = ref([]);
 const breadCrumbsItems = ref([{
   title: "Trang chủ",
-  href: "/",
+  to: "/",
   disable: false,
 }]);
 
@@ -87,20 +88,20 @@ watch(() => categoryStore.categories, async () => {
           const category = findCategoryBySlug(slug);
           breadCrumbsItems.value.push({
             title: category.name,
-            href: `/danh-muc${findRecursiveCategorySlug(category)}`,
+            to: `/danh-muc${findRecursiveCategorySlug(category)}`,
             disable: false,
           });
         }
       });
       breadCrumbsItems.value.push({
         title: category.value.name,
-        href: `/danh-muc${findRecursiveCategorySlug(category.value)}`,
+        to: `/danh-muc${findRecursiveCategorySlug(category.value)}`,
         disable: true,
         activeColor: "black",
         active: true
       });
 
-      products.value = await fetchRecursiveCategoryProducts(category.value.id);
+      products.value = await fetchRecursiveCategoryProducts(category.value.id, null, siteStore.userInfo.user_id);
     }
   }
 
@@ -308,10 +309,10 @@ watch(max, (newMax) => {
   priceRange.value[1] = newMax;
 });
 
-const fetchRecursiveCategoryProducts = async (id, numbers) => {
+const fetchRecursiveCategoryProducts = async (id, numbers, userId) => {
   let result = [];
   try {
-    const res = await axios.get(`recursive-categories/${id}/products/${numbers ?? ""}`);
+    const res = await axios.get(`recursive-categories/${id}/products/${numbers || ""}`);
     if (res.status === 200) {
       result = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
     }
@@ -326,7 +327,11 @@ const fetchRecursiveCategoryProducts = async (id, numbers) => {
 const fetchProductsByName = async () => {
   let result = [];
   try {
-    const res = await axios.get(`products/name/${route.query.name}`);
+    let url = `products/name/${route.query.name}`;
+    if (siteStore.userInfo.user_id) {
+      url += "/" + siteStore.userInfo.user_id;
+    }
+    const res = await axios.get(url);
     if (res.status === 200) {
       result = res.data.data.map(product => mapKeys(product, (value, key) => camelCase(key)));
     }
@@ -337,6 +342,7 @@ const fetchProductsByName = async () => {
   return result;
 };
 
+onMounted(categoryStore.fetchCategories);
 </script>
 
 <template>
@@ -345,35 +351,35 @@ const fetchProductsByName = async () => {
   <v-sheet class="my-5">
     <v-sheet class="d-flex align-center">
       <v-chip-group
-        style="overflow: visible;"
-        :model-value="selected"
-        @update:model-value="updateSelected($event)"
-        multiple
+          style="overflow: visible;"
+          :model-value="selected"
+          @update:model-value="updateSelected($event)"
+          multiple
       >
         <FilterChip
-          prepend-icon="mdi-cash"
-          append-icon="mdi-chevron-down"
-          style="overflow: visible;"
-          @click="handleChipClick(0)"
-          :ref="$el => { chips[0] = $el }"
+            prepend-icon="mdi-cash"
+            append-icon="mdi-chevron-down"
+            style="overflow: visible;"
+            @click="handleChipClick(0)"
+            :ref="$el => { chips[0] = $el }"
         ><template #text>Giá</template>
           <template
-            #card
-            v-if="switchCard[0]"
+              #card
+              v-if="switchCard[0]"
           >
 
             <FilterCard
-              width="25rem"
-              @click="clickChips(0)"
+                width="25rem"
+                @click="clickChips(0)"
             >
               <template #filter-title>Giá</template>
               <template #sub-filter>
                 <RangeSlider
-                  @update:rangePrice="newValue => priceRange = newValue"
-                  @changePrice="changePrice"
-                  :max="max"
-                  :priceRange="priceRange"
-                  :step="step"
+                    @update:rangePrice="newValue => priceRange = newValue"
+                    @changePrice="changePrice"
+                    :max="max"
+                    :priceRange="priceRange"
+                    :step="step"
                 ></RangeSlider>
               </template>
             </FilterCard>
@@ -421,37 +427,37 @@ const fetchProductsByName = async () => {
           </template>
         </FilterChip> -->
         <FilterChip
-          prepend-icon="mdi-sort"
-          append-icon="mdi-chevron-down"
-          style="overflow: visible;"
-          @click="handleChipClick(switchCard.length - 1)"
-          :ref="$el => { chips[chips.length - 1] = $el }"
+            prepend-icon="mdi-sort"
+            append-icon="mdi-chevron-down"
+            style="overflow: visible;"
+            @click="handleChipClick(switchCard.length - 1)"
+            :ref="$el => { chips[chips.length - 1] = $el }"
         >
           <template #text>Sắp xếp theo</template>
           <template
-            #card
-            v-if="switchCard[switchCard.length - 1]"
+              #card
+              v-if="switchCard[switchCard.length - 1]"
           >
             <FilterCard
-              width="13rem"
-              @click="clickChips(chips.length - 1)"
+                width="13rem"
+                @click="clickChips(chips.length - 1)"
             >
               <template #filter-title>Sắp xếp theo</template>
               <template #sub-filter>
                 <v-chip-group
-                  filter
-                  @click.stop
-                  v-model="sort"
+                    filter
+                    @click.stop
+                    v-model="sort"
                 >
                   <v-chip
-                    color="red-accent-4"
-                    @click.stop
+                      color="red-accent-4"
+                      @click.stop
                   >
                     Giá tăng dần
                   </v-chip>
                   <v-chip
-                    color="red-accent-4"
-                    @click.stop
+                      color="red-accent-4"
+                      @click.stop
                   >
                     Giá giảm dần
                   </v-chip>
@@ -463,8 +469,8 @@ const fetchProductsByName = async () => {
 
       </v-chip-group>
       <v-btn
-        @click="handleSearchClick"
-        class="ms-auto"
+          @click="handleSearchClick"
+          class="ms-auto"
       >Search</v-btn>
     </v-sheet>
 
@@ -482,16 +488,16 @@ const fetchProductsByName = async () => {
 
   </v-sheet>
   <ProductList
-    :productsLength="productsLength"
-    :products="newProducts"
-    :productsPerPages="productsPerPages"
-    :page="page"
+      :productsLength="productsLength"
+      :products="newProducts"
+      :productsPerPages="productsPerPages"
+      :page="page"
   ></ProductList>
   <GlobalPagination
-    v-if="numberOfPages > 1"
-    :page="page"
-    :numberOfPages="numberOfPages"
-    @update:page="updatePage"
+      v-if="numberOfPages > 1"
+      :page="page"
+      :numberOfPages="numberOfPages"
+      @update:page="updatePage"
   />
 </template>
 

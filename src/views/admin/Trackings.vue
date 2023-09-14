@@ -2,7 +2,7 @@
   <v-row>
     <v-col cols="12">
       <v-card class="m-card">
-        <v-card-title class="font-weight-bold text-h5 my-3 text-grey-darken-2">Danh sách vận chuyển giao hàng</v-card-title>
+        <v-card-title class="font-weight-bold text-h5 my-3 text-grey-darken-2">Danh sách giao dịch</v-card-title>
         <v-card-text>
           <v-row>
             <v-col cols="12" sm="5" md="3" class="d-flex">
@@ -43,7 +43,7 @@
               <v-text-field
                   color="red-accent-2"
                   v-model="selectDateStart"
-                  label="Ngày bắt đầu"
+                  label="Từ ngày"
                   density="compact"
                   variant="outlined"
                   type="date"
@@ -53,7 +53,7 @@
               <v-text-field
                   color="red-accent-2"
                   v-model="selectDateEnd"
-                  label="Ngày kết thúc"
+                  label="Trước ngày"
                   density="compact"
                   variant="outlined"
                   type="date"
@@ -71,7 +71,9 @@
                   density="compact"
                   v-model="selectedType"
                   label="Loại"
-                  :items="['Stripe','VNPay']"
+                  :items="typeTracking"
+                  item-title="name"
+                  item-value="value"
                   clearable
                   variant="outlined"
                   color="red-accent-2"
@@ -92,52 +94,40 @@
             class="text-no-wrap"
             @update:options="options = $event"
         >
-          <template #item.type_coupon="{ item }">
-            <div class="d-flex align-center">
-              <v-avatar
-                  size="34"
-                  variant="tonal"
-                  :color="customType(item.raw.type_coupon).color"
-                  class="me-3"
-              >
-                <v-icon :icon="customType(item.raw.type_coupon).icon"></v-icon>
-              </v-avatar>
-              <div class="d-flex flex-column">
-                <h5 class="text-base m-title" :title="item.raw.name">
-                  {{ item.raw.name }}
-                </h5>
-              </div>
-            </div>
-          </template>
           <template #item.order_code="{ item }">
             <h5 class="text-base m-title">
               {{ item.raw.order.order_code }}
             </h5>
           </template>
-          <template #item.amount="{ item }">
-            <h5 class="text-base m-title">
-              {{ formatPrice(item.raw.amount) }}
-            </h5>
-          </template>
-          <template #item.payment_method="{ item }">
-            <v-chip density="comfortable" variant="flat"
-                    :color="item.raw.payment_method === 'stripe'?'deep-purple-darken-1':'blue-darken-2'">
-              {{ item.raw.payment_method }}
-            </v-chip>
+          <template #item.deliver="{ item }">
+            <div v-if="!item.raw.deliver_info" >
+            </div>
+            <div v-else-if="item.raw.deliver ==='user'" elevation="2"  color="blue-grey-lighten-4">
+              <span class="text-grey-darken-2">Họ và tên:</span> {{ JSON.parse(item.raw.deliver_info).full_name }}<br>
+              <span class="text-grey-darken-2">Số điện thoại:</span>{{ JSON.parse(item.raw.deliver_info).phone_number }}
+            </div>
+            <div v-else elevation="2" color="blue-grey-lighten-4">
+              <span class="text-grey-darken-2">Đối tác:</span>Giao hàng tiết kiệm
+            </div>
           </template>
           <template #item.created_at="{ item }">
             <h5 class="text-base m-title">
               {{ formatDate(item.raw.created_at) }}
             </h5>
           </template>
+          <template #item.updated_at="{ item }">
+            <h5 class="text-base m-title">
+              {{ formatDate(item.raw.updated_at) }}
+            </h5>
+          </template>
           <template #item.status="{ item }">
             <h5 class="text-base m-title">
-              {{ item.raw.status }}
+              {{ customStatusTracking(item.raw.status) }}
             </h5>
           </template>
           <template #item.actions="{ item }">
             <v-btn variant="text" density="compact" icon="mdi-text-box-edit-outline" color="grey-darken-1"
-                   @click="openForm(item.index)"></v-btn>
+                   :to="`/admincp/orders/detail/${item.raw.order.order_code}`"></v-btn>
           </template>
           <template #bottom>
             <v-divider/>
@@ -145,7 +135,6 @@
               <p class="text-sm text-disabled mb-0">
                 {{ paginationMeta(options, totalData) }}
               </p>
-
               <v-pagination
                   color="red-darken-2"
                   v-model="options.page"
@@ -172,20 +161,31 @@ import {siteData} from "@/stores/globals";
 
 const siteStore = siteData();
 const route = useRoute();
-const addRequest = ref(false);
 const searchQuery = ref("");
 const selectedType = ref();
-const selectedStatus = ref();
 const selectDateStart = ref();
 const selectDateEnd = ref();
-const formForUser = ref();
-const formForRole = ref();
-const formMinQ = ref();
-const formMaxQ = ref();
-const formMinCart = ref();
-const formMaxValue = ref();
-const roles = ref();
 const datas = ref([]);
+
+
+const typeTracking = [
+  {
+    name: "Đang đóng gói",
+    value: ""
+  },
+  {
+    name: "Đang vận chuyển",
+    value: "shipping"
+  },
+  {
+    name: "Hàng trả về",
+    value: "return"
+  },
+  {
+    name: "Đã giao xong",
+    value: "done"
+  }
+];
 
 const options = ref({
   page: 1,
@@ -205,16 +205,6 @@ const paginationMeta = computed(() => {
     return `Đang hiển thị từ ${start} đến ${end} trên tổng ${total} dữ liệu.`;
   };
 });
-watch(() => addRequest.value, () => {
-  if (addRequest.value === false) {
-    formForUser.value = null;
-    formForRole.value = null;
-    formMinQ.value = null;
-    formMaxQ.value = null;
-    formMinCart.value = null;
-    formMaxValue.value = null;
-  }
-});
 const headers = [
   {
     title: "ID",
@@ -227,22 +217,21 @@ const headers = [
     sortable: false,
   },
   {
-    title: "Phương thức",
-    key: "payment_method",
+    title: "Vận chuyển bởi",
+    key: "deliver",
   },
   {
-    title: "Số tiền",
-    key: "amount",
-  },
-  {
-    title: "Ngày thực hiện",
+    title: "Ngày tạo",
     key: "created_at",
     align: "center",
   },
   {
+    title: "Cập nhật cuối",
+    key: "updated_at",
+  },
+  {
     title: "Trạng thái",
     key: "status",
-    align: "center",
     sortable: false,
   },
   {
@@ -254,12 +243,29 @@ const headers = [
 ];
 
 // Watch
+
+const customStatusTracking = (value) => {
+  switch (value.toLowerCase()) {
+    case "shipping":
+      return "Đang vận chuyển";
+    case "return":
+      return "Hàng trả về";
+    case "done":
+      return "Đã giao thành công";
+    default:
+      return "Đang chuẩn bị hàng";
+  }
+};
+
 function formatDate(timestamp) {
   const date = new Date(timestamp);
   const day = date.getUTCDate().toString().padStart(2, "0");
   const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
   const year = date.getUTCFullYear().toString();
-  return `${day}/${month}/${year}`;
+  const hours = date.getUTCHours().toString().padStart(2, "0");
+  const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
 const fetchListTransaction = async (q, ds, de, t) => {
@@ -269,12 +275,12 @@ const fetchListTransaction = async (q, ds, de, t) => {
   const queryDateEnd = de || "";
   const queryType = t ? t.toLowerCase() : "";
   try {
-    const res = await axios.get("fetchListTransaction");
+    const res = await axios.get("fetchListTracking");
     datas.value = res.data.filter(data => (
-        (data.order.order_code.toLowerCase().includes(queryString) || data.order.order_code.toLowerCase().includes(queryString)) &&
+        (data.order.order_code.toLowerCase().includes(queryString)) &&
         (!queryDateStart || data.created_at >= queryDateStart) &&
         (!queryDateEnd || data.created_at <= queryDateEnd) &&
-        (!queryType || data.payment_method.toLowerCase() === queryType)
+        (!queryType || data.status.toLowerCase() === queryType)
     )).reverse();
   } catch (e) {
     siteStore.errorSystem();
@@ -287,7 +293,7 @@ const fetchListTransaction = async (q, ds, de, t) => {
 watchEffect(async () => {
   await fetchListTransaction(searchQuery.value, selectDateStart.value, selectDateEnd.value, selectedType.value);
 });
-// onMounted
+
 onMounted(async () => {
   await fetchListTransaction();
 });

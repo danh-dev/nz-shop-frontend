@@ -19,31 +19,31 @@ const url = import.meta.env.VITE_PUBLIC_URL;
 <template>
   <v-list>
     <v-hover
-      v-for="category in parentCategories"
-      :key="category.id"
-      #default="{ isHovering, props }"
+        v-for="category in parentCategories"
+        :key="category.id"
+        #default="{ isHovering, props }"
     >
       <v-list-item
-        :class="[`${getSlugByName(category.name)}-activator${modal}`, isHovering ? 'text-red-accent-4' : '']"
-        v-bind="props"
-        :value="category.name"
-        :href="`/danh-muc/${getSlugByName(category.name)}`"
-        density="compact"
-        class="py-0 ps-1 pr-0"
-        color="red-accent-4"
-        variant="text"
+          :class="[`${getSlugByName(category.name)}-activator${modal}`, isHovering ? 'text-red-accent-4' : '']"
+          v-bind="props"
+          :value="category.name"
+          :to="`/danh-muc/${getSlugByName(category.name)}`"
+          density="compact"
+          class="py-0 ps-1 pr-0"
+          color="red-accent-4"
+          variant="text"
       >
         <div class="d-flex align-center">
           <v-icon class="me-3">
             <v-img
-              :class="isHovering && 'change-my-color'"
-              :src="`${url}${category.icon}`"
+                :class="isHovering && 'change-my-color'"
+                :src="`${url}${category.icon}`"
             />
           </v-icon>
           {{ category.name }}
           <v-icon
-            class="ms-auto"
-            icon="mdi-chevron-right"
+              class="ms-auto"
+              icon="mdi-chevron-right"
           ></v-icon>
         </div>
       </v-list-item>
@@ -75,24 +75,25 @@ const url = import.meta.env.VITE_PUBLIC_URL;
 
     <v-hover #default="{ isHovering, props }">
       <v-list-item
-        :class="[isHovering ? 'text-red-accent-4' : '']"
-        v-bind="props"
-        value="Tin tức"
-        density="compact"
-        class="py-0 ps-1 pr-0"
-        color="red-accent-4"
-        variant="text"
-        :activatorClass="`news-activator${modal} flex-1-1`"
+          :class="[isHovering ? 'text-red-accent-4' : '']"
+          v-bind="props"
+          value="Tin tức"
+          density="compact"
+          class="py-0 ps-1 pr-0"
+          color="red-accent-4"
+          variant="text"
+          :activatorClass="`news-activator${modal} flex-1-1`"
+          to="/news"
       >
         <div class="d-flex align-center">
           <v-icon
-            class="me-3"
-            icon="mdi-newspaper"
+              class="me-3"
+              icon="mdi-newspaper"
           />
           Tin tức
           <v-icon
-            class="ms-auto"
-            icon="mdi-chevron-right"
+              class="ms-auto"
+              icon="mdi-chevron-right"
           />
         </div>
       </v-list-item>

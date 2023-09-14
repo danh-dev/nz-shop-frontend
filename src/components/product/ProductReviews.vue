@@ -110,18 +110,18 @@ const averageRating = computed(() => {
 				</v-list-item>
 			</v-list> -->
 
-			<v-sheet class="d-flex flex-column align-center mt-2">
-				<p class="text-subtitle-1">Bạn đánh giá sao sản phẩm này ?</p>
-				<!-- <LoginModal /> -->
+<!--			<v-sheet class="d-flex flex-column align-center mt-2">-->
+<!--				<p class="text-subtitle-1">Bạn đánh giá sao sản phẩm này ?</p>-->
+<!--				&lt;!&ndash; <LoginModal /> &ndash;&gt;-->
 
-				<v-btn
-					id="reviewModalButton"
-					color="#d50000"
-					class="mt-2"
-				>
-					Đánh giá ngay
-				</v-btn>
-			</v-sheet>
+<!--				<v-btn-->
+<!--					id="reviewModalButton"-->
+<!--					color="#d50000"-->
+<!--					class="mt-2"-->
+<!--				>-->
+<!--					Đánh giá ngay-->
+<!--				</v-btn>-->
+<!--			</v-sheet>-->
 
 			<!-- Display reviews -->
 			<v-container>
