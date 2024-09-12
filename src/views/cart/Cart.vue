@@ -18,10 +18,10 @@ if(cartStore.coupon){
 const onSubmit = () => {
   if(couponInput.value.length){
     dataForm.value?.validate().then(({ valid: isValid }) => {
-      if (isValid)
-        cartStore.addCoupon(couponInput.value);
+    if (isValid)
+      cartStore.addCoupon(couponInput.value);
       readOnly.value = true
-    })}
+  })}
 }
 const onClear = () => {cartStore.removeCoupon(); readOnly.value = false ;couponInput.value ="";}
 </script>
@@ -31,13 +31,13 @@ const onClear = () => {cartStore.removeCoupon(); readOnly.value = false ;couponI
     <v-container>
       <v-sheet v-if="cartStore.listCart.length" class="mx-auto mt-8 rounded pa-3" elevation="3">
         <v-row class="ma-3" no-gutters>
-          <v-col cols="8" class="rounded pa-3">
+          <v-col cols="12" lg="8" class="rounded pa-3">
             <v-sheet>
               <h4 class="font-weight-bold text-red-accent-4">Giỏ hàng</h4>
-              <CartList :mini="true"/>
+              <CartList/>
             </v-sheet>
           </v-col>
-          <v-col cols="4" class="rounded pa-3">
+          <v-col cols="12" lg="4" class="rounded pa-3">
             <h4>Tạm tính:</h4>
             <v-card class="my-2 pa-3">
               <div class="order-summary-inner">

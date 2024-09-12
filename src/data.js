@@ -22,5 +22,6 @@ const productList = [
         thumbnail: "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/f/r/frame_1_3_13.png",
         url: "#"
     },
-];
-export default productList;
+]
+
+export { productList };
